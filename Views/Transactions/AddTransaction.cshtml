@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Add Transaction";
+    ViewBag.Title = "Create Receipt";
 }
 
 <!-- NEEDED FOR SPINNER DIALOG -->
@@ -172,7 +172,7 @@
 
             if ($('#hdnFormID').val() == '') {
                 //alert('No transaction item has been selected.');
-                $.AlertDialog('No transaction item has been selected.', 'Error Message', function (event) { }, 'lightcoral');
+                $.AlertDialog('No item has been selected.', 'Error Message', function (event) { }, 'lightcoral');
                 return;
             }
 
@@ -326,7 +326,7 @@
     var custname = ((AHDDManagerClass.Customer)Session["SelectedCustomer"]).FullName;
 }
 
-<h2>Add Transaction</h2>
+<h2>Create Receipt</h2>
 
 <div class="well">
     <div class="row">
@@ -338,7 +338,7 @@
 <div class="row">
     <div class="col-lg-6">
         <a href="#" id="lnkAdd">
-            <img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" />
+            <img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add Item" />
         </a>
     </div>
     <div class="col-lg-6">
@@ -350,7 +350,7 @@
 
 <table id="tblTrans" class="table table-hover">
     <tr>
-        <th>Transaction Item</th>
+        <th>Receipt Item</th>
         <th>Quantity</th>
         <th>Unit Price</th>
         <th>Discount Price</th>
@@ -372,7 +372,7 @@
     </div>
 </div>
 
-<div id="new-transaction-dialog" title="Add New Transaction">
+<div id="new-transaction-dialog" title="Add Item">
     <input type="hidden" id="hdnFormID" />
 
     <div class="container">
@@ -382,8 +382,8 @@
             <tr>
                 <td colspan="2">
 
-                    <label for="code">Transaction Item:</label><br />
-                    <input type="text" id="forms" data-required="true" data-name="Transaction Item" class="form-control" style="max-width:700px;">
+                    <label for="code">Item:</label><br />
+                    <input type="text" id="forms" data-required="true" data-name="Item" class="form-control" style="max-width:700px;">
 
 
 

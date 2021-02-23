@@ -1,7 +1,7 @@
 ﻿@model Tuple<AHDDManagerClass.TransactionDetails, AHDDManagerClass.Payments, AHDDManagerClass.Transaction, AHDDManagerClass.Refunds>
 
 @{
-    ViewBag.Title = "Transaction Details";
+    ViewBag.Title = "Receipt Details";
 }
 
 <script src="~/Scripts/Utilities.js"></script>
@@ -72,12 +72,12 @@
                 success: function (result) { //result is returned as an arry of base flavors
                     if (result.length == 1) {
                         //alert('The Transaction Detail has been deleted.');
-                        $.AlertDialog('The Transaction Detail has been deleted.', 'Success', function (event) { }, 'lightgreen');
+                        $.AlertDialog('The Receipt Detail has been deleted.', 'Success', function (event) { }, 'lightgreen');
 
                         location.reload();
                     } else {
                         //alert("Error: The Transaction Detail FAILED to delete.");
-                        $.AlertDialog('Error: The Transaction Detail FAILED to delete.', 'Error Message', function (event) { }, 'lightcoral');
+                        $.AlertDialog('Error: The Receipt Detail FAILED to delete.', 'Error Message', function (event) { }, 'lightcoral');
                     }
                 }
             });
@@ -169,7 +169,7 @@
                             //location.reload();
                         } else {
                             //alert("Error: Refund was not recorded. Transaction was not cancelled.");
-                            $.AlertDialog('Error: Refund was not recorded. Transaction was not cancelled.', 'Error Message', function (event) { }, 'lightcoral');
+                            $.AlertDialog('Error: Refund was not recorded. Receipt was not cancelled.', 'Error Message', function (event) { }, 'lightcoral');
                         }
                     }
                 });
@@ -295,8 +295,8 @@
                     contentType: 'application/json;',
                     success: function (result) { //result is returned as an arry of base flavors
                         if (result == 1) {
-                            //alert("Transaction was completed.");
-                            $.AlertDialog('Transaction was completed.', 'Success', function (event) { location.reload(); }, 'lightgreen');
+                            //alert("Receipt was completed.");
+                            $.AlertDialog('Receipt was completed.', 'Success', function (event) { location.reload(); }, 'lightgreen');
 
                         } else {
                             //alert(result);
@@ -310,7 +310,7 @@
         $('#ReOpen').on('click', function () {
             event.preventDefault();
 
-            $.ConfirmDialog('You are about to re-open this transaction. Continue?', 'Complete Transaction', function () {
+            $.ConfirmDialog('You are about to re-open this Receipt. Continue?', 'Re-open Transaction', function () {
                 $.ajax({
                     url: '/transactions/ReOpenTransaction/',
                     type: 'POST',
@@ -321,7 +321,7 @@
                     success: function (result) { //result is returned as an arry of base flavors
                         if (result == 1) {
                             //alert("Transaction was completed.");
-                            $.AlertDialog('Transaction was completed.', 'Success', function (event) { location.reload(); }, 'lightgreen');
+                            $.AlertDialog('Receipt was re-opened.', 'Success', function (event) { location.reload(); }, 'lightgreen');
 
                         } else {
                             //alert(result);
@@ -479,7 +479,7 @@
 
         if ($('#hdnNewDetailFormID').val() == '') {
             //alert('No transaction item has been selected.');
-            $.AlertDialog('No transaction item has been selected.', 'Error Message', function (event) { }, 'lightcoral');
+            $.AlertDialog('No item has been selected.', 'Error Message', function (event) { }, 'lightcoral');
             return;
         }
 
@@ -529,7 +529,7 @@
                     //return false;
                 } else {
                     //alert("Error: Customer transaction update has failed.");
-                    $.AlertDialog('Error: Customer transaction update has failed.', 'Error Message', function (event) { }, 'lightcoral');
+                    $.AlertDialog('Error: Customer Receipt update has failed.', 'Error Message', function (event) { }, 'lightcoral');
                 }
             }
         });
@@ -568,7 +568,7 @@
 </script>
 
 
-<h2>Transaction Details</h2>
+<h2>Receipt Details</h2>
 
 <div class="container">
     <div class="row">
@@ -584,7 +584,7 @@
                 if (Model.Item3.TransactionStatusID == 1)
                 {
                     <a href="#" id="lnkAddPaymentTop" class="cancel">
-                        <img src="~/images/CancelTransaction.png" data-toggle="tooltip" data-placement="left" title="Cancel Transaction" />
+                        <img src="~/images/CancelTransaction.png" data-toggle="tooltip" data-placement="left" title="Cancel Receipt" />
                     </a>
                 }
             }
@@ -628,10 +628,10 @@
                 <div class="col-lg-2"><strong>Customer ID:</strong> <div>@Model.Item3.CustomerID</div></div>
                 <div class="col-lg-2"><strong>Receipt No:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
                 <div class="col-lg-2"><strong>Rep:</strong> <div>@Model.Item3.TakenBy</div></div>
-                <div class="col-lg-3"><strong>Transaction Date:</strong> <div>@Model.Item3.TransactionDate</div></div>
+                <div class="col-lg-3"><strong>Receipt Date:</strong> <div>@Model.Item3.TransactionDate</div></div>
             </div>
             <div class="row">
-                <div class="col-lg-3"><strong>Transaction Total:</strong> <div id="lblTotalTrans" class="currencyLabel">@Model.Item3.TotalAmount</div></div>
+                <div class="col-lg-3"><strong>Receipt Total:</strong> <div id="lblTotalTrans" class="currencyLabel">@Model.Item3.TotalAmount</div></div>
                 <div class="col-lg-2"><strong>Total Paid:</strong> <div id="lblTotalPaid" class="currencyLabel">@Model.Item3.TotalCollected</div></div>
                 <div class="col-lg-2"><strong>Refunded:</strong> <div id="lblTotalRefunded" class="currencyLabel">@Model.Item3.RefundedAmount</div></div>
                 <div class="col-lg-2"><strong>Remaining Owed:</strong> <div id="lblOwed" class="currencyLabel">@Model.Item3.TotalOwed</div></div>
@@ -668,7 +668,7 @@
         }
         <table id="tblTransDetails" class="table table-hover">
             <tr>
-                <th>Transaction Item:</th>
+                <th>Receipt Item:</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
                 <th>Discount Price</th>
@@ -913,7 +913,7 @@
     </div>
 </div>
 
-<div id="refund-dialog" title="Transaction Refund">
+<div id="refund-dialog" title="Receipt Refund">
     <div class="container">
         <div class="well well-lg">
             <div class="row">
@@ -947,15 +947,15 @@
     </div>
 </div>
 
-<div id="new-transaction-dialog" title="Add New Transaction">
+<div id="new-transaction-dialog" title="Add New Item">
     <input type="hidden" id="hdnNewDetailFormID" />
 
     <div class="container">
         <table id="tblTransDetails" class="table">
             <tr>
                 <td colspan="2">
-                    <label for="code">Transaction Item:</label><br />
-                    <input type="text" id="newDetailForms" data-required="true" data-name="Transaction Item" class="form-control" style="max-width:700px;">
+                    <label for="code">Item:</label><br />
+                    <input type="text" id="newDetailForms" data-required="true" data-name="Item" class="form-control" style="max-width:700px;">
                 </td>
                 <td valign="bottom" class="text-left">
                     <label class="empty-label"></label><br />
