@@ -1,0 +1,257 @@
+﻿@{
+    Layout = "~/Views/Manhiem/ManhiemHeader.cshtml";
+}
+
+<!DOCTYPE html>
+
+<script>
+    $(function () {
+
+        $('#btnSubmit').on('click', function () {
+            var loc = $('#ddlLocations option:selected').val();
+            var date = $('#ddlDates option:selected').val();
+            var startyear = $('#ddlStartYears option:selected').val();
+            var endyear = $('#ddlEndYears option:selected').val();
+            var make = $('#ddlMake option:selected').val();
+            var model = $('#txtModel').val();
+
+
+            presale = {
+                Location: loc,
+                PreSaleDate: date,
+                YearSearchStart: startyear,
+                YearSearchEnd: endyear,
+                Make: make,
+                Model: model,
+                Odometer: $('#txtOdometer').val()
+            }
+
+            $('#tdCount').text('Count: ---');
+
+            $.ajax({
+                url: '/Manhiem/SearchPresales/',
+                type: 'POST',
+                data: JSON.stringify({ PreSale: presale }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    $("#tblResults tr:gt(1)").remove();
+
+
+                    $('#tdCount').text('Count: ' + result.length);
+
+                    if (result.length > 0) {
+                        $.each(result, function (key, value) {
+
+                            var checked = value.Selected ? 'checked' : '';
+
+                            var expense = "<tr>" +
+                                "<td><input type=\"checkbox\" class=\"preselected\" id=\"" + value.PreSaleID + "\" " + checked + "></td>" +
+                                "<td>" + value.PreSaleDateString + "</td>" +
+                                "<td>" + value.Location + "</td>" +
+                                "<td>" + value.Lane + "</td>" +
+                                "<td>" + value.Run + "</td>" +
+                                "<td>" + value.Year + "</td>" +
+                                "<td>" + value.Make + "</td>" +
+                                "<td>" + value.Model + "</td>" +
+                                "<td>" + value.Condition + "</td>" +
+                                "<td>" + value.Engine + "</td>" +
+                                "<td>" + value.Tranny + "</td>" +
+                                "<td>" + value.TopType + "</td>" +
+                                "<td><a href=\"#\" class=\"odo\">   " + value.Odometer + "</a></td>" +
+                                "<td>" + value.Color + "</td>" +
+                                "<td><a target=\"_blank\" href=\"https://www.manheim.com/members/powersearch/redirect.do?redirectPage=VDP&vin=" + value.Vin + "&fromPresales=true&format=enhanced&locale=en_US&country=USA\">View</a></td>" +
+                                "<td><a target=\"_blank\" href=\"https://mmr.manheim.com/?WT.svl=m_uni_hdr_buy&classic=true&country=US&popup=true&region_filter=SW&vin=" + value.Vin + "&mileage=" + value.Odometer + "&condition=" + value.Condition.replace('CR ', '').trim() + "\">" + value.Vin + "</a></td>"
+
+                            expense += "</tr>";
+
+                            $("#tblResults").append(expense);
+                        });
+                    }
+                },
+                error: function (jqXHR, exception) {
+
+                    alert('error');
+                }
+            });
+        });
+
+
+
+        $("#tblResults").on("click", ".preselected", function () {
+
+            //alert($(this).attr('id'));
+
+            var x = $(this).closest('tr').find('td:last-child');
+            var odo = $(this).closest('tr').find('td:nth-child(13)');
+
+            if ($(this).is(":checked")) {
+                $.ajax({
+                    url: '/Manhiem/InsertSelected/',
+                    type: 'POST',
+                    data: JSON.stringify({ PreSaleID: $(this).attr('id'), Vin: x.text().trim(), Miles: odo.text().trim() }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        //do nothing
+                    },
+                    error: function (jqXHR, error, errorThrown) {
+                        $.AlertDialog(errorThrown, 'Error Message', function (error) { }, 'red');                        
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: '/Manhiem/DeleteSelected/',
+                    type: 'POST',
+                    data: JSON.stringify({ PreSaleID: $(this).attr('id') }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        //do nothing
+                    },
+                    error: function (jqXHR, exception) {
+                        alert('error');
+                    }
+                });
+            }
+
+
+            // alert($(this).is(":checked"));
+        });
+
+
+        $("#tblResults").on("click", ".odo", function () {
+
+            var odo = $(this).text();
+
+            $.ajax({
+                url: '/Manhiem/SearchPostsalesByOdometer/',
+                type: 'POST',
+                data: JSON.stringify({ Odometer: odo }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    var disp = "<table class=\"table table-hover\">"
+                    disp += "<th>Year</th><th>Make</th><th>Model</th><th>Odometer</th><th>Price</th>";
+
+
+                    if (result.length > 0) {
+
+
+                        $.each(result, function (key, value) {
+                            disp += "<tr><td>" + value.Year + "</td><td>" + value.Make + "</td><td>" + value.Model + "</td><td>" + value.OdometerFormatted + "</td><td>" + value.PriceFormatted + "</td></tr>";
+                        });
+                    }
+                    else {
+                        disp += "<tr><td colspan=\"5\" align=\"center\">NO RECORDS FOUND</td></tr>";
+                    }
+
+                    disp += "</table>";
+
+                    $.AlertDialog(disp, 'Error Message', function (event) { }, 'lightcoral');
+
+
+                },
+                error: function (jqXHR, exception) {
+
+                    alert('error');
+                }
+            });
+        });
+
+        $('#ddlStartYears').on('change', function () {
+
+            $('#ddlEndYears').val($('#ddlStartYears option:selected').val());
+        });
+
+        $('#btnReset').on('click', function () {
+            $('#ddlLocations').val('');
+            $('#ddlDates').val('');
+            $('#ddlStartYears').val('');
+            $('#ddlEndYears').val('');
+            $('#ddlMake').val('');
+            $('#txtModel').val('');
+            $('#txtOdometer').val('');
+        });
+
+    });
+
+
+</script>
+
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Pre Sale Search</title>
+</head>
+<body>
+
+    <table class="table" style="width:600px;">
+
+        <tr><td><h3>Pre Sale Search</h3></td></tr>
+        <tr>
+            <td>PreSale Date: @Html.DropDownList("ddlDates", (IEnumerable<SelectListItem>)ViewBag.SaleDates, "Select Date")</td>
+
+            <td>Locations: @Html.DropDownList("ddlLocations", (IEnumerable<SelectListItem>)ViewBag.Locations, "Select Location")</td>
+
+        </tr>
+        <tr>
+            <td>Start Year: @Html.DropDownList("ddlStartYears", (IEnumerable<SelectListItem>)ViewBag.Years, "Select Year")</td>
+
+            <td>End Year: @Html.DropDownList("ddlEndYears", (IEnumerable<SelectListItem>)ViewBag.Years, "Select Year")</td>
+        </tr>
+        <tr>
+            <td>Make: @Html.DropDownList("ddlMake", (IEnumerable<SelectListItem>)ViewBag.Makes, "Select Make")</td>
+
+            <td>Model: <input type="text" id="txtModel" /></td>
+            <td>Odometer: <input type="text" id="txtOdometer" /></td>
+        </tr>
+    </table>
+    <table class="table table-responsive" style="font-size:12px">
+        <tr>
+            <td>
+                <input type="button" id="btnSubmit" value="Search" />
+            </td>
+            <td>
+                <input type="button" id="btnReset" value="Reset" />
+            </td>
+        </tr>
+    </table>
+
+
+    <table id="tblResults" class=" table table-responsive">
+        <tr><td colspan="16" id="tdCount" style="font-weight:bold;">Count: 0</td></tr>
+        <tr>
+            <th></th>
+            <th>Presale Date</th>
+            <th>Location</th>
+            <th>Lane</th>
+            <th>Run</th>
+            <th>Year</th>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Condition</th>
+            <th>Engine</th>
+            <th>Tranny</th>
+            <th>TopType</th>
+            <th>Odometer</th>
+            <th>Color</th>
+            <th>View</th>
+            <th>Vin</th>
+        </tr>
+    </table>
+</body>
+</html>
+
+
+
+
+
+
+
+

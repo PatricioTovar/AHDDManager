@@ -1,0 +1,184 @@
+﻿@{
+    Layout = "~/Views/Manhiem/ManhiemHeader.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>PreSale Tags</title>
+
+    <script>
+        $(function () {
+
+            $("#tblResults").on("click", ".preselected", function () {
+
+                //alert($(this).attr('id'));
+
+                if ($(this).is(":checked")) {
+                    $.ajax({
+                        url: '/Manhiem/InsertSelected/',
+                        type: 'POST',
+                        data: JSON.stringify({ PreSaleID: $(this).attr('id') }),
+                        dataType: 'json',
+                        traditional: true,
+                        contentType: 'application/json;',
+                        success: function (result) {
+                            location.reload(true);
+                        },
+                        error: function (jqXHR, exception) {
+                            alert('error');
+                        }
+                    });
+                } else {
+                    $.ajax({
+                        url: '/Manhiem/DeleteSelected/',
+                        type: 'POST',
+                        data: JSON.stringify({ PreSaleID: $(this).attr('id') }),
+                        dataType: 'json',
+                        traditional: true,
+                        contentType: 'application/json;',
+                        success: function (result) {
+                            location.reload(true);
+                        },
+                        error: function (jqXHR, exception) {
+                            alert('error');
+                        }
+                    });
+                }
+
+            });
+
+            $('#btnPurge').on('click', function () {
+
+                $.ajax({
+                    url: '/Manhiem/DeleteSelectedALL/',
+                    type: 'POST',
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        location.reload(true);
+                    },
+                    error: function (jqXHR, exception) {
+                        alert('error');
+                    }
+                });
+
+            });
+
+            $("#tblResults").on("click", ".odo", function () {
+
+                var odo = $(this).text();
+
+                $.ajax({
+                    url: '/Manhiem/SearchPostsalesByOdometer/',
+                    type: 'POST',
+                    data: JSON.stringify({ Odometer: odo }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        var disp = "<table class=\"table table-hover\">"
+                        disp += "<th>Year</th><th>Make</th><th>Model</th><th>Odometer</th><th>Price</th>";
+
+                        if (result.length > 0) {
+                            $.each(result, function (key, value) {
+                                disp += "<tr><td>" + value.Year + "</td><td>" + value.Make + "</td><td>" + value.Model + "</td><td>" + value.OdometerFormatted + "</td><td>" + value.PriceFormatted + "</td></tr>";
+                            });
+                        }
+                        else {
+                            disp += "<tr><td colspan=\"5\" align=\"center\">NO RECORDS FOUND</td></tr>";
+                        }
+
+                        disp += "</table>";
+
+                        $.AlertDialog(disp, 'Error Message', function (event) { }, 'lightcoral');
+
+
+                    },
+                    error: function (jqXHR, exception) {
+
+                        alert('error');
+                    }
+                });
+            });
+
+        });
+    </script>
+
+    @{
+        var iCount = 0;
+
+        foreach (AHDDManagerClass.ManhiemPreSale item in Model)
+        {
+            iCount += 1;
+        }
+    }
+
+
+        </head>
+<body>
+    <div>            
+        <table width="500px">
+            <tr>
+                <td><h3>PreSale Tags</h3></td>
+                <td align="right"> <input type="button" id="btnPurge" value="Purge All Selected" /></td>
+            </tr>
+        </table>
+
+        <table id="tblResults" class=" table table-responsive" style="font-size:12px">
+            <tr><td colspan="16" style="font-weight:bold;">Count: @iCount </td></tr>
+            <tr>
+                <th></th>
+                <th>Presale Date</th>
+                <th>Location</th>
+                <th>Lane</th>
+                <th>Run</th>
+                <th>Year</th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>Condition</th>
+                <th>Engine</th>
+                <th>Tranny</th>
+                <th>TopType</th>
+                <th>Odometer</th>
+                <th>Color</th>
+                <th>View</th>
+                <th>Vin</th>
+            </tr>
+
+            @{
+                foreach (AHDDManagerClass.ManhiemPreSale item in Model)
+                {
+                    <tr>
+                        <td><input type="checkbox" class="preselected" id="@item.PreSaleID" checked /></td>
+                        <td>@item.PreSaleDateString</td>
+                        <td>@item.Location</td>
+                        <td>@item.Lane</td>
+                        <td>@item.Run</td>
+                        <td>@item.Year</td>
+                        <td>@item.Make</td>
+                        <td>@item.Model</td>
+                        <td>@item.Condition</td>
+                        <td>@item.Engine</td>
+                        <td>@item.Tranny</td>
+                        <td>@item.TopType</td>
+                        <td><a href="#" class="odo"> @item.Odometer</a></td>
+                        <td>@item.Color</td>
+                        <td><a target="_blank" href="https://www.manheim.com/members/powersearch/redirect.do?redirectPage=VDP&vin=@item.Vin&fromPresales=true&format=enhanced&locale=en_US&country=USA">View</a></td>
+                        <td><a target="_blank" href="https://mmr.manheim.com/?WT.svl=m_uni_hdr_buy&classic=true&country=US&popup=true&region_filter=SW&vin=@item.Vin&mileage=@item.Odometer&condition=@item.Condition">@item.Vin</a></td>
+                        <td>@item.Low<br/>@item.Average<br />@item.High</td>
+                    </tr>
+                }
+
+            }
+
+
+
+
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+﻿@{
+    ViewBag.Title = "Collected";
+}
+
+<script>
+    $(function () {
+        var row;
+
+        LoadPayments(0);
+
+        function LoadPayments(associateID) {
+            var _now = new Date;
+
+            var start = _now.getMonth() + 1 + "/" + _now.getDate() + "/" + _now.getFullYear();
+            var end = _now.getMonth() + 1 + "/" + _now.getDate() + "/" + _now.getFullYear();
+
+            $.ajax({
+                url: '/admin/GetPaymentsCollectedByAssociate/',
+                data: JSON.stringify({ AssociateID: 0, StartDate: start, EndDate: end }),
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) { //result is returned as an arry of base flavors
+                    $("#tblPayments tr:gt(0)").remove();
+                    var _total = 0;
+                    $.each(result, function (key, value) {
+                        //$("#lblCount").text('Count: ' + result.length);
+                        var _date = new Date(parseInt(value.PaymentDate.substr(6)));
+                        var ampm = _date.getHours() >= 12 ? "PM" : "AM";
+
+                        _date = (_date.getMonth() + 1) + '/' + _date.getDate() + '/' + _date.getFullYear() + ' ' + _date.getHours() + ':' + (_date.getMinutes() < 10 ? '0' : '') + _date.getMinutes();
+
+                        _total += value.PaymentAmount;
+
+                        row = "<tr id='" + value.PaymentID + "'>" +
+                                    "<td><a href='/transactions/transactiondetails/" + value.TransactionID + "' target='_blank'>" + value.PaymentID + "</a></td>" +
+                                    "<td>" + _date + " " + ampm + "</td>" +
+                                    "<td class='currencyLabel'>" + value.PaymentAmount + "</td>" +
+                                    "<td>" + value.PaymentMethodDescription + "</td>" +
+                                    "<td>" + value.CheckNumber + "</td>" +
+                                    "<td>" + value.TakenBy + "</td>"
+                        "</tr>"
+                        $("#tblPayments").append(row);
+                    });
+
+
+
+ 
+//THIS NEEDS FAILURE CHECK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    //get this person's collected pay method counts
+                    $.ajax({
+                        url: '/admin/GetPayMethodCountsByDateRangeAssocID/',
+                        type: 'POST',
+                        data: JSON.stringify({AssociateID: 0, StartDate: start, EndDate: end }),
+                        dataType: 'json',
+                        traditional: true,
+                        contentType: 'application/json;',
+                        success: function (result) {
+                       
+                            _total = result.OverallTotal;
+
+                            if (result != null) {
+                               
+                                $("#tblPayments").append('<tr><td colspan="6"> <hr /></td></tr>');
+
+                                $.each(result.ret, function (key, value) {
+                                    
+                                    row = "<tr><td></td> <td><strong>" + value.PaymentMethod + " (" + value.MethodCount + "):</strong></td>  <td class='currencyLabel'><strong>" + value.TotalAmount + "</strong></td>"
+                                    
+                                    $("#tblPayments").append(row);
+                                    
+                                });
+
+
+                                row = "<tr><td></td><td><strong>Total:</strong></td><td class='currencyLabel'><strong> " + _total + "</strong></td></tr>";
+                                                                
+                                $("#tblPayments").append(row);
+                                $('.currencyLabel').formatCurrency();
+
+                            } else {
+
+                               
+
+                            }
+                        }
+                    });
+
+
+
+
+                    $('.currencyLabel').formatCurrency();
+                }
+            });
+        }
+    });
+</script>
+
+<h3>Payments Collected Today</h3>
+
+<div class="container">
+    <table id="tblPayments" class="table table-hover">
+        <tr>
+            <th>Pay ID</th>
+            <th>Pay Date</th>
+            <th>Amount</th>
+            <th>Pay Method</th>
+            <th>Check #</th>
+            <th>Receipt Creator</th>
+        </tr>
+
+    </table>
+
+</div>
+

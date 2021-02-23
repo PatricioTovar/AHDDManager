@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - AHDD</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+</head>
+
+<body>
+    <div class="content">
+        <div class="content-inside">
+            <div class="navbar main-navbar">
+                @*navbar-fixed-top  *TEMPORALY REMOVED FOR BETTER DESING* *@
+                <div class="container">
+                    <div>
+                        <a class="page-title" href="/Customer/">Agencia Hispana de Dallas on Bishop Ave.</a>
+                    </div>
+                    @if (Context.Session["Associate"] != null)
+                    {
+                        <div>
+                            @Html.Partial("~/Views/Shared/_Menu.cshtml")
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="body-content">
+                <div class="container">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <footer class="footer">
+        <div class="text-right">
+            <span>&copy; @DateTime.Now.Year - Agencia Hispana de Dallas on Bishop Ave.</span>
+        </div>
+    </footer> 
+    
+    @*LOADING DIALOG*@
+    <div id="loadingModal" class="modal" style="display: none">
+        <div class="center">
+            <img alt="" src="/images/ajax-loader.gif" />
+        </div>
+    </div>
+</body>
+</html>

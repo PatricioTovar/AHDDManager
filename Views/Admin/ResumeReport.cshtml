@@ -1,0 +1,323 @@
+﻿
+@{
+    ViewBag.Title = "Resume Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<script src="~/Scripts/datatables.min.js"></script>
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Scripts/dataTables.buttons.min.js"></script>
+<script src="~/Scripts/buttons.html5.min.js"></script>
+<script src="~/Scripts/jszip.min.js"></script>
+<style>
+    .dt-buttons { /*table buttons*/
+        text-align: right
+    }
+
+    .btnExcelTbl {
+        margin-bottom: 3px;
+    }
+</style>
+<script>
+    var tblPayments;
+    $(document).ready(function () {
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+
+        $("#dpStart").datepicker().datepicker("setDate", new Date());
+        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        initTable();
+
+    });
+
+    function initTable() {
+        tblPayments = $('#tblPayments').DataTable({
+            dom: "<'row'>" + "<'row'<'col-sm-6'l><'col-sm-5'f><'col-sm-1'B>>" + "<'row'<'col-sm-62'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+            pageLength: 50,
+            buttons: [
+                {
+                    extend: 'excel',
+                    className: 'btnExcelTbl btn btn-success',
+                    visible: false,
+                    exportOptions: {
+                        columns: '.exportExcel'
+                    }
+                },
+            ],
+            autoWidth: true,
+            columns: [
+                {
+                    data: "TransactionID",
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        {
+                            if (type == "exportxls") {
+                                return data;
+                            }
+
+                            return "<a href='/transactions/transactiondetails/" + data + "' target='_blank'>" + data + "</a>"
+                        }
+                    }
+                },
+                {
+                    data: "TransactionDate",
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        return moment(data).format('MM/DD/YYYY');
+                    }
+                },
+                {
+                    data: "CustomerName",
+                    className: "exportExcel"
+                },
+                {
+                    data: "TotalAmount",
+                    className: "exportExcel text-right",
+                    render: $.fn.dataTable.render.number(',', '.', 2)
+                },
+                {
+                    data: "PaymentDate",
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        if (row.PaymentMethod != 0) {
+                            return moment(data).format('MM/DD/YYYY');
+                        } else {
+                            return "";
+                        }
+                    }
+                },
+                {
+                    name: "Cash",
+                    visible: false,
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        if (row.PaymentMethod == 1) {
+                            return row.PaymentAmount;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    name: "Check",
+                    visible: false,
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        if (row.PaymentMethod == 2) {
+                            return row.PaymentAmount;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    name: "Card",
+                    visible: false,
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        if (row.PaymentMethod == 3) {
+                            return row.PaymentAmount;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    data: "MethodDescription",
+                    render: function (data, type, row, meta) {
+                        if (type == "exportxls") {
+                            return data;
+                        }
+
+                        switch (row.PaymentMethod) {
+                            case 1:
+                                return '<i class="fa fa-usd fa-fw"></i>' + data
+                                break;
+                            case 2:
+                                return '<i class="fa fa-university fa-fw"></i>' + data
+                                break;
+                            case 3:
+                                return '<i class="fa fa-credit-card fa-fw"></i>' + data
+                                break;
+                            default:
+                                return data
+                        }
+                    }
+                },
+                {
+                    data: "PaymentAmount",
+                    className: "text-right",
+                    render: $.fn.dataTable.render.number(',', '.', 2)
+                },
+                {
+                    data: "TakenBy",
+                    className: "exportExcel"
+                }
+                //,
+                //{
+                //    data: "PaymentID",
+                //    className: "text-center",
+                //    orderable: false,
+                //    render: function (data, type, row, meta) {
+                //        return "<span><i class='fa fa-info-circle fa-2x'></i></span>";
+                //    }
+                //}
+            ], drawCallback: function (settings) {
+                $('[data-toggle="tooltip"]').tooltip();
+
+            }
+        });
+
+    }
+
+    var formatterCurrency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+
+    function btnSearchClick() {
+        tblPayments.clear().draw();
+
+        $.ajax({
+            url: "/admin/GetTransactionPaymentsReport/",
+            type: "post",
+            data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
+            dataType: 'json',
+            contentType: 'application/json;',
+        }).done(function (result) {
+            if (result != null) {
+                tblPayments.rows.add(result).columns.adjust().draw();
+
+
+                //TOTALS & COUNT
+                var totalCash = 0;
+                var countCash = 0;
+
+                var totalCheck = 0;
+                var countCheck = 0;
+
+                var totalCard = 0;
+                var countCard = 0;
+
+                $.each(result, function (index, item) {
+                    if (!isNaN(item.PaymentAmount)) {
+                        if (item.PaymentMethod == 1) {
+                            totalCash = totalCash + item.PaymentAmount;
+                            countCash++;
+                        } else if (item.PaymentMethod == 2) {
+                            totalCheck = totalCheck + item.PaymentAmount;
+                            countCheck++;
+                        } else if (item.PaymentMethod == 3) {
+                            totalCard = totalCard + item.PaymentAmount;
+                            countCard++;
+                        }
+                    }
+                });
+
+                $('#lblCashAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalCash));
+                $('#lblCashCount').text('(' + countCash + ')');
+
+                $('#lblCheckAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalCheck));
+                $('#lblCheckCount').text('(' + countCheck + ')');
+
+                $('#lblCardAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalCard));
+                $('#lblCardCount').text('(' + countCard + ')');
+
+                var totalAmount = totalCash + totalCheck + totalCard;
+                var totalCount = countCash + countCheck + countCard;
+                $('#lblTotalAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalAmount));
+                $('#lblTotalCount').text('(' + totalCount + ')');
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // needs to implement if it fails
+            //  alert('Error searching customers.');
+            $.AlertDialog('Error searching customers.', 'Error Message', null, 'lightcoral');
+        });
+    }
+</script>
+
+<h2>Payments Details</h2>
+
+<div class="well">
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label for="dpStart">Start Date:</label>
+            <div class="input-group margin-bottom-sm">
+                <input type="text" id="dpStart" class="form-control" readonly />
+                <span class="input-group-addon btn btn-default" onclick="$('#dpStart').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+            </div>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="dpEnd">End Date:</label>
+            <div class="input-group margin-bottom-sm">
+                <input type="text" id="dpEnd" class="form-control" readonly />
+                <span class="input-group-addon btn btn-default" onclick="$('#dpEnd').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+            </div>
+        </div>
+        <div class="form-group col-md-1">
+            <label class="empty-label">&nbsp;</label>
+            <button id="btnSearch" class="btn btn-primary" onclick="btnSearchClick()">Search</button>
+        </div>
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-sm-9 text-right">
+                    <label>Cash: </label>
+                    <span id="lblCashCount">(0)</span>
+                </div>
+                <div class="col-sm-3 text-right">
+                    <span id="lblCashAmount">$0.00</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9 text-right">
+                    <label>Check: </label>
+                    <span id="lblCheckCount">(0)</span>
+                </div>
+                <div class="col-sm-3 text-right">
+                    <span id="lblCheckAmount">$0.00</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9 text-right">
+                    <label>Visa: </label>
+                    <span id="lblCardCount">(0)</span>
+                </div>
+                <div class="col-sm-3 text-right">
+                    <span id="lblCardAmount">$0.00</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9 text-right">
+                    <label>Total: </label>
+                    <span id="lblTotalCount">(0)</span>
+                </div>
+                <div class="col-sm-3 text-right" style="border-top: solid 1px #cccccc;">
+                    <label id="lblTotalAmount">$0.00</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div>
+    <table id="tblPayments" class="table table-striped table-condensed">
+        <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Transaction Date</th>
+                <th>Customer</th>
+                <th>Total Amount</th>
+                <th>Payment Date</th>
+                <th>Cash</th>
+                <th>Check</th>
+                <th>Visa</th>
+                <th>Method</th>
+                <th>Amount</th>
+                <th>Rep</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+

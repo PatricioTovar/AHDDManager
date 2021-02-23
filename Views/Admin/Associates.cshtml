@@ -1,0 +1,320 @@
+﻿@model IEnumerable<AHDDManagerClass.Associate>
+
+@{
+    ViewBag.Title = "Associates";
+}
+
+<script src="~/Scripts/States.js"></script>
+<script src="~/Scripts/Utilities.js"></script>
+
+<!-- NEEDED FOR SPINNER DIALOG -->
+
+
+<script>
+    $(function () {
+
+        var AssociateID;
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        GetStates();
+        GetColors();
+
+        $.ajaxSetup({
+            error: function (x, status, error) {
+                if (x.status == 901) {
+                    alert("Sorry, your session has expired. Please login again to continue");
+                    document.location.href = "/Home/";
+                    // window.location.href = "/Home/";
+                }
+                else {
+                    alert("An error occurred: " + status + "nError: " + error);
+                }
+            }
+        });
+
+        var AssociateDialog = $("#associate-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: $(window).height() * .75,
+            width: $(window).width() * .85,
+            //position: ['middle', 128],
+            stack: true,
+            modal: true,
+            open: function (event, ui) {
+
+            },
+            buttons: {
+                "Update": UpdateFormAssociate,
+                Cancel: function () {
+                    AssociateDialog.dialog("close");
+                }
+            },
+            close: function () {
+                AssociateDialog.dialog("close");
+            }
+        });
+
+        var HoursDialog = $("#hours-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: $(window).height() * .75,
+            width: $(window).width() * .65,
+            //position: ['middle', 128],
+            stack: true,
+            modal: true,
+            open: function (event, ui) {
+                var today = new Date();
+                var endDate = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
+
+                var someDate = new Date();
+                var numberOfDaysToAdd = 7;
+                someDate.setDate(someDate.getDate() - numberOfDaysToAdd);
+
+
+                var dd = someDate.getDate();
+                var mm = someDate.getMonth() + 1;
+                var y = someDate.getFullYear();
+
+                var startDate = mm + '/' + dd + '/' + y;
+
+
+
+
+                $.ajax({
+                    url: '/account/SearchClockInsByID/',
+                    type: 'POST',
+                    data: JSON.stringify({ StartDate: startDate, EndDate: endDate, AssociateID: AssociateID }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        if (result.length == 0) {
+                            //THIS NEEDS TO GO
+                            //StoreFlavor = "<tr><td>No Results</td></tr>";
+                            //$("#tblCustomers").append(StoreFlavor);
+                        } else {
+                            $("#tblClockIns tr:gt(0)").remove();
+
+                            $.each(result.ClockInHistory, function (key, value) {
+                                var _LoginDatetime = value.LoginDatetimeString;
+
+                                var _LogoutDatetime = value.LogoutDatetimeString;
+
+                                if (_LoginDatetime == '1/1/1') {
+                                    _LoginDatetime = 'N/A';
+                                }
+                                if (_LogoutDatetime == '1/1/1') {
+                                    _LogoutDatetime = 'N/A';
+                                }
+
+                                if (!value.IsLunch) {
+                                    expense = "<tr id=\"" + value.AssociateClockInHistoryID + "\">"
+                                }
+                                else {
+                                    expense = "<tr class='warning' id=\"" + value.AssociateClockInHistoryID + "\">"
+                                }
+
+                                expense += "<td>" + _LoginDatetime + "</td>" +
+                                    "<td>" + _LogoutDatetime + "</td>" +
+                                    "<td>" + value.HoursWorked + "</td>" +
+                                    "<td>" + value.MinutesWorked + "</td>" +
+                                    "</tr>";
+
+                                $("#tblClockIns").append(expense);
+
+                            });
+
+                            expense = "<tr>" +
+                                "<td> <strong>TOTAL:</strong></td>" +
+                                "<td><strong>" + result.HoursWorkedString + "</strong></td><td></td><td></td>" +
+
+                                "</tr>";
+                            $("#tblClockIns").append(expense);
+
+                            $('[data-toggle="tooltip"]').tooltip();
+                            //$('#divTotal').text(_total);
+
+                        }
+                    }
+                });
+            },
+            buttons: {
+                Cancel: function () {
+                    HoursDialog.dialog("close");
+                }
+            },
+            close: function () {
+                HoursDialog.dialog("close");
+            }
+        });
+
+
+        $("#tblAssociates").on('click', '.hours', function (event) {
+            event.preventDefault();
+            AssociateID = $(this).parent().parent().attr('id');
+
+            $('#associate').text('Associate: ' + $(this).parent().parent().find("td:eq(1)").text() + ' (last 7 days)');
+            HoursDialog.dialog('open');
+        });
+
+
+        $("#tblAssociates").on('click', '.clock', function (event) {
+            event.preventDefault();
+            AssociateID = $(this).parent().parent().attr('id');
+
+            $.ajax({
+                url: '/admin/ChangeAssociateClockedInStatus/',
+                type: 'POST',
+                data: JSON.stringify({ AssociateID: AssociateID }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result == '1') {
+                        //alert('Associate clocked in status has been changed.');
+                        $.AlertDialog('Associate clocked in status has been changed.', 'Success', function (event) { }, 'lightgreen');
+                        window.location.reload();
+
+                    } else {
+                        $.AlertDialog('There was an error changing the clock in status of the associate.', 'Error Message', function (event) { }, 'lightcoral');
+                        //alert("There was an error changing the clock in status of the associate.");
+                    }
+                }
+            });
+        });
+
+
+        $('#lnkNew').on('click', function (e) {
+            $('#ddlColors').show();
+            $('#divColor').hide();
+            ClearForm();
+            resetRequiredBoxes();
+            AssociateDialog.dialog("open");
+        });
+
+        $('#tblAssociates').on('click', '.name', function () {
+            $('#ddlColors').hide();
+            $('#divColor').show();
+            $('#divColor').css('background', 'silver')
+            ClearForm();
+            resetRequiredBoxes();
+            AssociateID = $(this).parent().parent().attr('id');
+            LoadAssociate(AssociateID);
+            AssociateDialog.dialog("open");
+        });
+
+        function UpdateFormAssociate() {
+            var res = UpdateAssociate(AssociateID);
+
+            if (res == '1') {
+                location.reload();
+            } else if (res == '0') {
+                //alert('There was an error updating the associate.');
+                $.AlertDialog('There was an error updating the associate.', 'Error Message', function (event) { }, 'lightcoral');
+            }
+        }
+    });
+</script>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-5">
+            <h2>Associates</h2>
+        </div>
+        <div class="col-lg-5"></div>
+        <div class="col-lg-5 pull-right text-right">
+            <a href="#" id="lnkNew">
+                <img src="~/images/add associate.png" data-toggle="tooltip" data-placement="left" title="Add New Associates" />
+            </a>
+        </div>
+    </div>
+</div>
+
+<table id="tblAssociates" class="table table-striped">
+    <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip</th>
+        <th>Phone</th>
+        <th>AltPhone</th>
+        <th>Email</th>
+        <th>Active</th>
+        <th>Hours</th>
+        <th>Status</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr id="@item.AssociateID">
+            <td><span class='dot' style='background-color: @item.BackgroundColor'></span></td>
+            <td><a href="#" class="name">@item.FirstName @item.LastName</a></td>
+            <td>@item.Address</td>
+            <td>@item.City</td>
+            <td>@item.State</td>
+            <td>@item.Zip</td>
+            <td>@item.PhoneFormatted</td>
+            <td>@item.AltPhoneFormatted</td>
+            <td>@item.Email</td>
+
+            @{
+                if (Convert.ToBoolean(item.Active))
+                {
+                    <td class="text-center"><span><i class="fa fa-check fa-2x" style="color:green"></i></span></td>
+                }
+                else
+                {
+                    <td class="text-center"><span><i class="fa fa-times fa-2x" style="color:red"></i></span></td>
+                }
+
+            }
+
+            <td><img src="/images/hours.png" class="imgBtn hours" data-toggle="tooltip" data-placement="left" title="Check Associate Hours" /></td>
+            @{
+                if (item.ClockedIn)
+                {
+                    <td class="text-center">  <img src="~/images/ClockedIn.png" class="imgBtn clock" data-toggle="tooltip" data-placement="left" title="Currently Clocked In" />   </td>
+                }
+                else
+                {
+                    <td class="text-center">  <img src="~/images/ClockedOut.png" class="imgBtn clock" data-toggle="tooltip" data-placement="left" title="Currently Clocked Out" />   </td>
+                }
+
+            }
+
+
+        </tr>
+    }
+</table>
+
+
+@Html.Partial("~/Views/Shared/AssociateDialog.cshtml")
+
+
+
+
+
+
+<div id="hours-dialog" title="Associate Hours">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div id="associate"></div>
+            </div>
+        </div>
+    </div>
+    <table id="tblClockIns" class="table table-responsive table-hover">
+        <tr>
+            <th>Log In Time</th>
+            <th>Log Out Time</th>
+        </tr>
+    </table>
+</div>
+
+

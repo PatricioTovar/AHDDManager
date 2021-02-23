@@ -1,0 +1,103 @@
+﻿@model IEnumerable<AHDDManagerClass.Transaction>
+
+@{
+    ViewBag.Title = "Transactions";
+}
+
+<script>
+    $(function () {
+        var CustomerID;
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $.ajaxSetup({
+            error: function (x, status, error) {
+                if (x.status == 901) {
+                    alert("Sorry, your session has expired. Please login again to continue");
+                    document.location.href = "/Home/";
+                    // window.location.href = "/Home/";
+                }
+                else {
+                    alert("An error occurred: " + status + "nError: " + error);
+                }
+            }
+        });
+
+        $('#tblTransactions tr').not(":first-child").on('click', function () {
+            document.location.href = '/transactions/transactiondetails/' + $(this).attr('id');
+            //window.location = '/transactions/transactiondetails/' + $(this).attr('id');
+        });
+
+    });
+</script>
+
+<h2>Customer Transactions</h2>
+<hr />
+<div>
+    @{
+        var id = ViewContext.RouteData.Values["id"];
+    }
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4"><strong>Customer:</strong> @ViewBag.CustomerName</div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <span class="pull-right" id="lblCount">
+                    <a href="/transactions/addtransaction/@id" id="lnkTrans">
+                        <img src="~/images/addtransaction.png" data-toggle="tooltip" data-placement="left" title="Add a Transaction" />
+                    </a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <p></p>
+    <div class="container">
+        <table id="tblTransactions" class="table table-hover table-condensed">
+            <tr>
+                <th>Receipt ID</th>
+                <th>Transaction Date</th>
+                <th>Amount</th>
+                <th>Paid</th>
+                <th>Owed</th>
+                <th>Created By</th>
+            </tr>
+
+            @{
+
+
+
+                foreach (var item in Model.ToList())
+                {
+
+                    <tr id="@item.TransactionID" data-status="@item.TransactionStatusID">
+                        <td>@item.TransactionID</td>
+                        <td>@item.TransactionDate</td>
+                        <td>@item.TotalAmount</td>
+                        <td>@item.TotalCollected</td>
+                        <td>@item.TotalOwed</td>
+                        <td>@item.TakenBy</td>
+                    </tr>
+                }
+            }
+
+        </table>
+
+        <script>
+            $(function () {
+                $('#tblTransactions tr').each(function (i, row) {
+                    var $row = $(row);
+
+                    if ($row.attr('data-status') == '3') {
+                       $row.addClass('danger');
+                    } if ($row.attr('data-status') == '2') {
+                        $row.addClass('success');
+                    }
+
+
+                });
+            });
+        </script>
+    </div>
+</div>

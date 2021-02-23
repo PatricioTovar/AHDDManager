@@ -1,0 +1,49 @@
+﻿@model IEnumerable<AHDDManagerClass.Payment>
+
+@{
+    ViewBag.Title = "Payments";
+}
+
+<h2>Payments</h2>
+
+<script>
+    $(function () {
+        $('#tblPayments tr').on('click', function () {
+            document.location.href = '/transactions/transactiondetails/' + $(this).attr('id');
+            //window.location = '/transactions/transactiondetails/' + $(this).attr('id');
+        });
+    });
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6" id="divCount"><strong>Customer Name:</strong>  @ViewBag.CustomerName</div>
+        <div class="col-lg-6 pull-text-right" id="divCount"><strong>Count:</strong> @Model.ToList().Count()</div>
+    </div>
+
+    <table class="table table-hover" id="tblPayments">
+        <tr>
+            <th>Payment Date</th>
+            <th>Amount</th>
+            <th>Transaction #</th>
+            <th>Reeceipt Creator</th>
+            <th>Method</th>
+            <th>Check Number</th>
+        </tr>
+
+        @{
+            foreach (AHDDManagerClass.Payment item in Model.ToList())
+            {
+                <tr id="@item.TransactionID">
+                    <td>@item.PaymentDate</td>
+                    <td>@String.Format("{0:C}", item.PaymentAmount)   </td>
+                    <td>@item.TransactionID</td>
+                    <td>@item.TakenBy</td>
+                    <td>@item.PaymentMethodDescription</td>
+                    <td> @item.CheckNumber</td>
+                </tr>
+            }
+
+        }
+    </table>
+</div>

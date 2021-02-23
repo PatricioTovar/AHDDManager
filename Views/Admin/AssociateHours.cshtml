@@ -1,0 +1,554 @@
+﻿@{
+    ViewBag.Title = "Associate Hours";
+}
+
+
+
+
+<script src="~/Scripts/Utilities.js"></script>
+<script src="~/Scripts/moment.js"></script>
+
+<script>
+    $(function () {
+        $("#dpStart").datepicker();
+        $("#dpEnd").datepicker();
+        $("#dpExpense").datepicker();
+
+        var AssociateID;
+        var HoursWorked;
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+        $('[data-toggle="tooltip"]').tooltip();
+
+        var _now = new Date;
+
+        $("#dpStart").datepicker().datepicker("setDate", new Date());
+        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+
+        var _total = 0;
+
+        $('#tblClockIns tbody').on('click', 'tr:not(:first-child, :last-child)', function () {
+            AssociateID = $(this).attr('id');
+
+            $('#associate').text($(this).find("td").eq(1).text() + ' ' + $(this).find("td").eq(2).text());
+
+            HoursDialog.dialog("open");
+        })
+
+        var HoursDialog = $("#hours-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: $(window).height() * .75,
+            width: $(window).width() * .85,
+            //position: ['middle', 128],
+            stack: true,
+            modal: true,
+            open: function (event, ui) {
+                var today = new Date();
+                var startDate = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
+
+                $.each(HoursWorked, function (key, value) {
+                    if (value.AssociateID == AssociateID) {
+
+                        $("#tblClockInsDetails tr:gt(0)").remove();
+
+                        $.each(value.ClockInHistory, function (key, cih) {
+
+                            var _LoginDatetime = cih.LoginDatetimeString;
+
+                            var _LogoutDatetime = cih.LogoutDatetimeString;
+
+                            if (_LoginDatetime == '1/1/0001') {
+                                _LoginDatetime = 'N/A';
+                            }
+                            if (_LogoutDatetime == '1/1/0001') {
+                                _LogoutDatetime = 'N/A';
+                            }
+
+                            var entry = "";
+
+                            if (cih.IsLunch) {
+                                entry += "<tr id=\"" + cih.AssociateClockInHistoryID + "\" style=\"background-color:beige\" \">"
+                            }
+                            else {
+                                entry += "<tr id=\"" + cih.AssociateClockInHistoryID + "\">"
+                            }
+
+                            entry += "<td>" + _LoginDatetime + "</td>" +
+                                        "<td>" + _LogoutDatetime + "</td>" +
+                                         "<td>" + cih.HoursWorked + "</td>" +
+                                          "<td>" + cih.MinutesWorked + "</td>" +
+                                          "<td><img id=\"edit\"src=\"/images/edit.png\" /></td>" +
+                                 "</tr>";
+
+                            $("#tblClockInsDetails").append(entry);
+
+                        });
+                    }
+                });
+
+            },
+            buttons: {
+                Cancel: function () {
+                    HoursDialog.dialog("close");
+                }
+            },
+            close: function () {
+                HoursDialog.dialog("close");
+            }
+        });
+
+
+        var HoursEditDialog = $("#hours-edit-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: $(window).height() * .75,
+            width: $(window).width() * .85,
+            //position: ['middle', 128],
+            stack: true,
+            modal: true,
+            open: function (event, ui) {
+            },
+            buttons: {
+                Update: function () {
+                    updateHours();
+                },
+                Cancel: function () {
+                    HoursEditDialog.dialog("close");
+                }
+            },
+            close: function () {
+                HoursEditDialog.dialog("close");
+            }
+        });
+
+
+        function updateHours() {
+            var id = $('#hdnACHID').val();
+            var LIdateTime = moment($('#hdnDate').val() + ' ' + $("#ddlLIHours option:selected").val() + ":" + $("#ddlLIMinutes option:selected").val() + " " + $("#ddlLIAMPM option:selected").val());
+            var LOdateTime = moment($('#hdnDate').val() + ' ' + $("#ddlLOHours option:selected").val() + ":" + $("#ddlLOMinutes option:selected").val() + " " + $("#ddlLOAMPM option:selected").val());
+
+            $.ajax({
+                url: '/admin/UpdateHours/',
+                type: 'POST',
+                data: JSON.stringify({ AssociateClockInHistoryID: id, LogInDate: LIdateTime.toString(), LogOutDate: LOdateTime.toString() }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result == '0') {
+                        $.AlertDialog('There was an error updating the times.', 'Error Message', function (event) { }, 'lightcoral');
+                    } else {
+                        $.AlertDialog('Clock in times update successfully.', 'Success Message', function (event) { }, 'lightgreen');                        
+                        HoursEditDialog.dialog("close");
+                        HoursDialog.dialog("close");
+                        $('#btnSearch').trigger('click');
+                    } 
+                }
+            });
+        }
+
+        $('#tblClockInsDetails tbody').on('click', '#edit', function () {            
+            //set the ach id for updating
+            $('#hdnACHID').val($(this).parent().parent().closest('tr').attr('id'));
+
+            
+            $('#tdLITime').text($(this).parent().parent().find('td:eq(0)').text());
+            $('#tdLOTime').text($(this).parent().parent().find('td:eq(1)').text());
+
+            //set up the login ddls
+            var li = new Date($(this).parent().parent().find('td:eq(0)').text());
+            var lo = new Date($(this).parent().parent().find('td:eq(1)').text());
+            var hour;
+            var ampm;
+ 
+            $('#hdnDate').val(moment($(this).parent().parent().find('td:eq(0)').text()).format('L'));
+//debugger
+            //set hours
+            if (li.getHours() > 12) {
+                hour = li.getHours() - 12;
+                ampm = 'PM';
+            } else {
+                hour = li.getHours();
+                ampm = 'AM';
+            }
+
+            var minutes = li.getMinutes();
+            minutes = minutes > 9 ? minutes : '0' + minutes.toString();
+
+            $("#ddlLIHours").val(hour);
+            $("#ddlLIMinutes").val(minutes);
+            $("#ddlLIAMPM").val(ampm);
+
+            //set up the logout ddls
+            if (lo.getHours() > 12) {
+                hour = lo.getHours() - 12;
+                ampm = 'PM';
+            } else {
+                hour = lo.getHours();
+                ampm = 'AM';
+            }
+            
+            var minutes = lo.getMinutes();
+            minutes = minutes > 9 ? minutes : '0' + minutes.toString();
+
+            $("#ddlLOHours").val(hour);
+            $("#ddlLOMinutes").val(minutes);
+            $("#ddlLOAMPM").val(ampm);
+
+            //open the dialog
+            HoursEditDialog.dialog("open");
+        });
+
+
+        $('#lnkPrint').on('click', function (e) {
+            e.stopPropagation();
+            window.open('AssociateHoursPrint/?startdate=' + $('#dpStart').val() + '&enddate=' + $('#dpEnd').val() + '&assoc=' + AssociateID, '', 'scrollbars=1,toolbar=1,resizable=1,width=1000,height=580,left=0,top=0')
+        });
+
+
+
+        $("#btnSearch").on('click', function (event) {
+            if (Date.parse($("#dpEnd").val()) < Date.parse($("#dpStart").val())) {
+                $.AlertDialog('End date cannot be before start date', 'Error Message', function (event) { }, 'lightcoral');
+                //alert('End date cannot be before start date');
+            }
+            else {
+                $.ajax({
+                    url: '/admin/GetAssociateHours/',
+                    type: 'POST',
+                    data: JSON.stringify({ StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+
+                        if (result.length == 0) {
+                            //THIS NEEDS TO GO
+                            //StoreFlavor = "<tr><td>No Results</td></tr>";
+                            //$("#tblCustomers").append(StoreFlavor);
+                        } else {
+                            $("#tblClockIns tr:gt(0)").remove();
+                            HoursWorked = result.HoursWorked;
+
+                            $.each(result.HoursWorked, function (key, value) {
+                                expense = "<tr id=" + value.AssociateID + ">" +
+                                           "<td>" + value.AssociateID + "</td>" +
+                                           "<td>" + value.AssociateName + "</td>" +
+                                           "<td>" + value.TotalHoursWorked + "</td>" +
+                                           "<td>" + value.TotalMinutesWorked + "</td>" +
+                                    "</tr>";
+
+                                $("#tblClockIns").append(expense);
+
+                            });
+
+                            expense = "<tr>" +
+                                                "<td> <strong>TOTAL:</strong></td>" +
+                                                "<td><strong>" + result.TotalWorkTimeString + "</strong></td>" +
+                                                "<td></td>" +
+                                                "<td></td>" +
+                                         "</tr>";
+                            $("#tblClockIns").append(expense);
+
+                            $('[data-toggle="tooltip"]').tooltip();
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#btnSearch').trigger('click');
+    });
+</script>
+
+<h2>Associate Hours</h2>
+
+<div class="container">
+
+    <div class="well">
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label for="dpStart">Start Date:</label>
+                <div class="input-group margin-bottom-sm">
+                    <input type="text" id="dpStart" class="form-control" readonly />
+                    <span class="input-group-addon btn btn-default" onclick="$('#dpStart').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dpEnd">End Date:</label>
+                <div class="input-group margin-bottom-sm">
+                    <input type="text" id="dpEnd" class="form-control" readonly />
+                    <span class="input-group-addon btn btn-default" onclick="$('#dpEnd').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="empty-label">&nbsp;</label>
+                <button id="btnSearch" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <table id="tblClockIns" class="table table-responsive table-hover">
+        <tr>
+            <th>Associate ID</th>
+            <th>Associate Name</th>
+            <th>Hours Worked</th>
+            <th>Minutes Worked</th>
+        </tr>
+    </table>
+
+</div>
+
+
+
+<div id="hours-dialog" title="Associate Hours">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+                <div id="associate"></div>
+            </div>
+        </div>
+        <div class="col-lg-2 text-left" style="padding-left:30px">
+            <a href="#" id="lnkPrint">
+                <img src="~/images/print.png" data-toggle="tooltip" data-placement="right" title="Print Expenses" />
+            </a>
+        </div>
+    </div>
+    <table id="tblClockInsDetails" class="table table-responsive">
+        <tr>
+            <th>Log In Time</th>
+            <th>Log Out Time</th>
+            <th>Hours</th>
+            <th>Minutes</th>
+            <th></th>
+        </tr>
+    </table>
+</div>
+
+
+
+
+<div id="hours-edit-dialog" title="Edit Associate Hours">
+
+    <input type="hidden" id="hdnACHID" value="" />
+    <input type="hidden" id="hdnDate" value="" />
+
+    <table id="tblClockInsDetails" class="table table-responsive">
+        <tr>
+            <th>Original Log In Time</th>
+            <th>Original Log Out Time</th>
+        </tr>
+        <tr>
+            <td id="tdLITime">9:56 AM</td>
+            <td id="tdLOTime">1:30 PM</td>
+        </tr>
+    </table>
+
+
+
+    <table id="tblClockInsDetails" class="table table-responsive">
+        <tr>
+            <th>New Log In Time</th>
+            <th>New Log Out Time</th>
+        </tr>
+        <tr>
+            <td>
+                <table width="400">
+                    <tr>
+                        <td>
+                            <select id="ddlLIHours" class="form-control" style="max-width:250px;">
+                                <option value="1">01</option>
+                                <option value="2">02</option>
+                                <option value="3">03</option>
+                                <option value="4">04</option>
+                                <option value="5">05</option>
+                                <option value="6">06</option>
+                                <option value="7">07</option>
+                                <option value="8">08</option>
+                                <option value="9">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <select id="ddlLIMinutes" class="form-control" style="max-width:125px;">
+                                <option value="00">00</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
+                                <option value="17">17</option>
+                                <option value="18">18</option>
+                                <option value="19">19</option>
+                                <option value="20">20</option>
+                                <option value="21">21</option>
+                                <option value="22">22</option>
+                                <option value="23">23</option>
+                                <option value="24">24</option>
+                                <option value="25">25</option>
+                                <option value="26">26</option>
+                                <option value="27">27</option>
+                                <option value="28">28</option>
+                                <option value="29">29</option>
+                                <option value="30">30</option>
+                                <option value="31">31</option>
+                                <option value="32">32</option>
+                                <option value="33">33</option>
+                                <option value="34">34</option>
+                                <option value="35">35</option>
+                                <option value="36">36</option>
+                                <option value="37">37</option>
+                                <option value="38">38</option>
+                                <option value="39">39</option>
+                                <option value="40">40</option>
+                                <option value="41">41</option>
+                                <option value="42">42</option>
+                                <option value="43">43</option>
+                                <option value="44">44</option>
+                                <option value="45">45</option>
+                                <option value="46">46</option>
+                                <option value="47">47</option>
+                                <option value="48">48</option>
+                                <option value="49">49</option>
+                                <option value="50">50</option>
+                                <option value="51">51</option>
+                                <option value="52">52</option>
+                                <option value="53">53</option>
+                                <option value="54">54</option>
+                                <option value="55">55</option>
+                                <option value="56">56</option>
+                                <option value="57">57</option>
+                                <option value="58">58</option>
+                                <option value="59">59</option>
+
+                            </select>
+                        </td>
+                        <td>
+                            <select id="ddlLIAMPM" class="form-control" style="max-width:125px;">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+
+            <td>
+                <table width="400">
+                    <tr>
+                        <td>
+                            <select id="ddlLOHours" class="form-control" style="max-width:125px;">
+                                <option value="1">01</option>
+                                <option value="2">02</option>
+                                <option value="3">03</option>
+                                <option value="4">04</option>
+                                <option value="5">05</option>
+                                <option value="6">06</option>
+                                <option value="7">07</option>
+                                <option value="8">08</option>
+                                <option value="9">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <select id="ddlLOMinutes" class="form-control" style="max-width:125px;">
+                                <option value="00">00</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
+                                <option value="17">17</option>
+                                <option value="18">18</option>
+                                <option value="19">19</option>
+                                <option value="20">20</option>
+                                <option value="21">21</option>
+                                <option value="22">22</option>
+                                <option value="23">23</option>
+                                <option value="24">24</option>
+                                <option value="25">25</option>
+                                <option value="26">26</option>
+                                <option value="27">27</option>
+                                <option value="28">28</option>
+                                <option value="29">29</option>
+                                <option value="30">30</option>
+                                <option value="31">31</option>
+                                <option value="32">32</option>
+                                <option value="33">33</option>
+                                <option value="34">34</option>
+                                <option value="35">35</option>
+                                <option value="36">36</option>
+                                <option value="37">37</option>
+                                <option value="38">38</option>
+                                <option value="39">39</option>
+                                <option value="40">40</option>
+                                <option value="41">41</option>
+                                <option value="42">42</option>
+                                <option value="43">43</option>
+                                <option value="44">44</option>
+                                <option value="45">45</option>
+                                <option value="46">46</option>
+                                <option value="47">47</option>
+                                <option value="48">48</option>
+                                <option value="49">49</option>
+                                <option value="50">50</option>
+                                <option value="51">51</option>
+                                <option value="52">52</option>
+                                <option value="53">53</option>
+                                <option value="54">54</option>
+                                <option value="55">55</option>
+                                <option value="56">56</option>
+                                <option value="57">57</option>
+                                <option value="58">58</option>
+                                <option value="59">59</option>
+
+                            </select>
+                        </td>
+                        <td>
+                            <select id="ddlLOAMPM" class="form-control" style="max-width:125px;">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+
+</div>
+
+
+

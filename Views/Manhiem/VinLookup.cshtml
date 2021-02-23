@@ -1,0 +1,104 @@
+﻿@{
+    Layout = "~/Views/Manhiem/ManhiemHeader.cshtml";
+}
+
+<!DOCTYPE html>
+
+<script>
+
+    $(function () {
+
+        $('#btnSubmit').on('click', function () {
+
+            $.ajax({
+                url: '/Manhiem/GetCarValue/',
+                type: 'POST',
+                data: JSON.stringify({ Vin: $('#txtVin').val(), Miles: $('#txtMiles').val() }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                  
+                    if (result.Success) {
+                        $('#tdVehicle').text(result.Vehicle);
+                        $('#tdMiles').text(result.Miles);
+                        $('#tdLow').text(result.Low);
+                        $('#tdAverage').text(result.Average);
+                        $('#tdHigh').text(result.High);
+
+                    }
+                    else {
+                        $('#tdVehicle').text('No vehicle found.');
+                        $('#tdMiles').text('---');
+                        $('#tdLow').text('---');
+                        $('#tdAverage').text('---');
+                        $('#tdHigh').text('---');
+                    }
+                },
+
+                error: function (jqXHR, exception) {
+
+                    alert('error');
+                }
+            });
+        });
+
+    });
+</script>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>VinLookup</title>
+</head>
+<body>
+    <div>
+        <table class="table" style="width: 700px;">
+            <tr><td><h3>VIN Lookup</h3></td></tr>
+            <tr>
+                <td>VIN:  <input type="text" id="txtVin" /></td>
+            </tr>
+            <tr>
+                <td>Miles:  <input type="text" id="txtMiles" /></td>
+            </tr>
+
+        </table>
+        <table class="table">
+            <tr>
+                <td>
+                    <input type="button" id="btnSubmit" value="Search" />
+                </td>
+                <td>
+                    <input type="button" id="btnReset" value="Reset" />
+                </td>
+            </tr>
+
+
+        </table>
+        <table class="table">
+            <tr>
+                <th>Vehicle:</th>
+                <td id="tdVehicle"></td>
+            </tr>
+            <tr>
+                <th>Mileage:</th>
+                <td id="tdMiles"></td>
+            </tr>
+            </table>
+        <table class="table"> 
+            <tr>
+                <th>Value</th>
+                <th>Low</th>
+                <th>Average</th>
+                <th>High</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td id="tdLow"></td>
+                <td id="tdAverage"></td>
+                <td id="tdHigh"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

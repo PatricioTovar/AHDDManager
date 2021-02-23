@@ -1,0 +1,663 @@
+﻿
+@{
+    ViewBag.Title = "Add Transaction";
+}
+
+<!-- NEEDED FOR SPINNER DIALOG -->
+
+<script src="~/Scripts/Utilities.js"></script>
+
+<style>
+    input {
+        width: 700px;
+    }
+</style>
+
+<script>
+    $(function () {
+        var CustomerID;
+
+        $("#txtTransactionDate").datepicker();
+        $("#txtPaymentDate").datepicker();
+
+        $('[data-toggle="tooltip"]').tooltip();
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+
+        GetAssociates();
+
+        $("#lnkAdd").on('click', function (event) {
+            newtransactiondialog.dialog("open");
+        });
+
+        $("#btnSubmit").on('click', function (event) {
+            if ($('#tblTrans tr').length < 3) {
+                alert('There are no transactions details.');
+            } else {
+                transaction = {
+                    BusinessID: 0,
+                    TransactionID: $('#txtTransactionID').val(),
+                    CustomerID: @Url.RequestContext.RouteData.Values["id"],
+                    AssociateID: $('#ddlAssociate').children("option:selected").val(),
+                    TransactionStatusID: $('#ddlStatus').children("option:selected").val() ,
+                    TransactionStatus:  $('#ddlStatus').children("option:selected").text(),
+                    TransactionDate: $('#txtTransactionDate').val(),
+                    TotalAmount: $('#tblTrans').find('tr:last td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', '')
+                };
+
+                var transactiondetails = new Array();
+
+
+                $('#tblTrans tr:not(:first-child)').each(function () {
+
+                    if (!$(this).is(":last-child")) {
+
+                        transdet = {
+                            FormID: $(this).attr('id'),
+                            FormTitle: $(this).find('td:nth-child(1)').text(),
+                            UnitPrice: $(this).find('td:nth-child(3)').text().replace('$', '').replace(',', '').replace('.00', ''),
+                            DiscountPrice: $(this).find('td:nth-child(4)').text().replace('$','').replace(',','').replace('.00',''),
+                            Quantity: $(this).find('td:nth-child(2)').text(),
+                            Notes: $(this).find('td:nth-child(6)').text(),
+                            Total: $(this).find('td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', '')
+                        }
+
+                        transactiondetails.push(transdet);
+                    }
+                });
+
+                var payments = new Array();
+
+                $('#tblPayments tr:not(:first-child)').each(function () {
+                    payment={
+                        CustomerID: $(this).find("td:eq(0)").text(),
+                        TransactionID: $(this).find("td:eq(1)").text(),
+                        AssociateID: $(this).find("td:eq(2)").text(),
+                        DeletedBy: $(this).find("td:eq(2)").text(),
+                        PaymentDate: $(this).find("td:eq(3)").text(),
+                        PaymentAmount: $(this).find("td:eq(4)").text(),
+                        PaymentMethod: $(this).find("td:eq(5)").text(),
+                        CheckNumber:$(this).find("td:eq(6)").text()
+                    };
+
+                    payments.push(payment);
+                });
+
+
+
+                $.ajax({
+                    url: '/backtrack/UpdateBacktrack/',
+                    type: 'POST',
+                    data: JSON.stringify({ transaction: transaction, transactiondetails: transactiondetails, Payments: payments }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        if (result != '0') {
+                            document.location.href='/backtrack/transactiondetails/' + result;
+                            //window.location();
+                            //return false;
+                        } else {
+                            //alert("Error: Customer transaction update has failed.");
+                            $.AlertDialog('Error: Customer transaction update has failed.', 'Error Message', function (event) { }, 'lightcoral');
+                        }
+                    }
+                });
+            }
+        });
+
+        var newtransactiondialog = $("#new-transaction-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: 500,
+            width: $(window).width() * .6,
+            stack: true,
+            modal: true,
+            buttons: {
+                "Update": AddTransactionDetail,
+                Cancel: function () {
+                    newtransactiondialog.dialog("close");
+                }
+            },
+            close: function () {
+                newtransactiondialog.dialog("close");
+            }
+        });
+
+
+        var listdialog = $("#list-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: 500,
+            width: $(window).width() * .6,
+            stack: true,
+            modal: true,
+            open: function() {
+                $.ajax({
+                    url: '/transactions/GetForms/',
+                    dataType: "json",
+                    success: function (data) {
+
+
+                        $('#lstForms').empty();
+                        var option='';
+
+                        $.each(data, function (index, item) {
+                            option = '<option value="' + item.FormID + '" data-price=' + item.Price + '>' + item.Title + '</option>';
+                            $('#lstForms').append(option);
+                        });
+
+
+                    }, error: function(xhr){
+                        //alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                        $.AlertDialog('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText, 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                });
+
+            },
+            buttons: {
+                "OK": function(){
+                    $('#hdnFormID').val($('#lstForms').find(":selected").val());
+                    $('#forms').val(  $('#lstForms').find(":selected").text() );
+
+                    $('#txtPrice').val($('#lstForms').find(":selected").data('price'));
+                    $('#txtQuantity').val('1');
+
+
+                    listdialog.dialog("close");
+                },
+                Cancel: function () {
+                    listdialog.dialog("close");
+                }
+            },
+            close: function () {
+                listdialog.dialog("close");
+            }
+        });
+
+
+        var newpaymentdialog = $("#new-payment-dialog").dialog({
+            autoOpen: false,
+            draggable:false,
+            height: 500,
+            width: 700,
+            modal: true,
+            buttons: {
+                "Update": UpdatePayment,
+                Cancel: function () {
+                    newpaymentdialog.dialog("close");
+                }
+            },
+            close: function () {
+                newpaymentdialog.dialog("close");
+            }
+        });
+
+
+        function GetAssociates(){
+            $.ajax({
+                url: '/backtrack/GetAssociates/',
+                type: 'POST',
+                //data: JSON.stringify({ transaction: transaction, transactiondetails: transactiondetails }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result.length != 0) {
+                        $('#ddlAssociate').find('option').remove();
+                        $('#ddlAssociatePay').find('option').remove();
+
+                        $.each(result, function (index, item) {
+                            option = '<option value="' + item.AssociateID + '">' + item.FirstName +' ' + item.LastName + '</option>';
+                            $('#ddlAssociate').append(option);
+                            $('#ddlAssociatePay').append(option);
+                        });
+                    } else {
+                        //alert("Error: Customer transaction update has failed.");
+                        $.AlertDialog('Error: Could not get associates.', 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+
+        }
+
+        $('.payment').on('click', function () {
+            event.preventDefault();
+            $("#txtPaymentAmount").css('border-color','#cccccc');
+
+            $('#ddlAssociatePay').val($("#target option:first").val());
+            $('#txtPaymentDate').val('');
+            $("#txtPaymentAmount").val('');
+            $('#ddlPayMethod').val($("#target option:first").val());
+            $("#txtCheckNumber").val('');
+
+
+
+            newpaymentdialog.dialog("open");
+
+        });
+
+
+
+        function UpdatePayment() {
+            if ($("#txtPaymentAmount").val() == ''){
+                $("#txtPaymentAmount").css('border-color','red');
+                //alert('Amount is required.');
+                $.AlertDialog('Amount is required.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+            else
+            {
+                $("#txtPaymentAmount").css('border-color','#cccccc');
+            }
+
+            if ($('#ddlPayMethod').find(":selected").val() == '2' && $("#txtCheckNumber").val() == '' ){
+                $("#txtCheckNumber").css('border-color','red');
+
+                $.AlertDialog('Check Number is required if Payment Type is CHECK.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+            else
+            {
+                $("#txtCheckNumber").css('border-color','#cccccc');
+            }
+
+
+            if (parseFloat($("#lblDialogOwed").text().replace("$","").replace(",","")) < parseFloat($("#txtPaymentAmount").val())){
+                $.AlertDialog('You cannot pay more than ' + $("#lblDialogOwed").text(), 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+
+            $("#txtPaymentAmount").formatCurrency();
+
+            var pay = '<tr> ' +
+                     '<td>' + @ViewContext.RouteData.Values["id"] + '</td>' +
+                     '<td>' + $('#txtTransactionID').val() + '</td>' +
+                     '<td>' + $('#ddlAssociatePay').find(":selected").val() + '</td>' +
+                     '<td>' + $('#txtPaymentDate').val() + '</td>' +
+                     '<td>' +  $("#txtPaymentAmount").val().replace("$","").replace(",","") + '</td>' +
+                     '<td>' + $('#ddlPayMethod').find(":selected").val() + '</td>' +
+                     '<td>' + $("#txtCheckNumber").val() + '</td>' +
+                     '</tr>'
+            $("#tblPayments").append(pay);
+
+            newpaymentdialog.dialog("close");
+
+        }
+
+        function AddTransactionDetail() {
+            var elements = document.querySelectorAll('[data-required="true"]');
+            var alertTriggered = false;
+
+            $.each(elements, function (index, item) {
+                if (item.value == '') {
+                    item.style.borderColor = 'red';
+
+                    if (!alertTriggered) {
+                        $.AlertDialog(item.dataset.name + ' is required.', 'Error Message', function (event) { }, 'lightcoral');
+                        item.focus();
+                    }
+
+                    alertTriggered = true;
+                }
+                else {
+                    item.style.borderColor = '#cccccc';
+                }
+            });
+
+            if (alertTriggered) {
+                return;
+            }
+
+            $('#tblTrans tr:last').remove();
+
+            if ($('#hdnFormID').val() == '') {
+                //alert('No transaction item has been selected.');
+                $.AlertDialog('No transaction item has been selected.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+
+            if ($('#txtDiscount').val() != '' && $('#txtNote').val() == '') {
+                //alert('You must include a note if you are discounting the price.');
+                $.AlertDialog('You must include a note if you are discounting the price.', 'Error Message', function (event) { }, 'lightcoral');
+                $('#txtDiscount').focus();
+                return false;
+            }
+
+            var subtotal;
+
+            if ($('#txtDiscount').val() == '') {
+                subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtPrice').val());
+            }
+            else {
+                subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtDiscount').val());
+            }
+
+            TransactionDetail = "<tr id=\"" + $('#hdnFormID').val() + "\">" +
+
+                                    "<td>" + $('#forms').val() + "</td>" +
+                                    "<td>" + $('#txtQuantity').val() + "</td>" +
+                                    "<td class='currencyLabel'>" + $('#txtPrice').val() + "</td>" +
+                                    "<td class='currencyLabel'>" + $('#txtDiscount').val() + "</td>" +
+                                    "<td class='currencyLabel'>" + subtotal + "</td>" +
+                                    "<td>" + $('#txtNote').val() + "</td>" +
+                                    "<td> <a href='#' class='removeTrans'><img src='/images/delete.png' /></a> </td>" +
+                                "</tr>";
+
+            $("#tblTrans").append(TransactionDetail);
+
+            $('#hdnFormID').val('');
+            $('#forms').val('');
+            $('#txtPrice').val('');
+            $('#txtDiscount').val('');
+            $('#txtQuantity').val('');
+            $('#txtNote').val('');
+
+            TotalUp();
+
+            newtransactiondialog.dialog("close");
+        }
+
+        $(document).on('click', '.removeTrans', function () {
+            $(this).closest('tr').remove();
+            $('#tblTrans tr:last').remove();
+            TotalUp();
+        });
+
+        $('#search').on('click', function () {
+            listdialog.dialog("open");
+        });
+
+        function TotalUp() {
+            var total = 0;
+
+            $('#tblTrans tr:not(:first-child)').each(function () {
+
+                total += parseFloat($(this).find('td:eq(4)').text().replace(',','').replace('$',''));
+
+            });
+
+            totalRow = "<tr id=\"" + $('#hdnFormID').val() + "\">" +
+
+                                            "<td></td>" +
+                                            "<td></td>" +
+                                            "<td></td>" +
+                                            "<td><strong>TOTAL:</strong></td>" +
+                                            "<td class='currencyLabel'>" + total + "</td>" +
+                                            "<td></td>" +
+                                            "<td></td>" +
+                                        "</tr>";
+
+            $("#tblTrans").append(totalRow);
+
+            $('.currencyLabel').formatCurrency();
+        }
+
+        $("#forms").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/transactions/SearchForms/',
+                    dataType: "json",
+                    data: {
+                        SearchCriteria: request.term
+                    },
+                    success: function (data) {
+                        return response($.map(data, function (item) {
+                            return {
+                                label: item.Title,
+                                value: item.FormID,
+                                formprice: item.Price
+                            };
+                        }))
+                    },
+                    minLength: 2,
+                });
+            },
+            select: function (event, ui) {
+
+                $('#forms').val(ui.item.label);
+                $('#txtPrice').val(ui.item.formprice);
+                $('#hdnFormID').val(ui.item.value);
+                $('#txtQuantity').val('1');
+
+                return false;
+            },
+            focus: function (event, ui) {
+                event.preventDefault();
+                $(this).val(ui.item.label);
+            },
+            change: function (event, ui) {
+                if (!ui.item) {
+                    $('#txtPrice').val('');
+                    $('#hdnFormID').val('');
+                    $('#txtQuantity').val('');
+
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+
+@{
+    var custid = ((AHDDManagerClass.Customer)Session["SelectedCustomer"]).CustomerID;
+    var custname = ((AHDDManagerClass.Customer)Session["SelectedCustomer"]).FullName;
+}
+
+<h1 style="font-weight:800; color:red;">*** Backtrack: Add Transaction ***</h1>
+
+<div class="well well-lg">
+    <div class="row">
+        <div class="col-lg-6"><strong>Customer:</strong> <div>@custname</div></div>
+        <div class="col-lg-6"><strong>Customer ID:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
+    </div>
+</div>
+<div class="well well-lg">
+    <div class="row">
+        <div class="col-lg-3">
+            <strong>Transaction ID:</strong>
+            <div>
+                <input type="text" id="txtTransactionID" class="form-control input-lg" />
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <strong>Associate:</strong>
+            <div>
+                <select id="ddlAssociate" class="form-control input-lg"></select>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <strong>Transaction Status:</strong>
+            <div>
+                <select id="ddlStatus" class="form-control input-lg">
+                    <option value="1">OPEN</option>
+                    <option value="2">COMPLETED</option>
+                    <option value="3">CANCELLED</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <strong>Transaction Date:</strong> <div>
+                <input type="text" id="txtTransactionDate" class="form-control input-lg" />
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <a href="#" id="lnkAdd">
+                <img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" />
+            </a>
+        </div>
+        <div class="col-lg-6 pull-text-right">
+            <a href="/backtrack/transactions/@Url.RequestContext.RouteData.Values["id"]">
+                <img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Transactions" />
+            </a>
+        </div>
+    </div>
+
+    <table id="tblTrans" class="table table-hover">
+        <tr>
+            <th>Transaction Item</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Discount Price</th>
+            <th>Sub-Total</th>
+            <th>Note</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>TOTAL:</td>
+            <td>0</td>
+            <td></td>
+        </tr>
+    </table>
+
+    <a href="#" id="lnkAddPaymentBottom" class="payment">
+        <img src="~/images/wallet.png" data-toggle="tooltip" data-placement="left" title="Add Payment" />
+    </a>
+
+    <table id="tblPayments" class="table table-hover">
+        <tr>
+            <th>Customer ID</th>
+            <th>Trans ID</th>
+            <th>Assoc ID</th>
+            <th>Pay Date</th>
+            <th>Pay Amount</th>
+            <th>Pay Method</th>
+            <th>Check Num</th>
+        </tr>
+
+    </table>
+
+</div>
+
+
+<div id="new-transaction-dialog" title="Add New Transaction">
+    <input type="hidden" id="hdnFormID" />
+
+    <div class="container">
+
+
+        <table id="tblTransDetails" class="table table-hover">
+            <tr>
+                <td colspan="2">
+
+                    <label for="code">Transaction Item:</label><br />
+                    <input type="text" id="forms" data-required="true" data-name="Transaction Item" class="form-control" style="max-width:700px;">
+
+
+
+
+                </td>
+                <td valign="bottom" class="text-left"><img src="~/images/search.png" id="search" style="padding-top:20px;" /></td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="txtQuantity">Quantity</label><input type="text" id="txtQuantity" class="form-control" data-required="true" onkeypress='numericValidate(event)' data-name="Quantity" />
+                </td>
+
+
+                <td>
+                    <label for="txtPrice">Unit Price</label> <input type="text" id="txtPrice" class="form-control" onkeypress='numericValidate(event)' maxlength="5" data-required="true" data-name="Unit Price" />
+                </td>
+                <td>
+                    <label for="txtDiscount">Discount Price</label><input type="text" class="form-control" onkeypress='numericValidate(event)' id="txtDiscount" />
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3">
+                    <div class="form-group">
+                        <label for="comment">Note:</label>
+                        <textarea class="form-control" rows="6" style="min-width: 100%" id="txtNote"></textarea>
+                    </div>
+                </td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
+<input type="button" class="btn btn-default" id="btnSubmit" value="Submit" />
+
+
+
+<div id="list-dialog" title="Forms">
+
+    <div class="container">
+        <select id="lstForms" size="18" style="max-width:100%;"></select>
+    </div>
+</div>
+
+
+
+
+
+<div id="new-payment-dialog" title="Add New Payment">
+    <input type="hidden" id="hdnFormID" />
+
+    <div class="container">
+        <div class="well well-lg">
+            <div class="row">
+                <div class="col-lg-6"><strong>Total Unpaid Amount:</strong></div>
+                <div class="col-lg-4 currencyLabel" id="lblDialogOwed"><strong></strong></div>
+            </div>
+        </div>
+        <table id="tblPayment" class="table table-hover">
+            <tr>
+                <td>
+                    <strong>Taken By:</strong>
+                    <div>
+                        <select id="ddlAssociatePay" class="form-control input-lg"></select>
+                    </div>
+                </td>
+                <td>
+                    <strong>Payment Date:</strong>
+                    <input type="text" id="txtPaymentDate" class="form-control input-lg" />
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="ui-widget">
+                        <label for="txtPaymentAmount">Amount: </label><br />
+                        <input type="text" id="txtPaymentAmount" class="form-control" onkeypress='numericValidate(event)' maxlength="5">
+                    </div>
+                </td>
+                <td>
+                    <label for="txtQuantity">Pay Method</label><br />
+                    <select id="ddlPayMethod">
+                        <option value="1">CASH</option>
+                        <option value="2">CHECK</option>
+                        <option value="3">CARD</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="txtPrice">Check #</label><br />
+                    <input type="text" id="txtCheckNumber" class="form-control" onkeypress='numericValidate(event)' maxlength="6" />
+                </td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+

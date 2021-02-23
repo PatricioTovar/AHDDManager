@@ -1,0 +1,832 @@
+﻿@model  IEnumerable<AHDDManagerClass.Customer>
+
+@{
+    ViewBag.Title = "Customers";
+}
+
+<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<script src="~/Scripts/datatables.min.js"></script>
+<script src="~/Scripts/Utilities.js"></script>
+<script src="~/Scripts/States.js"></script>
+
+<!-- NEEDED FOR SPINNER DIALOG -->
+
+<style>
+    .DetailLinks {
+        color: cornflowerblue;
+        text-shadow: 1px 1px 1px #000000;
+    }
+
+    .EditLinks {
+        color: lightskyblue;
+        text-shadow: 1px 1px 1px #000000;
+    }
+
+    .CustomersNotesLinks {
+        color: gold;
+        text-shadow: 1px 1px 1px #000000;
+    }
+
+    .deletecustomer {
+        color: crimson;
+        text-shadow: 1px 1px 1px #000000;
+    }
+</style>
+
+<script>
+    $(function () {
+        var _associateID = '@(ViewBag.AssociateID)';
+        var CustomerID;
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        GetStates();
+
+
+        var CustomerDialog = $("#customer-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            //height: (($(window).height() * .85) - 10),
+            width: $(window).width() * .85,
+            //position: { my: 'center', at: 'center', of: window },
+            stack: true,
+            draggable: false,
+            modal: true,
+            open: function (event, ui) {
+
+                $(this).parent().find('.ui-dialog-titlebar').unbind('mousedown');
+
+                $(".ui-dialog #lnkNotes").click(function () {
+
+                    event.preventDefault();
+
+                    //load dialog
+                    LoadCustomerNotes();
+
+                    CustomerNotesDialog.dialog("open");
+                    return false;
+                });
+            },
+            buttons: {
+                "Update": UpdateCustomer,
+                Cancel: function () {
+                    CustomerDialog.dialog("close");
+                }
+            },
+            close: function () {
+
+                CustomerDialog.dialog("close");
+            }
+        });
+
+        var CustomerNotesDialog = $("#customer-notes-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: (($(window).height() * .85) - 10),
+            width: $(window).width() * .85,
+            //position: { my: 'top', at: 'center', of: window },
+            stack: true,
+            draggable: false,
+            modal: true,
+            buttons: {
+                Cancel: function () {
+                    CustomerNotesDialog.dialog("close");
+                }
+            },
+            close: function () {
+                CustomerNotesDialog.dialog("close");
+            }
+        });
+
+        var CustomerNotesAddDialog = $("#customer-notes-add-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            //height: $(window).height() * .85,
+            width: 500,
+            //position: ['center', 128],
+            modal: true,
+            buttons: {
+                "Update": AddCustomerNote,
+                Cancel: function () {
+                    CustomerNotesAddDialog.dialog("close");
+                }
+            },
+            close: function () {
+                $('.ui-dialog-buttonpane button:contains("Update")').button().hide();
+                CustomerNotesAddDialog.dialog("close");
+            }
+        });
+
+        Table = $("#tblCustomers").DataTable({
+            data: [],
+            columns: [
+                {
+                    "data": "CustomerID",
+                    "type": "html-num",
+                    "className": "text-right",
+                    "render": function (data, type, row) {
+                        if (row.TotalOwed == 0) {
+                            return '<a href="/transactions/customertransactions/' + data + '" class="link" id="' + data + '"  data-toggle="tooltip" data-placement="right" title="View Transactions">' + data + '</a>';
+                        }
+                        else {
+                            return '<a href="/transactions/customertransactions/' + data + '" class="link" id="' + data + '" style="color:red;"  data-toggle="tooltip" data-placement="right" title="View Transactions">' + data + '</a>';
+                        }
+
+                    }
+                },
+                {
+                    "data": "Associate",
+                    "className": "text-center",
+                    "render": function (data, type, row) {
+
+                        return "<span class='dot' style='background-color:" + row.BackgroundColor + "' data-toggle='tooltip' title='" + data + "'></span>";
+                    }
+                },
+                { "data": "FirstName" },
+                { "data": "LastName" },
+                { "data": "SecondaryFirstName" },
+                { "data": "SecondaryLastName" },
+                { "data": "Address" },
+                //{ "data": "City" },
+                //{ "data": "State" },
+                //{ "data": "Zip" },
+                {
+                    "data": "Mobile",
+                    "render": function (data, type, row) {
+                        if (type === 'display') {
+                            var text = data.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+                            return text;
+                        }
+
+                        return data;
+                    }
+                },
+
+                {
+                    "data": "CustomerID",
+                    "orderable": false,
+                    "className": "text-center",
+                    "render": function (data, type, row) {
+
+                        return "<span class='DetailLinks imgBtn' id='detail_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='View details'><i class='fa fa-info-circle fa-2x'></a>";
+                    }
+                },
+                {
+                    "data": "CustomerID",
+                    "orderable": false,
+                    "className": "text-center",
+                    "render": function (data, type, row) {
+
+                        return "<span class='EditLinks imgBtn' id='edit_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Edit'><i class='fa fa-pencil fa-2x'></a>";
+                    }
+                },
+                //{
+                //    "data": "CustomerID",
+                //    'name': 'note',
+                //    "orderable": false,
+                //    "className": "text-center",
+                //    "render": function (data, type, row, meta) {
+                //        return "<span class='CustomerNotes imgBtn' data-toggle='tooltip' data-placement='top' title='View notes'><i class='fa fa-sticky-note fa-2x'></a>";
+                //    }
+                //},
+                {
+                    "data": "CustomerID",
+                    "orderable": false,
+                    "className": "text-center",
+                    "render": function (data, type, row) {
+
+                        return "<span class='CustomersNotesLinks imgBtn' id='customerNotes_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Notes'><i class='fa fa-sticky-note fa-2x'></a>";
+                    }
+                },
+                {
+                    "data": "Deleteable",
+                    'name': 'delete',
+                    "orderable": false,
+                    "className": "text-center",
+                    "render": function (data, type, full, meta) {
+                        if (data == 1) {
+                            var i = 0;
+                        }
+
+                        return data == 1 ? "<span class='deletecustomer text-danger imgBtn' id='" + full.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-2x'></a>" : ''
+                    }
+                }
+            ],
+            "responsive": true,
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "searching": true,
+            "drawCallback": function (settings) {
+                $('[data-toggle="tooltip"]').tooltip();
+            },
+        });
+
+
+        function GetStates() {
+            $.ajax({
+                beforeSend: function () {}, //Prevent loading dialog
+                url: '/account/GetStates/',
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result.length > 0) {
+                        $.each(result, function (key, value) {
+                            $("#ddlStates").append(new Option(value.Abbreviations, value.Abbreviations));
+                        });
+                    }
+                }
+            });
+        }
+
+        $.ajax({
+            beforeSend: function () { }, //Prevent loading dialog
+            url: '/customer/GetAssociates/',
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+
+                if (result != '0') {
+                    $.each(result, function (i, item) {
+                        $('#ddlAssignedTo').append($('<option>', {
+                            value: item.AssociateID,
+                            text: item.FirstName + ' ' + item.LastName
+                        }));
+                    });
+                } else {
+                    //alert("There was an error loading the page.");
+                    $.AlertDialog('There was an error loading the page.', 'Error Message', function (event) { }, 'lightcoral');
+                }
+            }
+        });
+
+        $("#tblCustomers").on('click', '.DetailLinks', function (event) {
+            event.preventDefault();
+            ClearCustomerDialog();
+            $('#dialog_menu').show();
+            $('#rowClientId').show();
+            $("#customer-dialog :input").prop("disabled", true);
+            $('.ui-dialog-buttonpane button:contains("Update")').button().hide();
+            CustomerDialog.dialog("open");
+
+            //load dialog
+            LoadCustomer(this.id.replace("detail_", ""));
+        });
+
+        $("#tblCustomers").on('click', '.EditLinks', function (event) {
+            event.preventDefault();
+            ClearCustomerDialog();
+            CustomerDialog.dialog("open");
+            $('#dialog_menu').hide();
+            $('#rowClientId').show();
+            $("#customer-dialog :input").prop("disabled", false);
+            $('.ui-dialog-buttonpane button:contains("Update")').button().show();
+            //load dialog
+            LoadCustomer(this.id.replace("edit_", ""));
+        });
+
+
+        $("#tblCustomers").on('click', '.CustomersNotesLinks', function (event) {
+            event.preventDefault();
+            var customerID = this.id.replace("customerNotes_", "");
+
+            CustomerID = customerID;
+            $("#customer-notes-dialog").dialog('open');
+
+        });
+
+        $('#tblCustomers').on('click', '.CustomerNotes', function () {
+            var data = Table.row($(this).parents('tr')).data();
+            var clientId = data.ClienteId;
+
+        });
+
+        $("#tblCustomers").on('click', '.deletecustomer', function (event) {
+            CustomerID = 0;
+            CustomerID = $(this).attr("id");
+
+            event.preventDefault();
+            //$("#ConfirmDialog").dialog("open");
+
+            $.ConfirmDialog('Are you sure you want to delete this customer?', 'Confirm required', DeleteCustomer, null, CustomerID, 'lightcoral')
+
+        });
+
+        $("#lnkAddNote").on('click', function (event) {
+            $('.ui-dialog-buttonpane button:contains("Update")').button().show();
+            $('#txtNote').css("border-color", "#cccccc");
+            CustomerNotesAddDialog.dialog("open");
+            return false;
+        });
+
+        $("#lnkTransactions").on('click', function (event) {
+            document.location.href = '/transactions/customertransactions/' + CustomerID;
+            //window.location = '/transactions/customertransactions/' + CustomerID;
+        });
+
+        $("#lnkPayments").on('click', function (event) {
+            document.location.href = '/customer/payments/' + CustomerID;
+            //  window.location = '/customer/payments/' + CustomerID;
+        });
+
+        $("#lnkNewCustomer").on('click', function (event) {
+            ClearCustomerDialog();
+
+            $('#dialog_menu').hide();
+            $('#rowClientId').hide();
+            $("#customer-dialog :input").prop("disabled", false);
+            $('.ui-dialog-buttonpane button:contains("Update")').button().show();
+            $('#chkActive').attr('disabled', true);
+            $('#chkActive').prop('checked', true);
+            CustomerID = 0;
+            CustomerDialog.dialog("open");
+        });
+
+        function ClearCustomerDialog() {
+
+            $("#lblClientID").val('');
+            $('#customer-dialog').find('input:text').css("border-color", "#cccccc");
+            $('#customer-dialog').find('input:text').val('');
+            $('#customer-dialog').find('input:checkbox').removeAttr('checked');
+            $("#ddlStates").val('TX'); //Default TEXAS
+            $("#ddlAssignedTo").val(_associateID);
+        }
+
+        function LoadCustomer(customerid) {
+            CustomerID = customerid;
+
+            $.ajax({
+                url: '/customer/GetCustomer/',
+                type: 'POST',
+                data: JSON.stringify({ CustomerID: customerid }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result.length == 0) {
+                        //THIS NEEDS TO GO
+                        //StoreFlavor = "<tr><td>No Results</td></tr>";
+                        //$("#tblCustomers").append(StoreFlavor);
+                    } else {
+                        var _date = new Date(parseInt(result.DateCreated.substr(6)));
+                        _date = (_date.getMonth() + 1) + '/' + _date.getDate() + '/' + _date.getFullYear();
+
+                        $("#lblClientID").val(customerid);
+                        $("#txtFirst").val(result.FirstName);
+                        $("#txtLast").val(result.LastName);
+                        $("#txtFirst2").val(result.SecondaryFirstName);
+                        $("#txtLast2").val(result.SecondaryLastName);
+                        $("#txtAddress").val(result.Address);
+                        $("#txtCity").val(result.City);
+                        $("#ddlStates").val(result.State);
+                        $("#txtZip").val(result.Zip);
+                        $("#txtPhone").val(result.Phone);
+                        $("#txtMobile").val(result.Mobile);
+                        $("#txtFax").val(result.Fax);
+                        $("#txtEmail").val(result.Email);
+                        $("#txtDateCreated").val(_date);
+                        $("#ddlAssignedTo").val(result.AssignedTo);
+                        $('#chkCitizen').prop('checked', result.Citizen);
+                        $('#chkActive').prop('checked', result.Active);
+
+                    }
+                }
+            });
+        }
+
+
+        function UpdateCustomer() {
+            var elements = document.querySelectorAll('[data-required="true"]');
+            var alertTriggered = false;
+
+            $.each(elements, function (index, item) {
+                if (item.value.trim() == '') {
+                    item.style.borderColor = 'red';
+
+                    if (!alertTriggered) {
+                        //$.AlertDialog(item.dataset.name + ' is required.', 'Error Message', function (event) { }, 'lightcoral');
+                        $.AlertDialog('Please fill required fields', 'Error Message', function (event) { item.focus(); }, 'lightcoral');
+
+                    }
+
+                    alertTriggered = true;
+                }
+                else {
+                    item.style.borderColor = '#cccccc';
+                }
+            });
+
+            if (alertTriggered) {
+                return;
+            }
+
+
+
+            if ($("#txtZip").val().length != 5) {
+                //alert('The zip code is invalid.');
+                $.AlertDialog('The zip code is invalid.', 'Error Message', function (event) { }, 'lightcoral');
+                $('#txtZip').css("border-color", "red");
+                $('#txtZip').focus();
+                return;
+            }
+
+            if ($("#txtPhone").val().trim().length > 0 && $("#txtPhone").val().length != 10) {
+                //alert('The phone number is invalid.');
+                $.AlertDialog('The phone number is invalid.', 'Error Message', function (event) { }, 'lightcoral');
+                $('#txtPhone').css("border-color", "red");
+                $('#txtPhone').focus();
+                return;
+            }
+            if ($("#txtMobile").val().length != 10) {
+                //alert('The mobile number is invalid.');
+                $.AlertDialog('The mobile number is invalid.', 'Error Message', function (event) { }, 'lightcoral');
+                $('#txtMobile').css("border-color", "red");
+                $('#txtMobile').focus();
+                return;
+            }
+
+
+            var _customer = {
+                CustomerID: CustomerID,
+                FirstName: $("#txtFirst").val(),
+                LastName: $("#txtLast").val(),
+                SecondaryFirstName: $("#txtFirst2").val(),
+                SecondaryLastName: $("#txtLast2").val(),
+                Address: $("#txtAddress").val(),
+                City: $("#txtCity").val(),
+                State: $("#ddlStates").val(),
+                Zip: $("#txtZip").val(),
+                Phone: $("#txtPhone").val().replace(/\./g, "", ""),
+                Mobile: $("#txtMobile").val().replace(/\./g, "", ""),
+                Fax: $("#txtFax").val().replace(/\./g, "", ""),
+                Email: $("#txtEmail").val(),
+                DateCreated: $("#txtDateCreated").val(),
+                Citizen: $("#chkCitizen").is(':checked'),
+                Active: $("#chkActive").is(':checked'),
+                AssignedTo: $("#ddlAssignedTo option:selected").val()
+            };
+
+            $.ajax({
+                url: '/customer/UpdateCustomer/',
+                type: 'POST',
+                data: JSON.stringify({ customer: _customer }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result > 0) {
+                        CustomerDialog.dialog("close");
+                        //if (CustomerID == 0) {
+                        $('#txtSearch').val(result);
+
+                        //$('#btnSearch').trigger("click");
+                        btnSearchClick();
+                        //}
+                    } else {
+                        //alert("Error: Customer update has failed.");
+                        $.AlertDialog('Error: Customer update has failed.', 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+        }
+
+        function DeleteCustomer(CustomerID) {
+            $.ajax({
+                url: '/customer/DeleteCustomer/',
+                type: 'POST',
+                data: JSON.stringify({ CustomerID: CustomerID }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) { //result is returned as an arry of base flavors
+                    if (result == '0') {
+                        //alert('The customer was deleted.');
+                        $.AlertDialog('The customer was deleted.', 'Success', function (event) { }, 'lightgreen');
+                        formID = 0;
+                        location.reload();
+                    } else {
+                        //alert(result);
+                        $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+
+        }
+
+        function LoadCustomerNotes() {
+            $.ajax({
+                url: '/customer/GetCustomerNotes/',
+                type: 'POST',
+                data: JSON.stringify({ CustomerID: CustomerID }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    $("#tblNotes tr:gt(0)").remove();
+                    if (result.length == 0) {
+                        //THIS NEEDS TO GO
+                        //StoreFlavor = "<tr><td>No Results</td></tr>";
+                        //$("#tblCustomers").append(StoreFlavor);
+                    } else {
+
+                        $.each(result, function (key, value) {
+                            var _date = new Date(parseInt(value.DateAdded.substr(6)));
+                            _date = (_date.getMonth() + 1) + '/' + _date.getDate() + '/' + _date.getFullYear();
+
+                            $("#lblNoteCount").text('Count: ' + result.length);
+
+                            var row =
+                                "<tr>" +
+                                "<td>" + _date + "</td>" +
+                                "<td>" + value.AddedByName + "</td>" +
+                                "<td>" + value.Note + "</td>";
+
+                            if (value.CustomerNoteID > 0){
+                                row = row +"<td><img id='cNote_" + value.CustomerNoteID + "' src='/images/delete.png' class='imgBtn deleteNote' /></td>"
+                            }
+
+                            row = row +"<tr>";
+                            $("#tblNotes").append(row);
+                        });
+                    }
+
+
+
+                    $(".deleteNote").on('click', function (event) {
+                        var CustomerNoteId = this.id.split('_')[1];
+                        $.ConfirmDialog('Are you sure you want to delete this note?', 'Confirm required', DeleteCustomerNote, null, CustomerNoteId, 'lightcoral')
+                    });
+                }
+            });
+        }
+
+        function AddCustomerNote() {
+            if ($('#txtNote').val() == '') {
+                $('#txtNote').css("border-color", "red");
+
+                //alert("Customer Note is required.");
+                $.AlertDialog('Customer Note is required.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+
+            var _customernote = {
+                CustomerID: CustomerID,
+                Note: $("#txtNote").val()
+            };
+
+            $.ajax({
+                url: '/customer/AddCustomerNote/',
+                type: 'POST',
+                data: JSON.stringify({ CustomerNote: _customernote }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result == '1') {
+
+                        $("#txtNote").val('');
+
+                        LoadCustomerNotes();
+
+                        CustomerNotesAddDialog.dialog("close");
+
+                    } else {
+                        // alert("Error: Customer Note update was failed.");
+                        $.AlertDialog('Error: Customer Note update was failed.', 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+        }
+
+        function DeleteCustomerNote(CustomerNoteID) {
+            $.ajax({
+                url: '/customer/DeleteCustomerNote/',
+                type: 'POST',
+                data: JSON.stringify({ CustomerNoteID: CustomerNoteID }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result == '0') {
+                        $.AlertDialog('The record was deleted.', 'Succes', function (event) { }, 'lightgreen');
+                        LoadCustomerNotes();
+                    } else {
+                        //alert(result);
+                        $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+
+        }
+
+    });
+
+    function btnSearchClick() {
+        if ($('#txtSearch').val() == '' || $('#txtSearch').val().trim() == '') {
+                $.AlertDialog('No search criteria has been entered.', 'Error Message', null, 'lightcoral');
+                return;
+            }
+            else {
+                $('#txtSearch').val($('#txtSearch').val().trim());
+            }
+
+            $.ajax({
+                url: "/customer/SearchCustomers/",
+                type: "post",
+                data: { SearchCriteria: $('#txtSearch').val() }
+            }).done(function (result) {
+                Table.clear().draw();
+                Table.rows.add(result).draw();
+                $('[data-toggle="tooltip"]').tooltip();
+
+
+                if ('@ViewData["IsAdmin"].ToString()' == 'False') {
+                    Table.column('delete').visible(false);
+                }
+
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                // needs to implement if it fails
+              //  alert('Error searching customers.');
+                $.AlertDialog('Error searching customers.', 'Error Message', null, 'lightcoral');
+            });
+    }
+</script>
+
+<div class="row">
+    <div class="col-sm-12"><h2>Customers</h2></div>
+</div>
+
+<div class="form-horizontal">
+    <form class="form-group" onsubmit="return false;">
+        <label class="col-sm-1 control-label" for="txtSeacrh">Search:</label>
+        <div class="col-sm-4">
+            <input type="text" id="txtSearch" class="form-control">
+        </div>
+        <div class="col-sm-1">
+            <button type="submit" class="btn btn-primary" id="btnSearch" onclick="btnSearchClick();">Search</button>
+        </div>
+        <div class="col-sm-6 text-right">
+            <span id="lnkNewCustomer" class="imgBtn">
+                <i class="fa fa-user-plus fa-2x" style="color:black" data-toggle="tooltip" title="Add New Customer"></i>
+            </span>
+        </div>
+    </form>
+</div>
+
+<hr />
+
+<table class="table table-striped table-condensed" id="tblCustomers" style="font-size:13px;">
+    <thead>
+        <tr>
+            <th style="width:5%">ID</th>
+            <th style="width:5%">Rep</th>
+            <th>First</th>
+            <th>Last</th>
+            <th>2nd First</th>
+            <th>2nd Last</th>
+            <th>Address</th>
+            @*<th>City</th>*@
+            @*<th>State</th>*@
+            @*<th>Zip</th>*@
+            <th style="width:10%">Mobile</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+<div id="customer-dialog" title="Customer Information">
+    <nav class="navbar" id="dialog_menu">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav nav-pills">
+                <li><a href="#" id="lnkNotes">Notes</a></li>
+                <li><a href="#" id="lnkTransactions">Transactions</a></li>
+                <li><a href="#" id="lnkPayments">Payments</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    @*<div id="divCustomerError" style="color: red; display: none;"></div>*@
+    <div style="padding: 0px 15px">
+        <div id="rowClientId" class="row">
+            <div class="col-md-3 form-group">
+                <label class="control-label">Client ID:</label>
+                <input type="text" id="lblClientID" class="form-control" readonly />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 form-group">
+                <label for="txtFirst">*First Name:</label>
+                <input type="text" id="txtFirst" class="form-control" data-required="true" maxlength="50" autofocus />
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="txtLast">*Last Name:</label>
+                <input type="text" id="txtLast" class="form-control" data-required="true" maxlength="50" />
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="txtFirst2">2nd Name:</label>
+                <input type="text" id="txtFirst2" class="form-control" maxlength="50" />
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="txtLast2">2nd Last Name:</label>
+                <input type="text" id="txtLast2" class="form-control" maxlength="50" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="txtAddress">*Address:</label>
+                <input type="text" id="txtAddress" class="form-control" data-required="true" maxlength="50" />
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="txtCity">*City:</label>
+                <input type="text" id="txtCity" class="form-control" data-required="true" maxlength="50" />
+            </div>
+            <div class="col-md-1 form-group">
+                <label for="ddlStates">*State:</label>
+                <select id="ddlStates" class="form-control"></select>
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="txtZip">*Zip code:</label>
+                <input type="text" id="txtZip" class="form-control" data-required="true" onkeypress='numericValidate(event)' maxlength="5" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 form-group">
+                <label for="txtMobile">Mobile:</label>
+                <input type="text" id="txtMobile" class="form-control" maxlength="10" onkeypress='numericValidate(event)' />
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="txtPhone">Phone:</label>
+                <input type="text" id="txtPhone" class="form-control" maxlength="10" onkeypress='numericValidate(event)' />
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="txtFax">Other number:</label>
+                <input type="text" id="txtFax" class="form-control" maxlength="10" onkeypress='numericValidate(event)' />
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="txtEmail">Email:</label>
+                <input type="text" id="txtEmail" class="form-control" maxlength="50" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="chkActive" /> Active
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="chkCitizen" /> Citizen
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-3 col-md-offset-6 form-group">
+                <label for="ddlAssignedTo">Assigned to:</label>
+                <select id="ddlAssignedTo" class="form-control"></select>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="customer-notes-dialog" title="Customer Notes">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <a href="#" id="lnkAddNote">
+                    <img src="~/images/sticky note.png" data-toggle="tooltip" data-placement="right" title="Add Customer Note" />
+                </a>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4"><span class="pull-right" id="lblNoteCount">Count: 0</span></div>
+        </div>
+    </div>
+    <p></p>
+    <div class="container">
+        <table id="tblNotes" class="table table-hover">
+            <tr>
+                <th width="15%">Date</th>
+                <th width="15%">Added By</th>
+                <th width="60%">Note</th>
+                <th width="10%"></th>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="customer-notes-add-dialog" title="Add Customer Note">
+    <div class="form-group">
+        <label for="comment">Customer Note:</label>
+        <textarea class="form-control" rows="10" style="min-width: 100%" id="txtNote" maxlength="1000"></textarea>
+    </div>
+
+</div>

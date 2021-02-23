@@ -1,0 +1,173 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_InvoiceLayout.cshtml";
+
+    ViewBag.Title = "Expenses - Print";
+}
+
+<!DOCTYPE html>
+
+
+
+<script src="~/Scripts/Utilities.js"></script>
+
+<script>
+    $(function () {
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+        $('[data-toggle="tooltip"]').tooltip();
+
+        //NEEDED FOR SPINNER DIALOG
+        $('body').append('<div class="modal" style="display: none"><div class="center"><img alt="" src="/images/ajax-loader.gif" /></div></div>');
+
+        //NEEDED FOR SPINNER DIALOG
+        $.ajaxSetup({
+            global: false,
+            beforeSend: function () {
+                $(".modal").show();
+            },
+            complete: function () {
+                $(".modal").delay(2000).hide();
+            }
+        });
+
+        var _now = new Date;
+
+        var startDate;
+        var endDate;
+
+        var _total = 0;
+
+
+        var qsVars = getUrlVars();
+
+        startDate = qsVars["startdate"];
+        endDate = qsVars["enddate"];
+
+        $('#divStart').text(startDate);
+        $('#divEnd').text(endDate);
+
+        $.ajax({
+            url: '/Expenses/SearchExpenses/',
+            type: 'POST',
+            data: JSON.stringify({ StartDate: startDate, EndDate: endDate }),
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+
+                _total = 0;
+
+                if (result.length == 0) {
+                    //THIS NEEDS TO GO
+                    //StoreFlavor = "<tr><td>No Results</td></tr>";
+                    //$("#tblCustomers").append(StoreFlavor);
+                } else {
+                    $("#tblExpenses tr:gt(0)").remove();
+
+                    $.each(result, function (key, value) {
+
+                        var _expensedate = new Date(parseInt(value.ExpenseDate.substr(6)));
+                        _expensedate = (_expensedate.getMonth() + 1) + '/' + _expensedate.getDate() + '/' + _expensedate.getFullYear();
+
+                        var _dateEntered = new Date(parseInt(value.DateEntered.substr(6)));
+                        _dateEntered = (_dateEntered.getMonth() + 1) + '/' + _dateEntered.getDate() + '/' + _dateEntered.getFullYear();
+
+                        _total += value.ExpenseAmount;
+
+                        expense = "<tr id=\"" + value.ExpenseID + "\">" +
+                                "<td>" + value.ExpenseID + "</td>" +
+                                "<td>" + value.PaidTo + "</td>" +
+                                "<td class='currencyLabel'>" + value.ExpenseAmount + "</td>" +
+                                "<td>" + value.Description + "</td>" +
+                                "<td>" + _expensedate + "</td>" +
+                                "<td>" + _dateEntered + "</td>" +
+                                "<td>" + value.Refunded + "</td>" +
+                                "<td>" + value.TakenByName + "</td>"
+                        "</tr>";
+                        $("#tblExpenses").append(expense);
+
+                    });
+
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('#divTotal').text(_total);
+                    $('.currencyLabel').formatCurrency();
+                }
+            }
+        });
+
+
+        // Read a page's GET URL variables and return them as an associative array.
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+
+    });
+</script>
+
+
+<h2>Business Expenses</h2>
+
+<div class="container">
+
+    <div class="well well-lg">
+        <div class="row">
+            <div class="col-sm-4">
+                <table class="table">
+                    <tr>
+                        <td><strong>Start Date:</strong></td>
+                    </tr>
+                    <tr>
+                        <td><div id="divStart"></div></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-4">
+                <table class="table">
+                    <tr>
+                        <td><strong>End Date:</strong></td>
+                    </tr>
+                    <tr>
+                        <td><div id="divEnd"></div></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-4">
+                <table class="table">
+                    <tr>
+                        <td><strong>TOTAL:</strong></td>
+                    </tr>
+                    <tr>
+                        <td><div class="col-sm2 currencyLabel" id="divTotal">$0.00</div></td>
+                    </tr>
+                </table>
+            </div>
+
+
+        </div>
+    </div>       
+
+    <p></p>
+
+    <table id="tblExpenses" class="table table-responsive table-hover">
+        <tr>
+            <th>Expense ID</th>
+            <th>Paid To</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Expense Date</th>
+            <th>Date Entered</th>
+            <th>Refunded</th>
+            <th>Entered By</th>
+        </tr>
+    </table>
+
+</div>
+

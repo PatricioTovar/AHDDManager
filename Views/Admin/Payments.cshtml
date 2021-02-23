@@ -1,0 +1,401 @@
+﻿@model AHDDManagerClass.Payment
+
+@{
+    ViewBag.Title = "Payments Collected";
+}
+
+<script>
+    $(function () {
+        $("#dpStart").datepicker();
+        $("#dpEnd").datepicker();
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+
+        var _now = new Date;
+
+        $("#dpStart").datepicker().datepicker("setDate", new Date());
+        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+
+        $.ajaxSetup({
+            error: function (x, status, error) {
+                if (x.status == 901) {
+                    $.AlertDialog('Sorry, your session has expired. Please login again to continue.', 'Session Expired', function (event) { document.location.href = "/Home/"; }, 'lightcoral');
+                }
+                else {
+                    alert();
+                    $.AlertDialog('An error occurred: ' + status + 'nError: ' + error, 'Error Message', function (event) { }, 'lightcoral');
+                }
+            }
+        });
+
+        $("#tblPayments").on("click", "tr:not(:first-child, :last-child, :nth-last-child(2))", function (e) {
+            id = $(this).attr("id");
+            LoadCustomer(id);
+            customerdialog.dialog("open");
+        });
+
+        var paymentdialog = $("#payments-dialog").dialog({
+            autoOpen: false,
+            height: 500,
+            width: 900,
+            //position: ['middle', 128],
+            modal: true,
+            draggable: false,
+            buttons: {
+                Cancel: function () {
+                    paymentdialog.dialog("close");
+                }
+            },
+            close: function () {
+                paymentdialog.dialog("close");
+            }
+        });
+
+        var customerdialog = $("#customer-dialog").dialog({
+            autoOpen: false,
+            height: 500,
+            width: 950,
+            //position: ['middle', 128],
+            draggable: false,
+            modal: true,
+            buttons: {
+                Cancel: function () {
+                    customerdialog.dialog("close");
+                }
+            },
+            close: function () {
+                customerdialog.dialog("close");
+            }
+        });
+
+        function LoadCustomer(paymentID) {
+            $.ajax({
+                url: '/admin/GetCustomerByPaymentID/',
+                data: JSON.stringify({ PaymentID: paymentID }),
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    $("#txtFirst").val(result.FirstName);
+                    $("#txtLast").val(result.LastName);
+                    $("#txtFirst2").val(result.SecondaryFirstName);
+                    $("#txtLast2").val(result.SecondaryLastName);
+                    $("#txtAddress").val(result.Address);
+                    $("#txtCity").val(result.City);
+                    $("#txtState").val(result.State);
+                    $("#txtZip").val(result.Zip);
+                }
+            });
+
+            LoadTransaction(paymentID);
+            LoadTransactionDetails(paymentID);
+        }
+
+        function LoadTransaction(paymentID) {
+            $.ajax({
+                url: '/admin/GetTransactionByPaymentID/',
+                data: JSON.stringify({ PaymentID: paymentID }),
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    var _date = new Date(parseInt(result.TransactionDate.substr(6)));
+                    var ampm = _date.getHours() >= 12 ? "PM" : "AM";
+
+                    _date = (_date.getMonth() + 1) + '/' + _date.getDate() + '/' + _date.getFullYear() + ' ' + _date.getHours() + ':' + (_date.getMinutes() < 10 ? '0' : '') + _date.getMinutes();
+
+                    $("#tdTransDate").text(_date + " " + ampm);
+                    $("#tdTransAmount").text(result.TotalAmount);
+                    $("#tdPaid").text(result.AmountPaid);
+                    $("#tdOwed").text(result.AmountDue);
+                    $('.currencyLabel').formatCurrency();
+                }
+            });
+        }
+
+        function LoadTransactionDetails(paymentID) {
+            $.ajax({
+                url: '/admin/GetTransactionDetailsByPaymentID/',
+                data: JSON.stringify({ PaymentID: paymentID }),
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    $("#tblDetails tr:gt(0)").remove();
+
+                    $.each(result, function (key, value) {
+                        var row = "<tr>" +
+                                    "<td>" + value.FormTitle + "</td>" +
+                                    "<td class='currencyLabel'>" + value.Total + "</td>"
+                        "</tr>"
+                        $("#tblDetails").append(row);
+                    });
+
+                    $('.currencyLabel').formatCurrency();
+                }
+            });
+        }
+
+        function LoadPayments(associateID) {
+            $.ajax({
+                url: '/admin/GetPaymentsCollectedByAssociate/',
+                data: JSON.stringify({ AssociateID: associateID, StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
+                type: 'POST',
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    $("#tblPayments tr:gt(0)").remove();
+
+                    $.each(result, function (key, value) {
+                        var _date = new Date(parseInt(value.PaymentDate.substr(6)));
+                        var ampm = _date.getHours() >= 12 ? "PM" : "AM";
+
+                        _date = (_date.getMonth() + 1) + '/' + _date.getDate() + '/' + _date.getFullYear() + ' ' + _date.getHours() + ':' + (_date.getMinutes() < 10 ? '0' : '') + _date.getMinutes();
+
+                        var row = "<tr id='" + value.PaymentID + "'>" +
+                                    "<td>" + value.PaymentID + "</td>" +
+                                    "<td>" + _date + " " + ampm + "</td>" +
+                                    "<td class='currencyLabel'>" + value.PaymentAmount + "</td>" +
+                                    "<td>" + value.PaymentMethodDescription + "</td>" +
+                                    "<td>" + value.CheckNumber + "</td>" +
+                                    "<td>" + value.TakenBy + "</td>"
+                        "</tr>"
+                        $("#tblPayments").append(row);
+
+                    });
+
+
+
+                    //THIS NEEDS FAILURE CHECK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    //get this person's collected pay method counts
+                    $.ajax({
+                        url: '/admin/GetPayMethodCountsByDateRangeAssocID/',
+                        type: 'POST',
+                        data: JSON.stringify({ AssociateID: associateID, StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
+                        dataType: 'json',
+                        traditional: true,
+                        contentType: 'application/json;',
+                        success: function (result) {
+                            var _total;
+
+                            _total = result.OverallTotal;
+
+                            if (result != null) {
+                                $("#tblPayments").append("<tr><td><strong>Total:</strong></td><td class='currencyLabel'><strong> " + _total + "</strong></td></tr>");
+
+                                var totalsRow;
+                                totalsRow = '<tr><td colspan="6"><table><tr>';
+
+                                $.each(result.ret, function (key, value) {
+                                    totalsRow += "<td><div style='float: left;'><strong>" + value.PaymentMethod + " (" + value.MethodCount + "):</strong> <div  class='currencyLabel'>" + value.TotalAmount + "</div></div></td>"
+                                });
+
+                                totalsRow += '</tr></table></td></tr>';
+
+                                $("#tblPayments").append(totalsRow);
+                                $('.currencyLabel').formatCurrency();
+
+                            } else {
+
+
+
+                            }
+                        }
+                    });
+
+
+                    $('.currencyLabel').formatCurrency();
+                }
+            });
+        }
+
+        $('#tblCollections').on('click', '.test', function (event) {
+            LoadPayments($(this).attr("id"));
+            paymentdialog.dialog("open");
+        });
+
+        $("#btnSearch").on('click', function (event) {
+            if (Date.parse($("#dpEnd").val()) < Date.parse($("#dpStart").val())) {
+                //alert('End date cannot be before start date');
+                $.AlertDialog('End date cannot be before start date', 'Error Message', function (event) { }, 'lightcoral');
+            }
+            else {
+                var _total;
+
+                $.ajax({
+                    url: '/admin/GetPaymentsCollectedByDateRange/',
+                    data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
+                    type: 'POST',
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        $("#tblCollections tr:gt(0)").remove();
+
+                        $.each(result, function (key, value) {
+                            var row = "<tr>" +
+                                        "<td><a href='#' class='test' id='" + value.AssociateID + "'>" + value.AssociateName + "</a></td>" +
+                                        "<td class='currencyLabel'>" + value.TotalCollected + "</td>" +
+                                        //"<td>" + parseFloat(((value.TotalCollected / _total) * 100).toFixed(2)) + "%</td>" +
+                                        "</tr>"
+                            $("#tblCollections").append(row);
+                        });
+
+
+                        //THIS NEEDS FAILURE CHECK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        //get this person's collected pay method counts
+                        $.ajax({
+                            url: '/admin/GetPayMethodCountsByDateRange/',
+                            type: 'POST',
+                            data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
+                            dataType: 'json',
+                            traditional: true,
+                            contentType: 'application/json;',
+                            success: function (result) {
+                                _total = result.OverallTotal;
+
+                                if (result != null) {
+                                    $("#tblCollections").append('<tr><td colspan="6"> <p></p></td></tr>');
+
+                                    $("#tblCollections").append("<tr><td><strong>Total:</strong></td><td class='currencyLabel'><strong> " + _total + "</strong></td></tr>");
+
+                                    $("#tblCollections").append('<tr><td colspan="6"> <p></p></td></tr>');
+
+                                    $.each(result.ret, function (key, value) {
+                                        row = "<tr><td><strong>" + value.PaymentMethod + " (" + value.MethodCount + "):</strong></td>  <td class='currencyLabel'><strong>" + value.TotalAmount + "</strong></td>"
+
+                                        $("#tblCollections").append(row);
+                                    });
+                                    $('.currencyLabel').formatCurrency();
+
+                                } else {
+
+                                    //ERROR HANDLING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                                }
+                            }
+                        });
+
+
+
+                        $('.currencyLabel').formatCurrency();
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<h2>Payments Collected</h2>
+
+<div>
+    <div class="well">
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label for="dpStart">Start Date:</label>
+                <div class="input-group margin-bottom-sm">
+                    <input type="text" id="dpStart" class="form-control" readonly />
+                    <span class="input-group-addon btn btn-default" onclick="$('#dpStart').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dpEnd">End Date:</label>
+                <div class="input-group margin-bottom-sm">
+                    <input type="text" id="dpEnd" class="form-control" readonly />
+                    <span class="input-group-addon btn btn-default" onclick="$('#dpEnd').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="empty-label">&nbsp;</label>
+                <button id="btnSearch" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </div>
+    <table id="tblCollections" class="table table-striped">
+        <tr>
+            <th>Associate</th>
+            <th>Total Collected</th>
+        </tr>
+    </table>
+</div>
+
+<div id="payments-dialog" title="Payments Collected">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Payments Collected</h3>
+        </div>
+    </div>
+    <div class="container">
+        <table id="tblPayments" class="table table-striped">
+            <tr>
+                <th>Pay ID</th>
+                <th>Pay Date</th>
+                <th>Amount</th>
+                <th>Pay Method</th>
+                <th>Check #</th>
+                <th>Receipt Creator</th>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+<div id="customer-dialog" title="Payment Information">
+    <h2>Customer Information</h2>
+    <table class="table">
+        <tr>
+            <th>First Name:</th>
+            <th>Last Name:</th>
+            <th>2nd First Name:</th>
+            <th>2nd Last Name:</th>
+        </tr>
+        <tr>
+            <td><input type="text" id="txtFirst" class="form-control" readonly="readonly" /></td>
+            <td><input type="text" id="txtLast" class="form-control" readonly="readonly" /></td>
+            <td><input type="text" id="txtFirst2" class="form-control" readonly="readonly" /></td>
+            <td><input type="text" id="txtLast2" class="form-control" readonly="readonly" /></td>
+        </tr>
+        <tr>
+            <th>Address:</th>
+            <th>City:</th>
+            <th>State:</th>
+            <th>Zip:</th>
+        </tr>
+        <tr>
+            <td><input type="text" id="txtAddress" class="form-control" readonly="readonly" /></td>
+            <td><input type="text" id="txtCity" class="form-control" readonly="readonly" /></td>
+            <td><input type="text" id="txtState" class="form-control" readonly="readonly" /></td>
+            <td><input type="text" id="txtZip" class="form-control" readonly="readonly" /></td>
+        </tr>
+    </table>
+
+    <h2>Transaction</h2>
+
+    <table class="table" id="tblTrans">
+        <tr>
+            <th>Date: </th>
+            <th>Total: </th>
+            <th>Paid: </th>
+            <th>Owed:</th>
+        </tr>
+        <tr>
+            <td id="tdTransDate"></td>
+            <td id="tdTransAmount" class='currencyLabel'></td>
+            <td id="tdPaid" class='currencyLabel'></td>
+            <td id="tdOwed" class='currencyLabel'></td>
+        </tr>
+    </table>
+
+    <h3>Transaction Details</h3>
+
+    <table class="table" id="tblDetails">
+        <tr>
+            <th>Form Title</th>
+            <th>Total</th>
+        </tr>
+    </table>
+</div>

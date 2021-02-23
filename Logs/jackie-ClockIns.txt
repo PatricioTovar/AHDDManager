@@ -1,0 +1,102 @@
+12/12/2020 8:11:14 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 8:12:13 AM|User Logged OUT: jackie
+12/12/2020 8:12:47 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 8:18:16 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 8:24:29 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 8:40:07 AM|User Logged OUT: jackie
+12/12/2020 8:41:10 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 8:41:59 AM|User Logged OUT: jackie
+12/12/2020 8:42:30 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 8:42:33 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 8:47:44 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 8:53:53 AM|User clock in status changed to False: jackie (Jackie Briseno)
+12/12/2020 9:12:38 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 9:13:22 AM|User clock in status changed to False: jackie (Jackie Briseno)
+12/12/2020 9:13:47 AM|User Logged OUT: jackie
+12/12/2020 9:13:58 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 9:22:30 AM|User clock in status changed to False: jackie (Jackie Briseno)
+12/12/2020 9:30:04 AM|User Logged OUT: jackie
+12/12/2020 9:30:12 AM|User Logged in: jackie (Jackie Briseno)
+12/12/2020 3:02:51 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/13/2020 11:30:02 AM|User Login FAILED: jackie | 321321
+12/13/2020 11:30:11 AM|User Login FAILED: jackie | 321321
+12/13/2020 11:35:28 AM|User Logged in: jackie (Jackie Briseno)
+12/13/2020 4:09:11 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/13/2020 5:25:34 PM|User clock in status changed to True: jackie (Jackie Briseno)
+12/14/2020 7:07:40 AM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:22:05 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:22:23 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 7:22:23 PM|User Logged OUT: jackie
+12/14/2020 7:26:22 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:26:29 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 7:26:29 PM|User Logged OUT: jackie
+12/14/2020 7:26:46 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:28:11 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:28:36 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 7:28:36 PM|User Logged OUT: jackie
+12/14/2020 7:30:16 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:32:09 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 7:32:15 PM|User Logged OUT: jackie
+12/14/2020 7:33:04 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:33:22 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 7:33:22 PM|User Logged OUT: jackie
+12/14/2020 7:37:53 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:38:03 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 7:38:03 PM|User Logged OUT: jackie
+12/14/2020 7:41:21 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:41:31 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 7:41:31 PM|User Logged OUT: jackie
+12/14/2020 7:45:47 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:46:02 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 7:46:02 PM|User Logged OUT: jackie
+12/14/2020 7:47:33 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 7:47:41 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 7:47:41 PM|User Logged OUT: jackie
+12/14/2020 9:34:57 PM|User Logged in: jackie (Jackie Briseno)
+12/14/2020 9:35:10 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/14/2020 9:35:10 PM|User Logged OUT: jackie
+12/14/2020 9:35:41 PM|User Logged OUT: jackie
+12/14/2020 9:35:50 PM|User Logged in: jackie (Jackie Briseno)
+12/15/2020 9:08:33 AM|User Logged in: jackie (Jackie Briseno)
+12/15/2020 9:09:38 AM|User Logged OUT: jackie
+12/15/2020 9:09:53 AM|User Logged in: jackie (Jackie Briseno)
+12/15/2020 9:11:12 AM|User Logged in: jackie (Jackie Briseno)
+12/15/2020 10:32:34 AM|User clock in status changed to False: jackie (Jackie Briseno)
+12/15/2020 10:32:34 AM|User Logged OUT: jackie
+12/15/2020 10:32:41 AM|User Logged OUT: jackie
+12/15/2020 10:34:05 AM|User Logged in: jackie (Jackie Briseno)
+12/15/2020 10:34:25 AM|User clock in status changed to False: jackie (Jackie Briseno)
+12/15/2020 10:34:25 AM|User Logged OUT: jackie
+12/15/2020 10:35:17 AM|User Logged OUT: jackie
+12/15/2020 10:36:07 AM|User Logged in: jackie (Jackie Briseno)
+12/15/2020 10:36:17 AM|User clock in status changed to False: jackie (Jackie Briseno)
+12/15/2020 10:36:17 AM|User Logged OUT: jackie
+12/15/2020 10:37:37 AM|User Logged in: jackie (Jackie Briseno)
+12/15/2020 10:37:50 AM|User clock in status changed to False: jackie (Jackie Briseno)
+12/15/2020 10:37:50 AM|User Logged OUT: jackie
+12/15/2020 10:39:14 AM|User Logged in: jackie (Jackie Briseno)
+12/15/2020 10:41:19 AM|User Logged in: jackie (Jackie Briseno)
+12/15/2020 10:41:34 AM|User clock in status changed to False: jackie (Jackie Briseno)
+12/15/2020 10:41:34 AM|User Logged OUT: jackie
+12/15/2020 11:40:02 AM|User Logged in: jackie (Jackie Briseno)
+12/16/2020 8:24:23 AM|User Logged in: jackie (Jackie Briseno)
+12/16/2020 7:52:20 PM|User Logged in: jackie (Jackie Briseno)
+12/16/2020 7:54:15 PM|User Logged in: jackie (Jackie Briseno)
+12/17/2020 9:54:15 AM|User Logged in: jackie (Jackie Briseno)
+12/17/2020 1:01:31 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/17/2020 1:01:31 PM|User Logged OUT: jackie
+12/17/2020 4:18:26 PM|User Logged in: jackie (Jackie Briseno)
+12/17/2020 8:12:10 PM|User clock in status changed to False: jackie (Jackie Briseno)
+12/17/2020 8:12:10 PM|User Logged OUT: jackie
+12/19/2020 6:58:52 AM|User Logged in: jackie (Jackie Briseno)
+12/19/2020 7:16:20 AM|User Logged in: jackie (Jackie Briseno)
+12/19/2020 7:32:13 AM|User Logged in: jackie (Jackie Briseno)
+12/19/2020 7:32:41 AM|User Logged OUT: jackie
+12/19/2020 7:33:36 AM|User Logged in: jackie (Jackie Briseno)
+12/19/2020 7:36:54 AM|User Logged in: jackie (Jackie Briseno)
+12/19/2020 8:00:24 AM|User Logged in: jackie (Jackie Briseno)
+12/19/2020 8:20:55 AM|User Logged in: jackie (Jackie Briseno)
+12/20/2020 5:55:49 PM|User Logged in: jackie (Jackie Briseno)
+12/20/2020 5:59:22 PM|User Logged OUT: jackie
+12/20/2020 6:01:03 PM|User Logged in: jackie (Jackie Briseno)
+12/20/2020 6:02:15 PM|User Logged OUT: jackie

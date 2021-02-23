@@ -1,0 +1,500 @@
+5/5/2019 8:44:11 AM|My Hours: 
+5/5/2019 8:44:11 AM|5/5/2019 8:42:00 AM
+5/6/2019 1:02:09 PM|My Hours: 
+5/6/2019 1:02:09 PM|5/6/2019 11:07:00 AM
+5/6/2019 1:02:09 PM|5/6/2019 11:09:00 AM
+5/6/2019 1:02:09 PM|5/6/2019 11:09:00 AM
+5/6/2019 1:03:25 PM|My Hours: 
+5/6/2019 1:03:25 PM|5/6/2019 11:07:00 AM
+5/6/2019 1:03:25 PM|5/6/2019 11:09:00 AM
+5/6/2019 1:03:25 PM|5/6/2019 11:09:00 AM
+5/6/2019 1:09:08 PM|My Hours: 
+5/6/2019 1:09:08 PM|5/6/2019 11:07:00 AM
+5/6/2019 1:09:08 PM|5/6/2019 11:09:00 AM
+5/6/2019 1:09:08 PM|5/6/2019 11:09:00 AM
+5/6/2019 9:33:20 PM|My Hours: 
+5/6/2019 9:33:20 PM|5/6/2019 8:52:00 AM
+5/6/2019 9:36:30 PM|My Hours: 
+5/6/2019 9:36:30 PM|5/6/2019 8:52:00 AM
+5/6/2019 9:37:09 PM|My Hours: 
+5/6/2019 9:37:09 PM|5/6/2019 8:52:00 AM
+5/6/2019 9:38:21 PM|My Hours: 
+5/6/2019 9:38:21 PM|5/6/2019 8:52:00 AM
+5/6/2019 9:40:19 PM|My Hours: 
+5/6/2019 9:40:19 PM|5/6/2019 8:52:00 AM
+5/6/2019 9:45:57 PM|My Hours: 
+5/6/2019 9:45:57 PM|5/6/2019 8:52:00 AM
+5/6/2019 9:46:46 PM|My Hours: 
+5/6/2019 9:46:46 PM|5/6/2019 8:52:00 AM
+5/7/2019 7:52:57 AM|My Hours: 
+5/7/2019 7:52:57 AM|5/7/2019 7:51:00 AM
+5/14/2019 4:33:06 PM|My Hours: 
+5/14/2019 4:33:06 PM|5/14/2019 9:23:00 AM
+5/14/2019 4:33:06 PM|5/14/2019 1:19:00 PM
+5/14/2019 4:33:06 PM|5/14/2019 1:52:00 PM
+5/23/2019 8:48:50 PM|Event to Add by 1 - TITLE: test
+5/23/2019 8:49:13 PM|Event add FAILED
+5/24/2019 8:14:16 PM|Event to Add by 1 - TITLE: test
+5/24/2019 8:14:16 PM|Event add FAILED
+5/24/2019 8:14:38 PM|Event to Add by 1 - TITLE: test 2 
+5/24/2019 8:14:53 PM|Event add FAILED
+5/24/2019 9:22:41 PM|Event to Add by 1 - TITLE: test
+5/24/2019 9:22:44 PM|Event add FAILED
+5/24/2019 9:23:07 PM|Event to Add by 1 - TITLE: test
+5/24/2019 9:23:09 PM|Event add FAILED
+5/24/2019 9:44:20 PM|Event to Add by 1 - TITLE: test
+5/24/2019 9:44:21 PM|Event add FAILED
+5/24/2019 9:45:47 PM|Event to Add by 1 - TITLE: test
+5/24/2019 9:45:50 PM|Event add FAILED
+5/24/2019 9:46:45 PM|Event to Add by 1 - TITLE: test
+5/24/2019 9:46:50 PM|Event add FAILED
+5/25/2019 7:38:19 AM|Event to Add by 1 - TITLE: test
+5/25/2019 7:38:19 AM|Event: Appt id - 1141
+5/25/2019 7:45:57 AM|Event to Add by 1 - TITLE: test
+5/25/2019 7:45:57 AM|Event: Appt id - 1142
+5/25/2019 7:47:05 AM|Event update FAILED
+5/25/2019 7:48:20 AM|Event update FAILED
+5/25/2019 1:41:33 PM|Event to Add by 1 - TITLE: test
+5/25/2019 1:41:33 PM|Event: Appt id - 1143
+5/25/2019 1:45:07 PM|Event update FAILED
+5/25/2019 1:46:25 PM|Event update FAILED
+5/26/2019 9:18:08 AM|Event update FAILED
+5/26/2019 9:19:21 AM|Event update FAILED
+5/26/2019 9:19:46 AM|Event update FAILED
+5/26/2019 9:28:55 AM|Event update FAILED
+5/26/2019 9:29:41 AM|Event update FAILED
+5/26/2019 9:43:18 AM|Event add FAILED
+5/26/2019 10:04:31 AM|Event add FAILED
+5/26/2019 10:06:52 AM|Event add FAILED
+5/26/2019 9:22:19 PM|Event to Add by 1 - TITLE: test
+5/26/2019 9:22:19 PM|Event add FAILED
+5/26/2019 9:27:03 PM|Event to Add by 1 - TITLE: test
+5/26/2019 9:27:03 PM|Event: Appt id - 1144
+5/26/2019 9:32:50 PM|Event to Add by 1 - TITLE: test
+5/26/2019 9:32:50 PM|Event: Appt id - 1145
+5/26/2019 9:43:04 PM|Event to Add by 1 - TITLE: test
+5/26/2019 9:43:04 PM|Event: Appt id - 1146
+5/26/2019 9:43:22 PM|Event to Add by 1 - TITLE: test 2
+5/26/2019 9:43:22 PM|Event: Appt id - 1147
+5/26/2019 9:44:06 PM|Event to Add by 1 - TITLE: test 3
+5/26/2019 9:44:07 PM|Event: Appt id - 1148
+5/26/2019 9:45:37 PM|Event to Add by 1 - TITLE: test
+5/26/2019 9:45:38 PM|Event: Appt id - 1149
+5/26/2019 9:45:55 PM|Event to Add by 1 - TITLE: test 2
+5/26/2019 9:45:56 PM|Event: Appt id - 1150
+5/26/2019 9:54:18 PM|Event to Add by 1 - TITLE: test
+5/26/2019 9:54:18 PM|Event: Appt id - 1151
+5/26/2019 9:55:01 PM|Event to Add by 1 - TITLE: test 2
+5/26/2019 9:55:02 PM|Event: Appt id - 1152
+5/26/2019 9:56:40 PM|Event to Add by 1 - TITLE: test
+5/26/2019 9:56:40 PM|Event: Appt id - 1153
+5/26/2019 10:00:04 PM|Event to Add by 1 - TITLE: fgh
+5/26/2019 10:00:04 PM|Event: Appt id - 1154
+5/26/2019 10:01:22 PM|Event to Add by 1 - TITLE: qwqwq
+5/26/2019 10:01:22 PM|Event: Appt id - 1155
+5/26/2019 10:01:46 PM|Event to Add by 1 - TITLE: test
+5/26/2019 10:01:46 PM|Event: Appt id - 1156
+5/30/2019 4:52:11 AM|My Hours: 
+5/30/2019 4:52:13 AM|5/30/2019 4:46:00 AM
+6/25/2019 8:42:37 PM|Event to Add by 1 - TITLE: test
+6/25/2019 8:42:39 PM|Event: Appt id - 1191
+6/26/2019 8:35:07 PM|Event to Add by 1 - TITLE: test
+6/26/2019 8:35:17 PM|Event: Appt id - 1192
+6/26/2019 8:41:14 PM|Event to Add by 1 - TITLE: test
+6/26/2019 8:41:14 PM|Event: Appt id - 1193
+6/26/2019 8:42:46 PM|Event to Add by 1 - TITLE: test
+6/26/2019 8:42:46 PM|Event: Appt id - 1194
+6/26/2019 8:46:48 PM|Event to Add by 1 - TITLE: test
+6/26/2019 8:46:48 PM|Event: Appt id - 1195
+6/26/2019 8:49:49 PM|Event to Add by 1 - TITLE: 
+6/26/2019 8:49:51 PM|Event add FAILED
+6/26/2019 8:50:13 PM|Event to Add by 1 - TITLE: test
+6/26/2019 8:50:13 PM|Event: Appt id - 1196
+6/26/2019 9:05:14 PM|Event to Add by 1 - TITLE: 
+6/26/2019 9:05:14 PM|Event add FAILED
+6/26/2019 9:05:24 PM|Event to Add by 1 - TITLE: test
+6/26/2019 9:05:24 PM|Event: Appt id - 1197
+6/26/2019 9:21:12 PM|Event to Add by 1 - TITLE: test
+6/26/2019 9:21:12 PM|Event: Appt id - 1198
+6/26/2019 9:23:15 PM|Event to Add by 1 - TITLE: asdf
+6/26/2019 9:23:15 PM|Event: Appt id - 1199
+6/26/2019 9:25:34 PM|Event to Add by 1 - TITLE: test
+6/26/2019 9:25:34 PM|Event: Appt id - 1200
+6/27/2019 9:25:41 PM|Event to Add by 1 - TITLE: wert
+6/27/2019 9:25:42 PM|Event: Appt id - 1201
+6/27/2019 9:27:11 PM|Event to Add by 1 - TITLE: test
+6/27/2019 9:27:11 PM|Event: Appt id - 1202
+6/27/2019 10:07:09 PM|Event to Add by 1 - TITLE: test
+6/27/2019 10:07:09 PM|Event: Appt id - 1203
+6/27/2019 10:07:37 PM|Event to Add by 1 - TITLE: test
+6/27/2019 10:07:37 PM|Event: Appt id - 1204
+6/27/2019 10:09:46 PM|Event to Add by 1 - TITLE: test
+6/27/2019 10:09:46 PM|Event: Appt id - 1205
+6/27/2019 10:11:51 PM|Event to Add by 1 - TITLE: tests
+6/27/2019 10:11:51 PM|Event: Appt id - 1206
+6/27/2019 10:13:28 PM|Event to Add by 1 - TITLE: tests
+6/27/2019 10:13:28 PM|Event: Appt id - 1207
+6/27/2019 10:14:25 PM|Event to Add by 1 - TITLE: test1
+6/27/2019 10:14:25 PM|Event: Appt id - 1208
+6/27/2019 10:15:45 PM|Event to Add by 1 - TITLE: test1
+6/27/2019 10:15:45 PM|Event: Appt id - 1209
+6/28/2019 9:22:03 PM|Event to Add by 1 - TITLE: test1
+6/28/2019 9:22:03 PM|Event: Appt id - 1209
+6/28/2019 10:13:07 PM|Event to Add by 1 - TITLE: test
+6/28/2019 10:13:07 PM|Event: Appt id - 1210
+6/28/2019 10:16:23 PM|Event to Add by 1 - TITLE: test
+6/28/2019 10:16:24 PM|Event: Appt id - 1211
+6/28/2019 10:18:20 PM|Event to Add by 1 - TITLE: test 1
+6/28/2019 10:18:20 PM|Event: Appt id - 1212
+6/29/2019 4:21:21 PM|Event to Add by 1 - TITLE: asdf
+6/29/2019 4:21:21 PM|Event: Appt id - 1213
+6/29/2019 4:22:12 PM|Event to Add by 1 - TITLE: qwer
+6/29/2019 4:22:12 PM|Event: Appt id - 1214
+6/29/2019 4:23:30 PM|Event to Add by 1 - TITLE: qewr
+6/29/2019 4:23:30 PM|Event: Appt id - 1215
+6/29/2019 4:30:07 PM|Event to Add by 1 - TITLE: asdf
+6/29/2019 4:30:10 PM|Event: Appt id - 1216
+6/29/2019 7:53:09 PM|Event to Add by 1 - TITLE: dfgh
+6/29/2019 7:53:11 PM|Event: Appt id - 1217
+6/29/2019 9:20:29 PM|Event to Add by 1 - TITLE: test
+6/29/2019 9:20:32 PM|Event: Appt id - 1218
+6/29/2019 9:21:36 PM|Event to Add by 1 - TITLE: vacation
+6/29/2019 9:21:36 PM|Event: Appt id - 1219
+6/29/2019 9:22:47 PM|Event to Add by 1 - TITLE: test
+6/29/2019 9:22:47 PM|Event: Appt id - 1220
+6/29/2019 9:23:24 PM|Event to Add by 1 - TITLE: test 2
+6/29/2019 9:23:24 PM|Event: Appt id - 1221
+6/29/2019 9:24:22 PM|Event to Add by 1 - TITLE: test
+6/29/2019 9:24:22 PM|Event: Appt id - 1222
+6/29/2019 9:25:14 PM|Event to Add by 1 - TITLE: test
+6/29/2019 9:25:14 PM|Event: Appt id - 1223
+6/30/2019 9:16:41 PM|Event to Add by 1 - TITLE: all day
+6/30/2019 9:16:42 PM|Event: Appt id - 1224
+6/30/2019 9:21:56 PM|Event to Add by 1 - TITLE: adsf
+6/30/2019 9:21:56 PM|Event: Appt id - 1225
+6/30/2019 9:34:37 PM|Event to Add by 1 - TITLE: test 11-1
+6/30/2019 9:34:37 PM|Event: Appt id - 1226
+7/1/2019 7:08:26 PM|Event to Add by 1 - TITLE: test
+7/1/2019 7:08:26 PM|Event: Appt id - 1227
+7/4/2019 8:25:01 AM|Event to Add by 1 - TITLE: vaca
+7/4/2019 8:25:01 AM|Event: Appt id - 1222
+7/4/2019 8:58:43 AM|Event to Add by 1 - TITLE: vaca
+7/4/2019 8:58:43 AM|Event: Appt id - 1224
+7/4/2019 9:03:47 AM|Event to Add by 1 - TITLE: test
+7/4/2019 9:03:47 AM|Event: Appt id - 1225
+7/4/2019 9:07:28 AM|Event to Add by 1 - TITLE: asdf
+7/4/2019 9:07:28 AM|Event: Appt id - 1228
+7/4/2019 9:12:14 AM|Event to Add by 1 - TITLE: asdf
+7/4/2019 9:12:14 AM|Event: Appt id - 1229
+7/4/2019 9:22:06 AM|Event to Add by 1 - TITLE: asdf
+7/4/2019 9:22:07 AM|Event: Appt id - 1230
+7/4/2019 9:42:41 AM|Event to Add by 1 - TITLE: asdfasdf
+7/4/2019 9:42:41 AM|Event: Appt id - 1231
+7/4/2019 9:48:08 AM|Event to Add by 1 - TITLE: adsf
+7/4/2019 9:48:08 AM|Event: Appt id - 1232
+7/4/2019 9:50:48 AM|Event to Add by 1 - TITLE: asdfasdf
+7/4/2019 9:50:48 AM|Event: Appt id - 1233
+7/4/2019 9:52:06 AM|Event to Add by 1 - TITLE: adfsadf
+7/4/2019 9:52:06 AM|Event: Appt id - 1234
+7/4/2019 6:09:58 PM|Event to Add by 1 - TITLE: test event
+7/4/2019 6:10:00 PM|Event: Appt id - 1235
+7/4/2019 6:11:50 PM|Event to Add by 1 - TITLE: test event
+7/4/2019 6:11:50 PM|Event: Appt id - 1236
+7/4/2019 6:30:50 PM|Event to Add by 1 - TITLE: test
+7/4/2019 6:30:50 PM|Event: Appt id - 1237
+7/4/2019 6:38:08 PM|Event to Add by 1 - TITLE: test
+7/4/2019 6:38:08 PM|Event: Appt id - 1237
+7/4/2019 6:39:17 PM|Event to Add by 1 - TITLE: test updated
+7/4/2019 6:39:17 PM|Event: Appt id - 1237
+7/4/2019 6:46:48 PM|Event to Add by 1 - TITLE: all day
+7/4/2019 6:46:48 PM|Event: Appt id - 1238
+7/4/2019 6:47:29 PM|Event to Add by 1 - TITLE: all day
+7/4/2019 6:47:29 PM|Event: Appt id - 1238
+7/4/2019 7:51:17 PM|Event to Add by 1 - TITLE: test
+7/4/2019 7:51:17 PM|Event: Appt id - 1239
+7/4/2019 7:52:32 PM|Event to Add by 1 - TITLE: test
+7/4/2019 7:52:32 PM|Event: Appt id - 1240
+7/4/2019 7:53:56 PM|Event to Add by 1 - TITLE: test
+7/4/2019 7:53:56 PM|Event: Appt id - 1241
+7/4/2019 7:57:10 PM|Event to Add by 1 - TITLE: test
+7/4/2019 7:57:10 PM|Event: Appt id - 1242
+7/4/2019 8:33:02 PM|Event to Add by 1 - TITLE: florida
+7/4/2019 8:33:02 PM|Event: Appt id - 1243
+7/4/2019 8:33:34 PM|Event to Add by 1 - TITLE: merida
+7/4/2019 8:33:34 PM|Event: Appt id - 1244
+7/4/2019 8:41:13 PM|Event to Add by 1 - TITLE: test
+7/4/2019 8:41:13 PM|Event: Appt id - 1245
+7/4/2019 8:45:30 PM|Event to Add by 1 - TITLE: adsf
+7/4/2019 8:45:30 PM|Event: Appt id - 1246
+7/4/2019 8:45:51 PM|Event to Add by 1 - TITLE: qwer
+7/4/2019 8:45:51 PM|Event: Appt id - 1247
+7/5/2019 9:12:31 PM|Event to Add by 1 - TITLE: test | Start Date: 7/21/2019 12:00:00 AM (7/21/2019 12:00:00 AM)
+7/5/2019 9:12:31 PM|Event: Appt id - 1248
+7/5/2019 9:23:24 PM|Event to Add by 1 - TITLE: test | Start Date: 8/18/2019 12:00:00 AM (8/18/2019 12:00:00 AM)
+7/5/2019 9:23:24 PM|Event: Appt id - 1249
+7/10/2019 9:54:05 PM|Event to Add by 32 - TITLE: adsf | Start Date: 7/11/2019 9:00:00 AM (7/11/2019 9:00:00 AM)
+7/10/2019 9:54:08 PM|Event: Appt id - 1250
+7/10/2019 10:01:37 PM|Event to Add by 29 - TITLE: test | Start Date: 7/11/2019 9:15:00 AM (7/11/2019 9:15:00 AM)
+7/10/2019 10:01:37 PM|Event: Appt id - 1251
+7/11/2019 8:47:52 PM|Event to Add by 32 - TITLE: test | Start Date: 7/11/2019 9:15:00 AM (7/11/2019 9:15:00 AM)
+7/11/2019 8:47:53 PM|Event: Appt id - 1251
+7/11/2019 8:48:56 PM|Event to Add by 30 - TITLE: test | Start Date: 7/11/2019 9:15:00 AM (7/11/2019 9:15:00 AM)
+7/11/2019 8:48:56 PM|Event: Appt id - 1251
+7/11/2019 8:49:12 PM|Event to Add by 34 - TITLE: test | Start Date: 7/11/2019 9:15:00 AM (7/11/2019 9:15:00 AM)
+7/11/2019 8:49:12 PM|Event: Appt id - 1251
+7/11/2019 8:49:19 PM|Event to Add by 31 - TITLE: test | Start Date: 7/11/2019 9:15:00 AM (7/11/2019 9:15:00 AM)
+7/11/2019 8:49:19 PM|Event: Appt id - 1251
+7/11/2019 8:49:39 PM|Event to Add by 1 - TITLE: test | Start Date: 7/11/2019 9:15:00 AM (7/11/2019 9:15:00 AM)
+7/11/2019 8:49:39 PM|Event: Appt id - 1251
+7/11/2019 8:52:10 PM|Event to Add by 1 - TITLE: vacation | Start Date: 7/13/2019 12:00:00 AM (7/13/2019 12:00:00 AM)
+7/11/2019 8:52:10 PM|Event: Appt id - 1252
+7/11/2019 8:52:17 PM|Event to Add by 29 - TITLE: vacation | Start Date: 7/13/2019 12:00:00 AM (7/13/2019 12:00:00 AM)
+7/11/2019 8:52:17 PM|Event: Appt id - 1252
+7/11/2019 8:52:25 PM|Event to Add by 1 - TITLE: vacation | Start Date: 7/13/2019 12:00:00 AM (7/13/2019 12:00:00 AM)
+7/11/2019 8:52:25 PM|Event: Appt id - 1252
+7/11/2019 8:53:01 PM|Event to Add by 1 - TITLE: test | Start Date: 7/11/2019 12:00:00 PM (7/11/2019 12:00:00 PM)
+7/11/2019 8:53:01 PM|Event: Appt id - 1251
+7/21/2019 8:11:04 AM|Event to Add by 33 - TITLE: test | Start Date: 8/21/2019 12:00:00 AM (8/21/2019 12:00:00 AM)
+7/21/2019 8:11:05 AM|Event: Appt id - 1289
+7/21/2019 8:11:13 AM|Event to Add by 1 - TITLE: test | Start Date: 8/21/2019 12:00:00 AM (8/21/2019 12:00:00 AM)
+7/21/2019 8:11:13 AM|Event: Appt id - 1289
+7/24/2019 7:43:37 PM|Event to Add by 34 - TITLE: test | Start Date: 8/11/2019 12:00:00 AM (8/11/2019 12:00:00 AM)
+7/24/2019 7:43:37 PM|Event: Appt id - 1295
+7/25/2019 9:35:47 AM|  
+7/25/2019 9:35:47 AM|Start Date (string): 2019-08-11T14:00:00-05:00
+7/25/2019 9:35:47 AM|End Date (string)2019-08-11T16:00:00-05:00
+7/25/2019 9:35:47 AM|  
+7/25/2019 6:41:02 PM|  
+7/25/2019 6:41:02 PM|Start Date (string): 2019-08-11T17:00:00Z
+7/25/2019 6:41:02 PM|End Date (string)2019-08-11T19:00:00Z
+7/25/2019 6:41:02 PM|  
+8/12/2019 8:32:52 PM|User Logged in: Diego Cantu
+8/12/2019 8:35:01 PM|User Logged in: Diego Cantu
+8/12/2019 8:35:07 PM|User Logged OUT: gehenna73
+8/12/2019 8:36:46 PM|User Logged in: gehenna73(Diego Cantu)
+8/12/2019 8:36:57 PM|User Logged OUT: gehenna73
+11/28/2020 6:47:56 AM|My Hours: 
+12/10/2020 10:32:03 PM|My Hours: 
+12/13/2020 11:35:37 AM|My Hours: 
+12/13/2020 11:35:37 AM|12/13/2020 11:35:00 AM
+12/13/2020 4:08:59 PM|My Hours: 
+12/13/2020 4:08:59 PM|12/13/2020 11:35:00 AM
+12/13/2020 4:09:11 PM|My Hours: 
+12/13/2020 4:09:11 PM|12/13/2020 11:35:00 AM
+12/13/2020 5:25:26 PM|My Hours: 
+12/13/2020 5:25:27 PM|12/13/2020 11:35:00 AM
+12/13/2020 5:25:35 PM|My Hours: 
+12/13/2020 5:25:35 PM|12/13/2020 11:35:00 AM
+12/13/2020 5:25:35 PM|12/13/2020 4:09:00 PM
+12/13/2020 5:25:35 PM|12/13/2020 5:26:00 PM
+12/14/2020 7:30:27 PM|My Hours: 
+12/14/2020 7:30:27 PM|12/14/2020 7:08:00 AM
+12/15/2020 11:57:01 AM|My Hours: 
+12/15/2020 11:57:01 AM|12/15/2020 9:11:00 AM
+12/15/2020 11:57:01 AM|12/15/2020 10:42:00 AM
+12/15/2020 11:57:01 AM|12/15/2020 11:40:00 AM
+12/15/2020 11:57:28 AM|My Hours: 
+12/15/2020 11:57:28 AM|12/15/2020 9:11:00 AM
+12/15/2020 11:57:28 AM|12/15/2020 10:42:00 AM
+12/15/2020 11:57:28 AM|12/15/2020 11:40:00 AM
+12/20/2020 7:43:56 PM|My Hours: 
+12/20/2020 7:43:56 PM|12/20/2020 7:38:00 PM
+12/20/2020 7:46:37 PM|Admin.UpdateHours error: String was not recognized as a valid DateTime.
+12/20/2020 7:57:59 PM|Admin.UpdateHours error: String was not recognized as a valid DateTime.
+12/20/2020 9:09:18 PM|My Hours: 
+12/20/2020 9:09:18 PM|12/20/2020 7:38:00 PM
+12/20/2020 9:09:18 PM|12/20/2020 7:56:00 PM
+12/20/2020 9:09:18 PM|12/20/2020 9:05:00 PM
+12/20/2020 9:10:28 PM|My Hours: 
+12/20/2020 9:10:28 PM|12/20/2020 9:10:00 PM
+12/20/2020 9:19:21 PM|My Hours: 
+12/20/2020 9:19:21 PM|12/20/2020 9:10:00 PM
+12/20/2020 9:19:21 PM|My Hours: 
+12/20/2020 9:19:21 PM|12/20/2020 9:10:00 PM
+12/20/2020 9:46:21 PM|My Hours: 
+12/20/2020 9:46:21 PM|12/20/2020 9:10:00 PM
+12/20/2020 9:46:21 PM|12/20/2020 9:20:00 PM
+12/20/2020 9:46:21 PM|12/20/2020 9:37:00 PM
+12/21/2020 7:15:50 AM|Admin.UpdateHours error: LogInDate - Sat Nov 28 2020 10:11:00 GMT-0600
+12/21/2020 7:15:50 AM|Admin.UpdateHours error: LogOutDate - Sat Nov 28 2020 15:00:00 GMT-0600
+12/21/2020 7:28:08 AM|Admin.UpdateHours error: LogInDate - Sat Nov 28 2020 10:11:00 GMT-0600
+12/21/2020 7:28:08 AM|Admin.UpdateHours error: LogOutDate - Sat Nov 28 2020 15:00:00 GMT-0600
+12/21/2020 8:58:40 AM|************************************************************************
+12/21/2020 8:58:40 AM|Admin.UpdateHours input param: LogInDate - Sat Nov 28 2020 06:11:00
+12/21/2020 8:58:41 AM|Admin.UpdateHours input param: LogOutDate - Sat Nov 28 2020 00:00:00
+12/21/2020 8:58:44 AM|Admin.UpdateHours error: String was not recognized as a valid DateTime.
+12/21/2020 9:04:02 AM|************************************************************************
+12/21/2020 9:04:02 AM|Admin.UpdateHours input param: LogInDate - Sat Nov 28 2020 06:11:00
+12/21/2020 9:04:03 AM|Admin.UpdateHours input param: LogOutDate - Sat Nov 28 2020 00:00:00
+12/21/2020 9:04:24 AM|Admin.UpdateHours converted:  objACH.LoginDatetime - 11/28/2020 6:11:00 AM
+12/21/2020 9:04:24 AM|Admin.UpdateHours converted: objACH.LogoutDatetime - 11/28/2020 12:00:00 AM
+12/21/2020 9:04:24 AM|************************************************************************
+12/22/2020 7:26:42 AM|My Hours: 
+12/22/2020 8:38:55 AM|My Hours: 
+12/22/2020 8:38:55 AM|12/22/2020 7:31:00 AM
+12/22/2020 8:38:55 AM|12/22/2020 7:41:00 AM
+12/22/2020 8:38:55 AM|12/22/2020 7:49:00 AM
+12/22/2020 8:38:55 AM|12/22/2020 8:20:00 AM
+12/22/2020 8:38:55 AM|12/22/2020 8:37:00 AM
+12/23/2020 6:20:36 AM|My Hours: 
+12/23/2020 6:21:51 AM|My Hours: 
+12/23/2020 7:07:55 AM|My Hours: 
+12/23/2020 7:07:55 AM|12/23/2020 7:08:00 AM
+12/23/2020 7:20:36 AM|My Hours: 
+12/23/2020 7:20:36 AM|12/23/2020 7:19:00 AM
+12/23/2020 7:41:56 AM|My Hours: 
+12/23/2020 7:41:56 AM|12/23/2020 7:19:00 AM
+12/23/2020 7:41:56 AM|12/23/2020 7:27:00 AM
+12/23/2020 7:41:56 AM|12/23/2020 7:42:00 AM
+1/21/2021 3:38:49 PM|************************************************************************
+1/21/2021 3:38:49 PM|Admin.UpdateHours input param: LogInDate - Thu Jan 21 2021 14:06:00
+1/21/2021 3:38:49 PM|Admin.UpdateHours input param: LogOutDate - Thu Jan 21 2021 14:36:00
+1/21/2021 3:38:49 PM|Admin.UpdateHours converted:  objACH.LoginDatetime - 1/21/2021 2:06:00 PM
+1/21/2021 3:38:49 PM|Admin.UpdateHours converted: objACH.LogoutDatetime - 1/21/2021 2:36:00 PM
+1/21/2021 3:38:49 PM|************************************************************************
+1/23/2021 11:14:41 AM|My Hours: 
+1/23/2021 11:14:41 AM|1/23/2021 10:22:00 AM
+1/25/2021 4:50:34 PM|My Hours: 
+1/25/2021 4:50:34 PM|1/25/2021 10:42:00 AM
+1/25/2021 4:50:34 PM|1/25/2021 2:36:00 PM
+1/25/2021 4:50:34 PM|1/25/2021 3:29:00 PM
+1/25/2021 5:16:54 PM|My Hours: 
+1/25/2021 5:16:54 PM|1/25/2021 10:42:00 AM
+1/25/2021 5:16:54 PM|1/25/2021 2:36:00 PM
+1/25/2021 5:16:54 PM|1/25/2021 3:29:00 PM
+1/25/2021 5:17:19 PM|My Hours: 
+1/25/2021 5:17:19 PM|1/25/2021 10:42:00 AM
+1/25/2021 5:17:19 PM|1/25/2021 2:36:00 PM
+1/25/2021 5:17:19 PM|1/25/2021 3:29:00 PM
+1/25/2021 5:17:22 PM|My Hours: 
+1/25/2021 5:17:22 PM|1/25/2021 10:42:00 AM
+1/25/2021 5:17:22 PM|1/25/2021 2:36:00 PM
+1/25/2021 5:17:22 PM|1/25/2021 3:29:00 PM
+1/26/2021 10:52:51 AM|My Hours: 
+1/26/2021 10:52:51 AM|1/26/2021 10:38:00 AM
+1/26/2021 10:55:40 AM|My Hours: 
+1/26/2021 10:55:40 AM|1/26/2021 10:38:00 AM
+1/26/2021 10:58:11 AM|My Hours: 
+1/26/2021 10:58:11 AM|1/26/2021 10:38:00 AM
+1/26/2021 10:58:21 AM|My Hours: 
+1/26/2021 10:58:21 AM|1/26/2021 10:38:00 AM
+1/26/2021 11:03:51 AM|My Hours: 
+1/26/2021 11:03:51 AM|1/26/2021 10:38:00 AM
+1/26/2021 11:15:34 AM|My Hours: 
+1/26/2021 11:15:34 AM|1/26/2021 10:38:00 AM
+1/26/2021 11:25:53 AM|My Hours: 
+1/26/2021 11:25:53 AM|1/26/2021 10:38:00 AM
+1/26/2021 11:28:02 AM|My Hours: 
+1/26/2021 11:28:02 AM|1/26/2021 10:38:00 AM
+1/26/2021 12:44:09 PM|My Hours: 
+1/26/2021 12:44:09 PM|1/26/2021 10:38:00 AM
+1/26/2021 12:56:41 PM|My Hours: 
+1/26/2021 12:56:41 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:01:15 PM|My Hours: 
+1/26/2021 1:01:15 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:08:12 PM|My Hours: 
+1/26/2021 1:08:12 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:08:48 PM|My Hours: 
+1/26/2021 1:08:48 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:11:00 PM|My Hours: 
+1/26/2021 1:11:00 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:11:14 PM|My Hours: 
+1/26/2021 1:11:14 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:18:50 PM|My Hours: 
+1/26/2021 1:18:50 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:21:22 PM|My Hours: 
+1/26/2021 1:21:22 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:21:50 PM|My Hours: 
+1/26/2021 1:21:50 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:23:30 PM|My Hours: 
+1/26/2021 1:23:30 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:28:43 PM|My Hours: 
+1/26/2021 1:28:43 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:29:20 PM|My Hours: 
+1/26/2021 1:29:20 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:30:28 PM|My Hours: 
+1/26/2021 1:30:28 PM|1/26/2021 10:38:00 AM
+1/26/2021 1:31:00 PM|My Hours: 
+1/26/2021 1:31:00 PM|1/26/2021 10:38:00 AM
+1/26/2021 3:32:55 PM|My Hours: 
+1/26/2021 3:32:55 PM|1/26/2021 10:38:00 AM
+1/26/2021 3:32:55 PM|1/26/2021 2:46:00 PM
+1/26/2021 3:32:55 PM|1/26/2021 3:26:00 PM
+1/26/2021 4:58:39 PM|My Hours: 
+1/26/2021 4:58:39 PM|1/26/2021 10:38:00 AM
+1/26/2021 4:58:39 PM|1/26/2021 2:46:00 PM
+1/26/2021 4:58:39 PM|1/26/2021 3:26:00 PM
+1/28/2021 2:08:30 PM|My Hours: 
+1/28/2021 2:08:30 PM|1/28/2021 10:44:00 AM
+1/28/2021 4:32:05 PM|My Hours: 
+1/28/2021 4:32:05 PM|1/28/2021 10:44:00 AM
+1/28/2021 4:32:05 PM|1/28/2021 2:09:00 PM
+1/28/2021 4:32:05 PM|1/28/2021 2:41:00 PM
+1/28/2021 4:33:31 PM|My Hours: 
+1/28/2021 4:33:31 PM|1/28/2021 10:44:00 AM
+1/28/2021 4:33:31 PM|1/28/2021 2:09:00 PM
+1/28/2021 4:33:31 PM|1/28/2021 2:41:00 PM
+1/28/2021 4:37:46 PM|My Hours: 
+1/28/2021 4:37:46 PM|1/28/2021 10:44:00 AM
+1/28/2021 4:37:46 PM|1/28/2021 2:09:00 PM
+1/28/2021 4:37:46 PM|1/28/2021 2:41:00 PM
+1/28/2021 4:39:12 PM|My Hours: 
+1/28/2021 4:39:12 PM|1/28/2021 10:44:00 AM
+1/28/2021 4:39:12 PM|1/28/2021 2:09:00 PM
+1/28/2021 4:39:12 PM|1/28/2021 2:41:00 PM
+1/28/2021 4:47:16 PM|My Hours: 
+1/28/2021 4:47:16 PM|1/28/2021 10:44:00 AM
+1/28/2021 4:47:16 PM|1/28/2021 2:09:00 PM
+1/28/2021 4:47:16 PM|1/28/2021 2:41:00 PM
+1/29/2021 11:33:43 AM|My Hours: 
+1/29/2021 11:33:43 AM|1/29/2021 10:33:00 AM
+1/29/2021 2:04:21 PM|My Hours: 
+1/29/2021 2:04:21 PM|1/29/2021 10:33:00 AM
+1/29/2021 2:30:10 PM|My Hours: 
+1/29/2021 2:30:10 PM|1/29/2021 10:33:00 AM
+1/29/2021 2:32:01 PM|My Hours: 
+1/29/2021 2:32:01 PM|1/29/2021 10:33:00 AM
+1/29/2021 2:33:03 PM|My Hours: 
+1/29/2021 2:33:03 PM|1/29/2021 10:33:00 AM
+1/29/2021 2:33:13 PM|My Hours: 
+1/29/2021 2:33:13 PM|1/29/2021 10:33:00 AM
+1/29/2021 2:33:53 PM|My Hours: 
+1/29/2021 2:33:53 PM|1/29/2021 10:33:00 AM
+2/13/2021 12:09:21 PM|My Hours: 
+2/13/2021 12:09:21 PM|2/13/2021 11:01:00 AM
+2/13/2021 12:11:55 PM|My Hours: 
+2/13/2021 12:11:55 PM|2/13/2021 11:01:00 AM
+2/13/2021 12:12:44 PM|My Hours: 
+2/13/2021 12:12:44 PM|2/13/2021 11:01:00 AM
+2/13/2021 5:30:37 PM|Event to Add by 32 - TITLE: *MAYRA* JORDY BRAVO REMOVICION DE CONDICIONES  | Start Date: 2/12/2021 10:30:00 AM (2/12/2021 10:30:00 AM)
+2/13/2021 5:30:37 PM|Event: Appt id - 2154
+2/20/2021 12:07:02 PM|Event to Add by 29 - TITLE: *JACKIE* ROSA CERON Y HIJA KAROL CERON 214 881-0568 TAXAS REGULARES  | Start Date: 2/21/2021 1:00:00 PM (2/21/2021 1:00:00 PM)
+2/20/2021 12:07:05 PM|Event: Appt id - 2106
+2/20/2021 12:08:02 PM|Event to Add by 29 - TITLE: *JACKIE* ROSA CERON Y HIJA KAROL CERON 214 881-0568 TAXAS REGULARES  | Start Date: 2/21/2021 1:00:00 PM (2/21/2021 1:00:00 PM)
+2/20/2021 12:08:03 PM|Event: Appt id - 2106
+2/20/2021 12:14:20 PM|Event to Add by 30 - TITLE: SILVIA* JAIME VAZQUEZ, TAXAS | Start Date: 2/27/2021 1:30:00 PM (2/27/2021 1:30:00 PM)
+2/20/2021 12:14:21 PM|Event: Appt id - 2236
+2/20/2021 12:25:02 PM|Event to Add by 32 - TITLE: *MAYRA* SAN JUANA PADIERNA | Start Date: 2/24/2021 4:30:00 PM (2/24/2021 4:30:00 PM)
+2/20/2021 12:25:02 PM|Event: Appt id - 2259
+2/20/2021 12:25:42 PM|Event to Add by 32 - TITLE: *MAYRA* SANJUANA PADIERNA (469)909-7930 IMPUESTOS FEDERALES 2020 | Start Date: 2/24/2021 4:30:00 PM (2/24/2021 4:30:00 PM)
+2/20/2021 12:25:42 PM|Event: Appt id - 2246
+2/20/2021 12:31:17 PM|Event to Add by 48 - TITLE: OPEN* GLORIA GONZALEZ TAXAS | Start Date: 2/22/2021 12:00:00 PM (2/22/2021 12:00:00 PM)
+2/20/2021 12:31:17 PM|Event: Appt id - 2260
+2/20/2021 3:45:32 PM|Event to Add by 0 - TITLE: OPEN* GLORIA GONZALEZ TAXAS | Start Date: 2/22/2021 12:00:00 PM (2/22/2021 12:00:00 PM)
+2/20/2021 3:45:33 PM|Event add FAILED
+2/20/2021 3:45:36 PM|Event to Add by 0 - TITLE: OPEN* GLORIA GONZALEZ TAXAS | Start Date: 2/22/2021 12:00:00 PM (2/22/2021 12:00:00 PM)
+2/20/2021 3:45:36 PM|Event add FAILED
+2/20/2021 4:20:08 PM|Event to Add by 0 - TITLE: OPEN* GLORIA GONZALEZ TAXAS | Start Date: 2/22/2021 12:00:00 PM (2/22/2021 12:00:00 PM)
+2/20/2021 4:20:51 PM|Event add FAILED
+2/20/2021 4:36:31 PM|Event to Add by 30 - TITLE: JOSE PADRON, TAXAS | Start Date: 2/21/2021 10:30:00 AM (2/21/2021 10:30:00 AM)
+2/20/2021 4:36:31 PM|Event: Appt id - 2262
+2/20/2021 6:33:19 PM|Event to Add by 48 - TITLE: OPEN* Uriel Diaz, renovar DACA | Start Date: 2/21/2021 10:30:00 AM (2/21/2021 10:30:00 AM)
+2/20/2021 6:33:20 PM|Event: Appt id - 2263
+2/20/2021 6:33:37 PM|Event to Add by 30 - TITLE: Ana EStrada 2 taxes 2020 2147600163 | Start Date: 2/21/2021 10:30:00 AM (2/21/2021 10:30:00 AM)
+2/20/2021 6:33:38 PM|Event: Appt id - 2250
+2/21/2021 1:09:38 PM|My Hours: 
+2/21/2021 1:09:38 PM|2/21/2021 10:10:00 AM
+2/22/2021 11:55:23 AM|My Hours: 
+2/22/2021 11:55:23 AM|2/22/2021 10:40:00 AM
+2/22/2021 12:42:52 PM|My Hours: 
+2/22/2021 12:42:52 PM|2/22/2021 10:40:00 AM

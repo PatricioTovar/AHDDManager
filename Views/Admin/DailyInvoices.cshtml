@@ -1,0 +1,607 @@
+﻿
+
+<!DOCTYPE html>
+
+
+
+<script src="~/Scripts/Utilities.js"></script>
+<link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Daiy Invoices</title>
+
+    <style>
+        /*
+                     .accordion .card-header:after {
+            font-family: 'FontAwesome';
+            content: "\f068";
+            float: right;
+        }
+        .accordion .card-header.collapsed:after {
+            //symbol for "collapsed" panels
+            content: "\f067";
+        }
+                */
+        .card-header {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 0;
+            border-bottom: 1px solid rgba(0,0,0,0.8);
+        }
+    </style>
+
+
+
+
+
+    <script>
+        $(function () {
+            var _now = new Date;
+            var transactionResults = [];
+            var totalCollectedToday = 0;
+            var totalRefundedToday = 0;
+
+            $("#dpTransactionDate").datepicker();
+
+            $.fn.bootstrapBtn = $.fn.button.noConflict();
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $("#dpTransactionDate").val(_now.getMonth() + 1 + "/" + _now.getDate() + "/" + _now.getFullYear());
+
+            $('#divCollected').text('$0.00');
+            $('#divPaid').text('($0.00)');
+
+            $("#dpStart").datepicker();
+            $("#dpEnd").datepicker();
+
+            //$.fn.bootstrapBtn = $.fn.button.noConflict();
+
+            var _now = new Date;
+
+            $("#dpStart").datepicker().datepicker("setDate", new Date());
+            $("#dpEnd").datepicker().datepicker("setDate", new Date());
+
+            var paymentdialog = $("#payments-dialog").dialog({
+                autoOpen: false,
+                height: 500,
+                width: 900,
+                //position: ['middle', 128],
+                modal: true,
+                draggable: false,
+                buttons: {
+                    Cancel: function () {
+                        paymentdialog.dialog("close");
+                    }
+                },
+                close: function () {
+                    paymentdialog.dialog("close");
+                }
+            });
+
+
+            var refunddialog = $("#refunds-dialog").dialog({
+                autoOpen: false,
+                height: 500,
+                width: 900,
+                //position: ['middle', 128],
+                modal: true,
+                draggable: false,
+                buttons: {
+                    Cancel: function () {
+                        refunddialog.dialog("close");
+                    }
+                },
+                close: function () {
+                    refunddialog.dialog("close");
+                }
+            });
+
+
+            function loadTransactions(url, tableName, errorCode, showTotalCollected, showTotalRefunded, headerTitle, titleText) {
+                $.ajax({
+                    url: url,
+                    data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
+                    type: 'POST',
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        if (result.length == 0) {
+                            //THIS NEEDS TO GO
+                            //StoreFlavor = "<tr><td>No Results</td></tr>";
+                            //$("#tblCustomers").append(StoreFlavor);
+                        } else {
+                            $(tableName).find('tr:gt(0)').remove();
+
+                            var collected = 0;
+                            var refunded = 0;
+
+                            totalCollectedToday = 0;
+                            totalRefundedToday = 0;
+
+                            headerTitle.text(titleText + ' (' + result.length + ')');
+
+                            $.each(result, function (key, value) {
+                                transactionResults.push(value);
+
+                                if (showTotalRefunded) {
+                                    refunded = GetTodaysRefundTotal(value);
+
+                                    totalRefundedToday += refunded;
+
+                                }
+
+                                if (showTotalCollected) {
+                                    collected = GetTodaysPaymentTotal(value);
+
+                                    totalCollectedToday += collected;
+                                }
+
+
+                                var _transdate = new Date(parseInt(value.TransactionDate.substr(6)));
+                                _transdate = (_transdate.getMonth() + 1) + '/' + _transdate.getDate() + '/' + _transdate.getFullYear();
+
+                                Transaction = "<tr id=\"" + value.TransactionID + "\">" +
+                                    "<td><a href='/transactions/transactiondetails/" + value.TransactionID + "' target='_blank'>" + value.TransactionID + "</a></td>" +
+                                    "<td>" + value.CustomerName + "</td>" +
+                                    "<td>" + _transdate + "</td>" +
+                                    "<td class='currencyLabel'>" + value.TotalAmount + "</td>" +
+                                    "<td class='currencyLabel'>" + value.PaymentAmount + "</td>" +  //what was paid today
+
+                                    "<td class='currencyLabel' " + (refunded == 0 ? ">" + refunded : "style='color:red'>( " + refunded + " )") + "</td>" +
+                                    "<td>" + value.TakenBy + "</td>" +
+                                    "<td><img id='" + value.TransactionID + "' class='details' src='/images/details.png' /></td>" +
+                                    "<td><img id='" + value.TransactionID + "' class='refunds' src='/images/Refund.png' /></td>"
+
+                                "</tr>";
+                                $(tableName).append(Transaction);
+
+                            });
+
+
+                            if (showTotalCollected) {
+                                $('#divCollected').text(totalCollectedToday);
+                            }
+
+                            if (showTotalRefunded) {
+                                $('#divPaid').text('( ' + totalRefundedToday + ' )');
+                            }
+
+                            $('[data-toggle="tooltip"]').tooltip();
+                            $('.currencyLabel').formatCurrency();
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //alert(errorCode);
+                        $.AlertDialog(errorCode, 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                });
+            }
+
+
+            function LoadPayMethodCounts() {
+
+                $.ajax({
+                    url: '/admin/GetPayMethodCountsByDateRange/',
+                    type: 'POST',
+                    data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        _total = result.OverallTotal;
+
+                        if (result != null) {
+                            $("#tblCollections").append('<tr><td colspan="6"> <p></p></td></tr>');
+
+                            $("#tblCollections").append("<tr><td><strong>Total:</strong></td><td class='currencyLabel'><strong> " + _total + "</strong></td></tr>");
+
+                            $("#tblCollections").append('<tr><td colspan="6"> <p></p></td></tr>');
+
+                            $.each(result.ret, function (key, value) {
+                                row = "<tr><td><strong>" + value.PaymentMethod + " (" + value.MethodCount + "):</strong></td>  <td class='currencyLabel'><strong>" + value.TotalAmount + "</strong></td>"
+
+                                $("#tblCollections").append(row);
+                            });
+                            $('.currencyLabel').formatCurrency();
+
+                        } else {
+
+                            //ERROR HANDLING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                        }
+                    }
+                });
+
+
+
+                $('.currencyLabel').formatCurrency();
+
+            }
+
+
+            function resetTables() {
+
+                $("#tblCollections tr:gt(0)").remove();
+                $("#tblTransactions tr:gt(0)").remove();
+                $("#tblTransCompletedWOPayents tr:gt(0)").remove();
+                $("#tblTransCancelledWRefunds tr:gt(0)").remove();
+                $("#tblTransCancelledWORefunds tr:gt(0)").remove();
+                $("#tblTransOpenedWORefunds tr:gt(0)").remove();
+
+                $('#hdrTransactions').text('Transactions with Payments (0)');
+                $('#hdrCompleteWOPay').text('Transactions Completed with out Payments (0)');
+                $('hdrCancelledWRef').text('Transactions Cancelled with Refunds (0)');
+                $('#hdrCancelledWORef').text('Transactions Cancelled with out Refunds (0)');
+                $('#hdrOpenWOPay').text('Transactions Opened with out Payments (0)');
+
+            }
+
+            $("#btnSearch").on('click', function (event) {
+                if (Date.parse($("#dpEnd").val()) < Date.parse($("#dpStart").val())) {
+                    //alert('End date cannot be before start date');
+                    $.AlertDialog('End date cannot be before start date', 'Error Message', function (event) { }, 'lightcoral');
+                }
+                else {
+                    resetTables();
+
+                    //get today's transactions with Payments
+                    loadTransactions('/admin/GetTransactionsWithPayments/', $("#tblTransactions"), 'Error getting today\'s transactions with payments.', true, false, $('#hdrTransactions'), 'Transactions with Payments');
+                    //get today's transactions completed w/o Payments
+                    loadTransactions('/admin/GetTransCompletedWOPaymentByDate/', $("#tblTransCompletedWOPayents"), 'Error getting today\'s transactions completed with out payments.', false, false, $('#hdrCompleteWOPay'), 'Transactions Completed with out Payments');
+                    //get Transactions Cancelled with Refunds
+                    loadTransactions('/admin/GetTransCancelledWRefundByDate/', $("#tblTransCancelledWRefunds"), 'Error getting today\'s transactions cancelled with refunds.', false, true, $('hdrCancelledWRef'), "Transactions Cancelled with Refunds");
+                    //get Transactions Cancelled with out Refunds
+                    loadTransactions('/admin/GetTransCancelledWORefundByDate/', $("#tblTransCancelledWORefunds"), 'Error getting today\'s transactions cancelled with out refunds.', false, false, $('#hdrCancelledWORef'), 'Transactions Cancelled with out Refunds');
+                    //get Transactions Cancelled with out Refunds
+                    loadTransactions('/admin/GetTransOpenWOPaymentByDate/', $("#tblTransOpenedWORefunds"), 'Error getting today\'s transactions Opened with out payments.', false, false, $('#hdrOpenWOPay'), 'Transactions Opened with out Payments');
+
+
+                    LoadPayMethodCounts();
+
+                }
+            });
+
+
+            $("table").on('click', '.details', function (event) {
+                event.preventDefault();
+
+                LoadPayments($(this).closest('tr').attr("id"));
+                paymentdialog.dialog("open");
+            });
+
+
+            $("table").on('click', '.refunds', function (event) {
+                event.preventDefault();
+
+                LoadRefunds($(this).closest('tr').attr("id"));
+                refunddialog.dialog("open");
+            });
+
+
+            function GetTodaysPaymentTotal(transaction) {
+                var moneyCollectedToday = 0;
+
+                $.each(transaction.PaymentsCollected, function (key, payment) {
+                    var _paymentdate = new Date(parseInt(payment.PaymentDate.substr(6)));
+                    _paymentdate = (_paymentdate.getMonth() + 1) + '/' + _paymentdate.getDate() + '/' + _paymentdate.getFullYear();
+
+                    if (Date.parse(_paymentdate) <= Date.parse($("#dpEnd").val()) && (Date.parse(_paymentdate) >= Date.parse($("#dpStart").val()))) {
+                        moneyCollectedToday += payment.PaymentAmount;
+                    }
+                });
+
+                return moneyCollectedToday;
+            }
+
+
+            function GetTodaysRefundTotal(transaction) {
+                var moneyCollectedToday = 0;
+
+                $.each(transaction.RefundsPaid, function (key, refund) {
+                    var _refunddate = new Date(parseInt(refund.RefundDate.substr(6)));
+                    _refunddate = (_refunddate.getMonth() + 1) + '/' + _refunddate.getDate() + '/' + _refunddate.getFullYear();
+
+                    if (Date.parse(_refunddate) <= Date.parse($("#dpEnd").val()) && (Date.parse(_refunddate) >= Date.parse($("#dpStart").val()))) {
+                        moneyCollectedToday += refund.RefundAmount;
+                    }
+
+                });
+
+                return moneyCollectedToday;
+            }
+
+
+
+            function LoadPayments(transactionID) {
+                //var x = transactionResults.findIndex(x => x.id === '8');
+                for (var i = 0, len = transactionResults.length; i < len; i++) {
+                    if (transactionResults[i].TransactionID == transactionID) {
+                        $("#tblPayments tr:gt(0)").remove();
+
+                        $.each(transactionResults[i].PaymentsCollected, function (key, value) {
+
+                            var _date = new Date(parseInt(value.PaymentDate.substr(6)));
+                            _date = (_date.getMonth() + 1) + '/' + _date.getDate() + '/' + _date.getFullYear();
+
+                            //var todaysPaymentTotal = GetTodaysPaymentTotal();
+
+                            var today = new Date();
+                            today = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
+
+                            //$("#lblNoteCount").text('Count: ' + result.length);
+                            //if (_date == today) {
+                            var row = '<tr>' +
+                                "<td>" + value.PaymentID + "</td>" +
+                                "<td>" + _date + "</td>" +
+                                "<td class='currencyLabel'>" + value.PaymentAmount + "</td>" +
+                                "<td>" + value.PaymentMethodDescription + "</td>" +
+                                "<td>" + value.CheckNumber + "</td>" +
+                                "<td>" + value.TakenBy + "</td>" +
+                                "</tr>"
+                            $("#tblPayments").append(row);
+                            //}
+
+                            $('.currencyLabel').formatCurrency();
+                        });
+                    }
+                }
+
+                var i = 0;
+            }
+
+            function LoadRefunds(transactionID) {
+                //var x = transactionResults.findIndex(x => x.id === '8');
+                for (var i = 0, len = transactionResults.length; i < len; i++) {
+                    if (transactionResults[i].TransactionID == transactionID) {
+                        $("#tblRefunds tr:gt(0)").remove();
+
+                        $.each(transactionResults[i].RefundsPaid, function (key, value) {
+
+                            var _date = new Date(parseInt(value.RefundDate.substr(6)));
+                            _date = (_date.getMonth() + 1) + '/' + _date.getDate() + '/' + _date.getFullYear();
+
+                            //var todaysPaymentTotal = GetTodaysPaymentTotal();
+
+                            var today = new Date();
+                            today = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
+
+                            //$("#lblNoteCount").text('Count: ' + result.length);
+                            //if (_date == today) {
+                            var row = '<tr>' +
+                                "<td>" + value.RefundID + "</td>" +
+                                "<td>" + value.TransactionID + "</td>" +
+                                "<td class='currencyLabel'>" + value.RefundAmount + "</td>" +
+                                "<td>" + _date + "</td>" +
+                                "<td>" + value.RefundedByName + "</td>" +
+                                "</tr>"
+                            $("#tblRefunds").append(row);
+                            //}
+
+                            $('.currencyLabel').formatCurrency();
+                        });
+                    }
+                }
+
+                var i = 0;
+            }
+
+        });
+    </script>
+
+</head>
+<body>
+
+    <h2>Today's Transactions</h2>
+
+
+    <div class="well">
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label for="dpStart">Start Date:</label>
+                <div class="input-group margin-bottom-sm">
+                    <input type="text" id="dpStart" class="form-control" readonly />
+                    <span class="input-group-addon btn btn-default" onclick="$('#dpStart').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dpEnd">End Date:</label>
+                <div class="input-group margin-bottom-sm">
+                    <input type="text" id="dpEnd" class="form-control" readonly />
+                    <span class="input-group-addon btn btn-default" onclick="$('#dpEnd').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="empty-label">&nbsp;</label>
+                <button id="btnSearch" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-lg-6"><strong>Total Money Collected:</strong> <div id="divCollected" class='currencyLabel'></div></div>
+            <div class="col-lg-6"><strong>Total Money Paid Out:</strong> <div id="divPaid" style="color:red;" class='currencyLabel'></div></div>
+        </div>
+        <div>
+            <table id="tblCollections" class="table"></table>
+        </div>
+    </div>
+
+
+
+    <div class="container">
+        <div id="accordion" class="accordion">
+            <div class="card mb-0">
+                <div class="card-header collapsed" data-toggle="collapse" style="background-color:beige;" href="#collapseOne">
+                    <a class="card-title">
+                        <h4 id="hdrTransactions">Transactions with Payments (0)</h4>
+                    </a>
+                </div>
+                <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
+
+                    <table id="tblTransactions" class="table table-striped">
+                        <tr style="background-color:aquamarine">
+                            <th>Receipt No</th>
+                            <th>Customer Name</th>
+                            <th>Receipt Date</th>
+                            <th>Receipt Amount</th>
+                            <th>Paid Today</th>
+                            @*<th>Pay Mthd</th>*@
+                            <th>Refunded</th>
+                            <th>Rep</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-header collapsed" data-toggle="collapse" style="background-color:beige;" data-parent="#accordion" href="#collapseThree">
+                    <a class="card-title">
+                        <h4 id="hdrCancelledWRef">Transactions Cancelled with Refunds (0)</h4>
+                    </a>
+                </div>
+                <div id="collapseThree" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+
+                        <table id="tblTransCancelledWRefunds" class="table table-striped">
+                            <tr style="background-color:aquamarine">
+                                <th>Receipt No</th>
+                                <th>Customer Name</th>
+                                <th>Receipt Date</th>
+                                <th>Receipt Amount</th>
+                                <th>Paid Today</th>
+                                <th>Refunded Today</th>
+                                <th>Rep</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-header collapsed" data-toggle="collapse" style="background-color:beige;" data-parent="#accordion" href="#collapseTwo">
+                    <a class="card-title">
+                        <h4 id="hdrCompleteWOPay">Transactions Completed with out Payments (0)</h4>
+                    </a>
+                </div>
+                <div id="collapseTwo" class="collapse" data-parent="#accordion">
+
+                    <table id="tblTransCompletedWOPayents" class="table table-striped">
+                        <tr style="background-color:aquamarine">
+                            <th>Receipt No</th>
+                            <th>Customer Name</th>
+                            <th>Receipt Date</th>
+                            <th>Receipt Amount</th>
+                            <th>Paid Today</th>
+                            <th>Refunded Today</th>
+                            <th>Rep</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" style="background-color:beige;" href="#collapseFour">
+                    <a class="card-title">
+                        <h4 id="hdrCancelledWORef">Transactions Cancelled with out Refunds (0)</h4>
+                    </a>
+                </div>
+                <div id="collapseFour" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+
+
+                        <table id="tblTransCancelledWORefunds" class="table table-striped">
+                            <tr style="background-color:aquamarine">
+                                <th>Receipt No</th>
+                                <th>Customer Name</th>
+                                <th>Receipt Date</th>
+                                <th>Receipt Amount</th>
+                                <th>Paid Today</th>
+                                <th>Refunded Today</th>
+                                <th>Rep</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" style="background-color:beige;" href="#collapseFive">
+                    <a class="card-title">
+                        <h4 id="hdrOpenWOPay">Transactions Opened with out Payments (0)</h4>
+                    </a>
+                </div>
+                <div id="collapseFive" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+
+
+                        <table id="tblTransOpenedWORefunds" class="table table-striped">
+                            <tr style="background-color:aquamarine">
+                                <th>Receipt No</th>
+                                <th>Customer Name</th>
+                                <th>Receipt Date</th>
+                                <th>Receipt Amount</th>
+                                <th>Paid Today</th>
+                                <th>Refunded Today</th>
+                                <th>Rep</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div id="payments-dialog" title="Payments Collected">
+
+        <h3>Payments Collected</h3>
+        <div class="container">
+            <table id="tblPayments" class="table table-striped">
+                <tr>
+                    <th>Pay ID</th>
+                    <th>Pay Date</th>
+                    <th>Amount</th>
+                    <th>Pay Method</th>
+                    <th>Check #</th>
+                    <th>Reeceipt Creator</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+
+    <div id="refunds-dialog" title="Refunds Paid">
+
+        <h3>Refunds</h3>
+        <div class="container">
+            <table id="tblRefunds" class="table table-striped">
+                <tr>
+                    <th>Refund ID</th>
+                    <th>Trans ID</th>
+                    <th>Amount</th>
+                    <th>Refund Date</th>
+                    <th>Refunded By</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+
+
+</body>
+</html>

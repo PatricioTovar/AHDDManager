@@ -1,0 +1,291 @@
+﻿@{
+    ViewBag.Title = "Forms";
+}
+
+<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<script src="~/Scripts/datatables.min.js"></script>
+
+<script src="~/Scripts/Utilities.js"></script>
+
+<!-- NEEDED FOR SPINNER DIALOG -->
+
+
+<script>
+    $(function () {
+        var formID = 0;
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        var newformdialog = $("#new-form-dialog").dialog({
+            autoOpen: false,
+            height: 350,
+            width: 700,
+            stack: true,
+            modal: true,
+            draggable: false,
+            buttons: {
+                "Update": UpdateForm,
+                Cancel: function () {
+                    newformdialog.dialog("close");
+                }
+            },
+            close: function () {
+                newformdialog.dialog("close");
+            }
+        });
+
+        $("#ConfirmDialog").dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: {
+                "Confirm": function () {
+                    DeleteForm(formID);
+                },
+                "Cancel": function () {
+                    formID = 0;
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        $("#tblTrans").on('click', '.deleteform', function (event) {
+            formID = 0;
+            formID = $(this).attr("id");
+           
+            event.preventDefault();
+            $("#ConfirmDialog").dialog("open");
+        });
+
+        function resetRequiredBoxes() {
+            var elements = document.querySelectorAll('[data-required="true"]');
+
+            $.each(elements, function (index, item) {
+                item.style.borderColor = '#cccccc';
+            });
+        }
+
+        function UpdateForm() {
+            var elements = document.querySelectorAll('[data-required="true"]');
+            var alertTriggered = false;
+
+            $.each(elements, function (index, item) {
+                if (item.value == '') {
+                    item.style.borderColor = 'red';
+
+                    if (!alertTriggered) {
+                        //alert(item.dataset.name + " is required.");
+                        $.AlertDialog(item.dataset.name + " is required.", 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                    alertTriggered = true;
+                }
+                else {
+                    item.style.borderColor = '#cccccc';
+                }
+            });
+
+            if (alertTriggered) {
+                return;
+            }
+
+            var _form = {
+                FormID: formID,
+                Title: $('#txtFormTitle').val(),
+                Active: $('#chkActive').is(':checked'),
+                Price: $('#txtFormPrice').val()
+            }
+
+            $.ajax({
+                url: '/admin/updateform/',
+                type: 'POST',
+                data: JSON.stringify({ form: _form }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) { //result is returned as an arry of base flavors
+                    if (result == '0') {
+                        //alert('There was an error updating the form.');
+                        $.AlertDialog('There was an error updating the form.', 'Error Message', function (event) { }, 'lightcoral');
+                    } else {
+                        location.reload();
+                    }
+                }
+            });
+        }
+
+        function DeleteForm(formID) {
+            $.ajax({
+                url: '/admin/DeleteForm/',
+                type: 'POST',
+                data: JSON.stringify({ FormID: formID }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) { //result is returned as an arry of base flavors
+                    if (result == '0') {
+                        //alert('The form was deleted.');
+                        $.AlertDialog('The form was deleted.', 'Success', function (event) { }, 'lightgreen');
+                        formID = 0;
+                        location.reload();
+                    } else {
+                       // alert(result);
+                        $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+
+        }
+
+
+        $('#tblTrans').on('click', '.link', function (e) {
+            var row = $(this).closest('tr').find('td');
+            resetForm();
+            formID = $(this).attr("id");
+
+            event.preventDefault();
+
+            $('#txtFormTitle').val(row[0].innerText);
+            $('#chkActive').prop('checked', row.find('input:checkBox').is(':checked'))
+            $('#txtFormPrice').val(row[2].innerText);
+
+            newformdialog.dialog('option', 'title', 'Update Form');
+            newformdialog.dialog("open");
+        });
+
+
+
+
+        $('#lnkAdd').on('click', function (e) {
+            formID = 0;
+            resetForm();
+            $('#chkActive').prop('checked', true);
+            $('#tdActive').attr('align', 'center');
+            newformdialog.dialog('option', 'title', 'Add New Form');
+            newformdialog.dialog("open");
+        });
+
+        oOverviewTable = $('#tblTrans').DataTable({
+            "responsive": true,
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "searching": true,
+            "drawCallback": function( settings ) {
+                $('[data-toggle="tooltip"]').tooltip();
+            },
+            "initComplete": function(settings, json) {
+                $('[data-toggle="tooltip"]').tooltip();
+            },
+            "ajax": {
+                "url": "/admin/getforms/",
+                "dataSrc": ""
+            },
+            columnDefs: [
+                { type: 'currency', targets: 2 }
+            ],
+            "columns": [
+                {
+                    "data": "Title",
+                    "render": function (data, type, full, meta) {
+                        return '<a href="#" class="link" id="' + full.FormID + '">' + data + '</a>';
+                    }
+                },
+                {
+                    "data": "Active",
+                    "render": function (data, type, full, meta) {
+                        return data ? '<input type="checkbox" disabled checked/>' : '<input type="checkbox" disabled/>'
+                    }
+                },
+                {
+                    "data": "Price",
+                    render: $.fn.dataTable.render.number(",", ".", 2)
+                },
+                {
+                    "data": "Deleteable",
+                    "render": function (data, type, full, meta) {
+                        if (data == 1) {                            
+                            var i = 0;
+                            
+                        }
+
+                        return data == 1 ? '<img src="/images/delete.png" id="' + full.FormID + '" class="deleteform" data-toggle="tooltip" data-placement="left" title="Delete Form"  />' : ''
+                    }
+                }
+            ]
+        });
+
+
+        function resetForm() {
+            $('#txtFormTitle').val('');
+            $('#chkActive').prop('checked', false)
+            $('#txtFormPrice').val('');
+
+            resetRequiredBoxes();
+        }
+    });
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <h2>Forms</h2>
+        </div>
+        <div class="col-lg-6 pull-bottom text-right" style="padding-top: 10px">
+            <a href="#" id="lnkAdd">
+                <img src="~/images/add form.png" data-toggle="tooltip" data-placement="left" title="Add New Form" />
+            </a>
+        </div>
+    </div>
+</div>
+<p></p>
+<table id="tblTrans" class="display table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>Form Title</th>
+            <th>Active</th>
+            <th>Form Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Form Title</th>
+            <th>Active</th>
+            <th>Form Price</th>
+            <th></th>
+        </tr>
+    </tfoot>
+</table>
+
+<div id="ConfirmDialog" title="Confirmation Required">
+    Are you sure you want to delete this form?
+</div>
+
+<div id="new-form-dialog" title="Add New Form">
+    <input type="hidden" id="hdnFormID" />
+
+    <div class="container">
+        <table id="tblTransDetails" class="table">
+            <tr>
+                <td colspan="3" width="300px">
+                    <label for="txtFormTitle">Form Name</label><input type="text" class="form-control" id="txtFormTitle" style="max-width:100%;" data-required="true" data-name="Form Name" />
+                </td>
+            </tr>
+            <tr>
+                <td width="150px;" align="left">
+                    <label for="txtFormPrice">Form Price</label>
+                    <input type="text" class="form-control" id="txtFormPrice" data-required="true" style="max-width:100%;" data-name="Form Price" onkeypress='numericValidate(event)' />
+                </td>
+                <td id="tdActive" class="text-center" width="75px;">
+                    <label for="chkActive">Active</label> <input type="checkbox" class="checkbox" id="chkActive" checked="checked" />
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+
+
+

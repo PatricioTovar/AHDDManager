@@ -1,0 +1,153 @@
+﻿<!-- NEEDED FOR SPINNER DIALOG -->
+
+
+<script src="~/Scripts/Utilities.js"></script>
+
+<script>
+    $(function () {
+        $("#dpStart").datepicker();
+        $("#dpEnd").datepicker();
+        $("#dpExpense").datepicker();
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $("#dpStart").datepicker().datepicker("setDate", new Date());
+        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+
+        var _total = 0;
+
+ 
+
+        $('#lnkPrint').on('click', function (e) {
+            e.stopPropagation();
+            window.open('expensesprint/?startdate=' + $('#dpStart').val() + '&enddate=' + $('#dpEnd').val(), '', 'scrollbars=1,toolbar=1,resizable=1,width=1000,height=580,left=0,top=0')
+        });
+
+
+
+
+        $("#btnSearch").on('click', function (event) {
+            if (Date.parse($("#dpEnd").val()) < Date.parse($("#dpStart").val())) {
+                //alert('End date cannot be before start date');
+                $.AlertDialog('End date cannot be before start date', 'Error Message', function (event) { }, 'lightcoral');
+            }
+            else {
+                $.ajax({
+                    url: '/Expenses/SearchRefunds/',
+                    type: 'POST',
+                    data: JSON.stringify({ StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+
+                        _total = 0;
+
+                        if (result.length == 0) {
+                            //THIS NEEDS TO GO
+                            //StoreFlavor = "<tr><td>No Results</td></tr>";
+                            //$("#tblCustomers").append(StoreFlavor);
+                        } else {
+                            $("#tblExpenses tr:gt(0)").remove();
+
+                            $.each(result, function (key, value) {
+
+                                var _expensedate = new Date(parseInt(value.ExpenseDate.substr(6)));
+                                _expensedate = (_expensedate.getMonth() + 1) + '/' + _expensedate.getDate() + '/' + _expensedate.getFullYear();
+
+                                var _dateEntered = new Date(parseInt(value.DateEntered.substr(6)));
+                                _dateEntered = (_dateEntered.getMonth() + 1) + '/' + _dateEntered.getDate() + '/' + _dateEntered.getFullYear();
+
+                                _total += value.ExpenseAmount;
+
+                                expense = "<tr id=\"" + value.ExpenseID + "\">" +
+                                        "<td>" + value.ExpenseID + "</td>" +
+                                        "<td>" + value.PaidTo + "</td>" +
+                                        "<td class='currencyLabel'>" + value.ExpenseAmount + "</td>" +
+                                        "<td>" + value.Description + "</td>" +
+                                        "<td>" + _expensedate + "</td>" +
+                                        "<td>" + _dateEntered + "</td>" +
+                                        "<td>" + value.Refunded + "</td>" +
+                                        "<td>" + value.TakenByName + "</td>" 
+                                "</tr>";
+                                $("#tblExpenses").append(expense);
+
+                            });
+
+                            $("#tblExpenses").append("<tr style='backgroundcolor:beige'>" +
+                                        "<td></td>" +
+                                        "<td><strong>Total:</strong></td>" +
+                                        "<td class='currencyLabel'><strong>" + _total + "</strong> </td>" +
+                                        "<td></td>" +
+                                        "<td></td>" +
+                                        "<td></td>" +
+                                        "<td></td>" +
+                                        "<td></td>" +
+                            "</tr>");
+
+
+                            $('[data-toggle="tooltip"]').tooltip();
+                            $('#divTotal').text(_total);
+                            $('.currencyLabel').formatCurrency();
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#btnSearch').trigger('click');
+    });
+</script>
+
+<h2>Refunds</h2>
+
+<div class="container">
+
+    <div class="well well-lg">
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label for="dpStart">Start Date:</label>
+                <div class="input-group margin-bottom-sm">
+                    <input type="text" id="dpStart" class="form-control" readonly />
+                    <span class="input-group-addon btn btn-default" onclick="$('#dpStart').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dpEnd">End Date:</label>
+                <div class="input-group margin-bottom-sm">
+                    <input type="text" id="dpEnd" class="form-control" readonly />
+                    <span class="input-group-addon btn btn-default" onclick="$('#dpEnd').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="empty-label">&nbsp;</label>
+                <button id="btnSearch" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <p></p>
+
+    <table id="tblExpenses" class="table table-responsive table-hover">
+        <tr>
+            <th>Expense ID</th>
+            <th>Paid To</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Expense Date</th>
+            <th>Date Entered</th>
+            <th>Refunded</th>
+            <th>Entered By</th>
+        </tr>
+    </table>
+
+</div>
+
+
+
+
+
+
+
+

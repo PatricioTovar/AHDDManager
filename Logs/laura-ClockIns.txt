@@ -1,0 +1,2 @@
+1/26/2021 5:17:11 PM|User clock in status changed to False: laura (Laura Dominguez)
+1/26/2021 5:17:11 PM|User Logged OUT: laura

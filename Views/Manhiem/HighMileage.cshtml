@@ -1,0 +1,76 @@
+﻿@model IEnumerable<AHDDManagerClass.ManhiemPostSale>
+
+@{
+    Layout = "~/Views/Manhiem/ManhiemHeader.cshtml";
+}
+
+<!DOCTYPE html>
+
+@{
+    var iCount = 0;
+
+    foreach (AHDDManagerClass.ManhiemPostSale item in Model)
+    {
+        iCount += 1;
+    }
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>High Mileage Sales</title>
+</head>
+<body>
+    <div>
+        <table class="table table-responsive table-hover" id="tblResults" style="font-size:12px">
+            <tr><td id="tdCount" colspan="18" style="font-weight:bold;">Count: @iCount </td></tr>
+            <tr>
+                <th>Location</th>
+                <th>PostSaleDate</th>
+                <th>Year</th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>SubSeries</th>
+                <th>Color</th>
+                <th>Doors</th>
+                <th>Cylinder</th>
+                <th>Fuel</th>
+                <th>Tranny</th>
+                <th>FourByFour</th>
+                <th>EW</th>
+                <th>Radio</th>
+                <th>TopType</th>
+                <th>IntType</th>
+                <th>Odometer</th>
+                <th>Price</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Location</td>
+                    <td>@item.PostSaleDateString</td>
+                    <td>@item.Year</td>
+                    <td>@item.Make</td>
+                    <td>@item.Model</td>
+                    <td>@item.SubSeries</td>
+                    <td>@item.Color</td>
+                    <td>@item.Doors</td>
+                    <td>@item.Cylinder</td>
+                    <td>@item.Fuel</td>
+                    <td>@item.Tranny</td>
+                    <td>@item.FourByFour</td>
+                    <td>@item.EW</td>
+                    <td>@item.Radio</td>
+                    <td>@item.TopType</td>
+                    <td>@item.IntType</td>
+                    <td>@item.OdometerFormatted</td>
+                    <td>@item.PriceFormatted</td>
+                </tr>
+            }
+
+
+        </table>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,215 @@
+﻿<!-- NEEDED FOR SPINNER DIALOG -->
+
+
+<script src="~/Scripts/Utilities.js"></script>
+
+<script>
+    $(function () {
+        $("#dpStart").datepicker();
+        $("#dpEnd").datepicker();
+        $("#dpExpense").datepicker();
+
+        $("#tabs").tabs();
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+        $('[data-toggle="tooltip"]').tooltip();
+
+        var _now = new Date;
+
+        $("#dpStart").datepicker().datepicker("setDate", new Date());
+        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+
+
+        //get today's hours
+        $.ajax({
+            url: '/account/SearchClockIns2/',
+            type: 'POST',
+            data: JSON.stringify({ StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                var today;
+
+                $("#tblToday tr:gt(0)").remove();
+                if (result.length == 0) {
+
+                    today = "<tr>" +
+                        "<td> <strong>No records returned</strong></td>" +
+                        "<td></td>" +
+                        "<td></td>" +
+                        "<td></td>" +
+                        "</tr>";
+                    $("#tblToday").append(today);
+                } else {
+
+                    $.each(result, function (key, value) {
+                        var _LoginDatetime;
+                        var _LogoutDatetime;
+
+                        if (value.LoginDatetimeString.indexOf('1/1/0001') == 0) { _LoginDatetime = 'N/A'; }
+                        else { _LoginDatetime = value.LoginDatetimeString; }
+
+                        if (value.LogoutDatetimeString.indexOf('1/1/0001') == 0) { _LogoutDatetime = 'N/A'; }
+                        else { _LogoutDatetime = value.LogoutDatetimeString; }
+
+                        if (!value.IsLunch) { today = "<tr id=\"" + value.AssociateClockInHistoryID + "\">" }
+                        else { today = "<tr class='warning' id=\"" + value.AssociateClockInHistoryID + "\">" }
+
+                        today += "<td>" + _LoginDatetime + "</td>" +
+                            "<td>" + _LogoutDatetime + "</td>" +
+                            "<td>" + value.HoursWorked + "</td>" +
+                            "<td>" + value.MinutesWorked + "</td>" +
+                            "</tr>";
+
+                        $("#tblToday").append(today);
+
+                    });
+
+
+                    $('[data-toggle="tooltip"]').tooltip();
+
+                }
+            }
+        });
+
+
+
+
+
+
+        $("#btnSearch").on('click', function (event) {
+            if (Date.parse($("#dpEnd").val()) < Date.parse($("#dpStart").val())) {
+                //alert('End date cannot be before start date');
+                $.AlertDialog('End date cannot be before start date', 'Error Message');
+            }
+            else {
+                $.ajax({
+                    url: '/account/SearchClockIns/',
+                    type: 'POST',
+                    data: JSON.stringify({ StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        $("#tblClockIns tr:gt(0)").remove();
+
+                        if (result.length == 0) {
+                            today = "<tr>" +
+                                "<td> <strong>No records returned</strong></td>" +
+                                "<td></td>" +
+                                "<td></td>" +
+                                "<td></td>" +
+                                "</tr>";
+                        } else {
+                            $.each(result.ClockInHistory, function (key, value) {
+
+                                var _LoginDatetime = new Date(parseInt(value.LoginDatetime.substr(6)));
+                                _LoginDatetime = (_LoginDatetime.getMonth() + 1) + '/' + _LoginDatetime.getDate() + '/' + _LoginDatetime.getFullYear() + ' &nbsp;&nbsp;   ' + ((_LoginDatetime.getHours() + 11) % 12 - 1) + ':' + (_LoginDatetime.getMinutes() > 9 ? _LoginDatetime.getMinutes() : '0' + _LoginDatetime.getMinutes()) + (_LoginDatetime.getHours() > 11 ? ' PM' : ' AM'); //_LoginDatetime.getMinutes();
+
+                                var _LogoutDatetime = new Date(parseInt(value.LogoutDatetime.substr(6)));
+
+                                _LogoutDatetime = (_LogoutDatetime.getMonth() + 1) + '/' + _LogoutDatetime.getDate() + '/' + _LogoutDatetime.getFullYear() + ' &nbsp;&nbsp;   ' + ((_LogoutDatetime.getHours() + 11) % 12 - 1) + ':' + (_LogoutDatetime.getMinutes() > 9 ? _LogoutDatetime.getMinutes() : '0' + _LogoutDatetime.getMinutes()) + (_LogoutDatetime.getHours() > 11 ? ' PM' : ' AM'); // _LogoutDatetime.getMinutes();
+
+                                if (!value.IsLunch) {
+                                    expense = "<tr id=\"" + value.AssociateClockInHistoryID + "\">"
+                                }
+                                else {
+                                    expense = "<tr class='warning' id=\"" + value.AssociateClockInHistoryID + "\">"
+                                }
+
+                                expense += "<td>" + value.LoginDatetimeString + "</td>" +
+                                    "<td>" + value.LogoutDatetimeString + "</td>" +
+                                    "<td align='center'>" + value.HoursWorked + "</td>" +
+                                    "<td align='center'>" + value.MinutesWorked + "</td>" +
+                                    "</tr>";
+
+                                $("#tblClockIns").append(expense);
+
+                            });
+
+                            expense = "<tr><td> </td><td></td><td></td><td></td></tr>";
+                            $("#tblClockIns").append(expense);
+
+                            expense = "<tr>" +
+                                "<td> <strong>TOTAL:</strong></td>" +
+                                "<td><strong>" + result.HoursWorkedString + "</strong></td>" +
+                                "<td></td>" +
+                                "<td></td>" +
+                                "</tr>";
+                            $("#tblClockIns").append(expense);
+
+                            $('[data-toggle="tooltip"]').tooltip();
+
+                        }
+                    }
+                });
+            }
+        });
+
+
+
+        //$('#btnSearch').trigger('click');
+    });
+</script>
+
+
+<div class="row">
+    <div class="col-sm-12"><h2>My Hours</h2></div>
+</div>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Today</a></li>
+        <li><a href="#tabs-2">Search Hours</a></li>
+    </ul>
+    <div id="tabs-1">
+
+        <table id="tblToday" class="table table-responsive">
+            <tr>
+                <th>Log In Time</th>
+                <th>Log Out Time</th>
+                <th>Hours Worked</th>
+                <th>Minutes Worked</th>
+            </tr>
+        </table>
+
+    </div>
+    <div id="tabs-2">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label for="dpStart">Start Date:</label>
+                    <div class="input-group margin-bottom-sm">
+                        <input type="text" id="dpStart" class="form-control" readonly />
+                        <span class="input-group-addon btn btn-default" onclick="$('#dpStart').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="dpEnd">End Date:</label>
+                    <div class="input-group margin-bottom-sm">
+                        <input type="text" id="dpEnd" class="form-control" readonly />
+                        <span class="input-group-addon btn btn-default" onclick="$('#dpEnd').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="empty-label">&nbsp;</label>
+                    <button id="btnSearch" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+
+        <table id="tblClockIns" class="table table-responsive">
+            <tr>
+                <th>Log In Time</th>
+                <th>Log Out Time</th>
+                <th>Hours Worked</th>
+                <th>Minutes Worked</th>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+

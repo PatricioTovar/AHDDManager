@@ -1,0 +1,17 @@
+12/10/2020 10:40:01 PM|ERROR: User clock in status change: 1
+12/11/2020 7:29:50 AM|ERROR: User clock in status change: 1
+12/11/2020 7:30:19 AM|ERROR: User clock in status change: 1
+12/11/2020 7:31:22 AM|ERROR: User clock in status change: 1
+12/12/2020 8:08:17 AM|ERROR: User clock in status change: 1
+12/12/2020 8:09:52 AM|ERROR: User clock in status change: 1
+12/12/2020 8:11:18 AM|ERROR: User clock in status change: 29
+12/12/2020 8:12:51 AM|ERROR: User clock in status change: 29
+12/12/2020 8:42:52 AM|ERROR: User clock in status change: 29
+12/12/2020 8:48:47 AM|ERROR: User clock in status change: 29
+12/14/2020 7:25:06 PM|User Logged OUT: unknown
+12/14/2020 7:30:12 PM|User Logged OUT: unknown
+12/14/2020 7:32:58 PM|User Logged OUT: unknown
+12/16/2020 8:23:58 AM|User Logged OUT: unknown
+12/17/2020 9:19:52 AM|User Logged OUT: unknown
+12/22/2020 8:58:23 AM|ERROR: User clock in status change: 32
+1/29/2021 11:07:17 AM|User Logged OUT: unknown

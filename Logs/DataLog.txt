@@ -1,0 +1,18 @@
+5/25/2019 7:47:05 AM|Event Update Failed: event update time test failed.
+5/25/2019 7:48:15 AM|Event Update Failed: event update time test failed.
+5/25/2019 1:45:04 PM|Event Update Failed: event update time test failed.
+5/25/2019 1:46:25 PM|Event Update Failed: event update time test failed.
+5/26/2019 9:18:06 AM|Event Update Failed: event update time test failed.
+5/26/2019 9:19:21 AM|Event to Add Failed: this is a test
+5/26/2019 9:19:46 AM|Event to Add Failed: this is a test
+5/26/2019 9:28:53 AM|Event Update Failed: event update time test failed.
+5/26/2019 9:29:41 AM|Event Update Failed: event update time test failed.
+5/26/2019 9:22:19 PM|Event to Add Failed: this is a test
+6/26/2019 8:49:49 PM|Event to Add Failed: Data.UpdateAppointment error :Procedure or function 'UpdateAppointment' expects parameter '@AppointmentName', which was not supplied.
+6/26/2019 9:05:14 PM|Event to Add Failed: Data.UpdateAppointment error :Procedure or function 'UpdateAppointment' expects parameter '@AppointmentName', which was not supplied.
+2/20/2021 3:45:33 PM|Event to Add Failed: Data.UpdateAppointment error :The UPDATE statement conflicted with the FOREIGN KEY constraint "FK_Appointments_Associates". The conflict occurred in database "SQL2012_1010845_agenciahisp", table "dbo.Associates", column 'AssociateID'.
+The statement has been terminated.
+2/20/2021 3:45:36 PM|Event to Add Failed: Data.UpdateAppointment error :The UPDATE statement conflicted with the FOREIGN KEY constraint "FK_Appointments_Associates". The conflict occurred in database "SQL2012_1010845_agenciahisp", table "dbo.Associates", column 'AssociateID'.
+The statement has been terminated.
+2/20/2021 4:20:51 PM|Event to Add Failed: Data.UpdateAppointment error :The UPDATE statement conflicted with the FOREIGN KEY constraint "FK_Appointments_Associates". The conflict occurred in database "SQL2012_1010845_agenciahisp", table "dbo.Associates", column 'AssociateID'.
+The statement has been terminated.

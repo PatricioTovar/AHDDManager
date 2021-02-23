@@ -1,0 +1,156 @@
+﻿@{
+    Layout = "~/Views/Shared/_InvoiceLayout.cshtml";
+
+    ViewBag.Title = "Associate Hours Print";
+
+}
+
+<!DOCTYPE html>
+
+
+
+<script src="~/Scripts/Utilities.js"></script>
+
+<script>
+    $(function () {
+
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+        $('[data-toggle="tooltip"]').tooltip();
+
+        var _now = new Date;
+
+        var startDate;
+        var endDate;
+        var assoc;
+
+        var _total = 0;
+
+
+        var qsVars = getUrlVars();
+
+        startDate = qsVars["startdate"];
+        endDate = qsVars["enddate"];
+        assoc = qsVars["assoc"];
+
+        $('#divAssociate').text(assoc);
+        $('#divStart').text(startDate);
+        $('#divEnd').text(endDate);
+
+        $('#print').on('click', function () {
+            $('#print').hide();
+            window.print();
+            $('#print').show();
+        });
+
+
+        $.ajax({
+            url: '/admin/GetAssociateName/',
+            type: 'POST',
+            data: JSON.stringify({ AssociateID: assoc }),
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                $("#divAssociate").text(result);
+            }
+        });
+
+
+        $.ajax({
+            url: '/account/SearchClockInsByID/',
+            type: 'POST',
+            data: JSON.stringify({ StartDate: startDate, EndDate: endDate, AssociateID: assoc }),
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                _hourTotal = 0;
+                _minuteTotal = 0;
+                _total = 0;
+
+                if (result.length == 0) {
+
+                    //error handling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                } else {
+                    $("#tblClockInsDetails tr:gt(0)").remove();
+                 
+                    $.each(result.ClockInHistory, function (key, value) {
+                        expense = "<tr id=\"" + value.AssociateClockInHistoryID + "\">" +
+                                    "<td>" + value.LoginDatetimeString + "</td>" +
+                                    "<td>" + value.LogoutDatetimeString + "</td>" +
+                                     "<td>" + value.HoursWorked + "</td>" +
+                                      "<td>" + value.MinutesWorked + "</td>" +
+                             "</tr>";
+
+                        $("#tblClockInsDetails").append(expense);
+
+                    });
+
+                    expense = "<tr><td> </td><td></td><td></td><td></td></tr>";
+                    $("#tblClockInsDetails").append(expense);
+
+                    _hourTotal += parseInt(_minuteTotal < 60 ? 0 : _minuteTotal / 60);
+                    _minuteTotal = _minuteTotal % 60;
+
+                    expense = "<tr>" +
+                                        "<td> <strong>TOTAL:</strong></td>" +
+                                        "<td><strong>" + result.TotalHoursWorked + " hrs " + result.TotalMinutesWorked + " mins</strong></td>" +
+                                        "<td></td>" +
+                                        "<td></td>" +
+                                 "</tr>";
+                    $("#tblClockInsDetails").append(expense);
+
+                    $('[data-toggle="tooltip"]').tooltip();
+
+                }
+            }
+        });
+
+
+        // Read a page's GET URL variables and return them as an associative array.
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+
+    });
+</script>
+
+
+<div class="container">
+
+    <h2>Associate Hours</h2>
+
+    <div class="container">
+
+        <div class="well well-lg">
+            <div class="row">
+                <div class="col-sm-3"><strong>Associate: </strong><div id="divAssociate"></div> </div>
+                <div class="col-sm-3"><strong>Start Date:</strong> <div id="divStart"></div></div>
+                <div class="col-sm-3"><strong>End Date:</strong> <div id="divEnd"></div></div>
+                <div class="col-sm-2"><div><a href="#" id="print"><img src="/images/print.png" width="25" height="25" /></a></div></div>
+            </div>
+        </div>
+
+        <table id="tblClockInsDetails" class="table table-responsive table-hover">
+            <tr>
+                <th>Log In Time</th>
+                <th>Log Out Time</th>
+                <th>Hours</th>
+                <th>Minutes</th>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+

@@ -1,0 +1,303 @@
+﻿
+@{
+    ViewBag.Title = "Accounts Receivable";
+}
+
+<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<script src="~/Scripts/datatables.min.js"></script>
+
+<!-- NEEDED FOR SPINNER DIALOG -->
+
+
+
+
+<script>
+    $(function () {
+        var CustomerID;
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+
+        $('[data-toggle="tooltip"]').tooltip();
+      
+
+        var CustomerDialog = $("#customer-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: (($(window).height() * .85) - 1),
+            width: $(window).width() * .85,
+            //position: { my: 'top', at: 'center', of: window },
+            stack: true,
+            draggable: false,
+            modal: true,
+            open: function (event, ui) {
+                $(this).parent().find('.ui-dialog-titlebar').unbind('mousedown');            
+            },
+            close: function () {
+
+                CustomerDialog.dialog("close");
+            }
+        });
+
+    
+
+      
+
+        Table = $("#tblCustomers").DataTable({
+            data: [],
+            columns: [
+                        {
+                            "data": "CustomerID",
+                            "render": function (data, type, row) {
+                                if (row.TotalOwed == 0) {
+                                    return '<a href="/transactions/customertransactions/' + data + '" class="link" id="' + data + '"  data-toggle="tooltip" data-placement="right" title="View Transactions">' + data + '</a>';
+                                }
+                                else {
+                                    return '<a href="/transactions/customertransactions/' + data + '" class="link" id="' + data + '" style="color:red;"  data-toggle="tooltip" data-placement="right" title="View Transactions">' + data + '</a>';
+                                }
+
+                            }
+                        },
+                        {
+                            "data": "Associate",
+                            "render": function (data, type, row) {
+
+                                return "<td><a href='#' data-toggle='tooltip' title='" + data + "'><span class='dot' style='background-color:" + row.BackgroundColor + "'></span></a></td>";
+                            }
+                        },
+                        { "data": "FirstName" },
+                        { "data": "LastName" },
+                        { "data": "SecondaryFirstName" },
+                        { "data": "SecondaryLastName" },
+                        { "data": "Address" },
+                        { "data": "City" },
+                        { "data": "State" },
+                        { "data": "Zip" },
+                        { "data": "MobileFormatted" },
+
+                        {
+                            "data": "CustomerID",
+                            "render": function (data, type, row) {
+
+                                return "<td><a href='#' class='DetailLinks' id='detail_" + row.CustomerID + "'><img src='../images/details.png' data-toggle='tooltip' data-placement='left' title='View Customer Details' /></a></td>";
+                            }
+                        }
+            ],
+            "responsive": true,
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "searching": true,
+        });
+
+       
+
+
+        $.ajax({
+            url: "/admin/GetAccountsReceivables/",
+            type: "post",
+            data: { SearchCriteria: $('#txtSearch').val() }
+        }).done(function (result) {
+            Table.clear().draw();
+            Table.rows.add(result).draw();
+            $('[data-toggle="tooltip"]').tooltip();
+
+
+           
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // needs to implement if it fails
+            //alert('Error searching customers.');
+            $.AlertDialog('Error searching customers.', 'Error Message', function (event) { }, 'lightcoral');
+        });
+
+
+
+        $("#tblCustomers").on('click', '.DetailLinks', function (event) {
+            event.preventDefault();
+            ClearCustomerDialog();
+            $('#dialog_menu').hide();
+            $("#customer-dialog :input").prop("disabled", true);
+            $('.ui-dialog-buttonpane button:contains("Update")').button().hide();
+            CustomerDialog.dialog("open");
+
+            //load dialog
+            LoadCustomer(this.id.replace("detail_", ""));
+        });
+
+
+
+
+
+  
+
+        $("#lnkTransactions").on('click', function (event) {
+            document.location.href = '/transactions/customertransactions/' + CustomerID;
+            //window.location = '/transactions/customertransactions/' + CustomerID;
+        });
+
+      
+
+        function ClearCustomerDialog() {
+            $('#customer-dialog').find('input:text').css("border-color", "#cccccc");
+            $('#customer-dialog').find('input:text').val('');
+            $('#customer-dialog').find('input:checkbox').removeAttr('checked');
+        }
+
+        function LoadCustomer(customerid) {
+            CustomerID = customerid;
+
+            $.ajax({
+                url: '/customer/GetCustomer/',
+                type: 'POST',
+                data: JSON.stringify({ CustomerID: customerid }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result.length == 0) {
+                        //THIS NEEDS TO GO
+                        //StoreFlavor = "<tr><td>No Results</td></tr>";
+                        //$("#tblCustomers").append(StoreFlavor);
+                    } else {
+                        var _date = new Date(parseInt(result.DateCreated.substr(6)));
+                        _date = (_date.getMonth() + 1) + '/' + _date.getDate() + '/' + _date.getFullYear();
+
+                        $("#txtFirst").val(result.FirstName);
+                        $("#txtLast").val(result.LastName);
+                        $("#txtFirst2").val(result.SecondaryFirstName);
+                        $("#txtLast2").val(result.SecondaryLastName);
+                        $("#txtAddress").val(result.Address);
+                        $("#txtCity").val(result.City);
+                        $("#ddlStates").val(result.State);
+                        $("#txtZip").val(result.Zip);
+                        $("#txtPhone").val(result.PhoneFormatted);
+                        $("#txtMobile").val(result.MobileFormatted);
+                        $("#txtFax").val(result.FaxFormatted);
+                        $("#txtEmail").val(result.Email);
+                        $("#txtDateCreated").val(_date);
+                        $("#ddlAssignedTo").val(result.AssignedTo);
+                        $('#chkCitizen').prop('checked', result.Citizen);
+                        $('#chkActive').prop('checked', result.Active);
+
+                    }
+                }
+            });
+        }
+
+       
+        
+    });
+
+</script>
+
+
+
+<h2>Accounts Receivable</h2>
+
+
+
+
+
+<table class="table table-striped" id="tblCustomers" style="font-size:13px;">
+    <thead>
+        <tr>
+            <th>Cust ID</th>
+            <th></th>
+            <th>First</th>
+            <th>Last</th>
+            <th>2nd First</th>
+            <th>2nd Last</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Mobile</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+
+
+<div id="customer-dialog" title="Customer Information">
+    <nav class="navbar navbar-inverse" id="dialog_menu">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li><a href="#" id="lnkNotes">Notes</a></li>
+                <li><a href="#" id="lnkTransactions">Transactions</a></li>
+                <li><a href="#" id="lnkPayments">Payments</a></li>
+
+            </ul>
+        </div>
+    </nav>
+
+    <div id="divCustomerError" style="color: red; display: none;"></div>
+    <table class="table">
+        <tr>
+            <th>First Name:</th>
+            <th>Last Name:</th>
+            <th>2nd First Name:</th>
+            <th>2nd Last Name:</th>
+        </tr>
+
+        <tr>
+            <td><input type="text" id="txtFirst" class="form-control" data-required="true" data-name="First Name" maxlength="50" /></td>
+            <td><input type="text" id="txtLast" class="form-control" data-required="true" data-name="Last Name" maxlength="50" /></td>
+            <td><input type="text" id="txtFirst2" class="form-control" maxlength="50" /></td>
+            <td><input type="text" id="txtLast2" class="form-control" maxlength="50" /></td>
+        </tr>
+    </table>
+    <table class="table">
+        <tr>
+            <th>Address:</th>
+            <th>City:</th>
+            <th>State:</th>
+            <th>Zip:</th>
+        </tr>
+        <tr>
+            <td><input type="text" id="txtAddress" class="form-control" data-required="true" data-name="Address" maxlength="50" /></td>
+            <td><input type="text" id="txtCity" class="form-control" data-required="true" data-name="City" maxlength="50" /></td>
+            <td><select id="ddlStates" class="form-control"></select></td>
+            <td><input type="text" id="txtZip" class="form-control" data-required="true" onkeypress='numericValidate(event)' data-name="Zip" maxlength="5" /></td>
+        </tr>
+    </table>
+    <table class="table">
+        <tr>
+            <th>Phone:</th>
+            <th>Mobile:</th>
+            <th>Fax:</th>
+            <th>Active:</th>
+            <th>Citizen:</th>
+        </tr>
+        <tr>
+            <td><input type="text" id="txtPhone" class="form-control" maxlength="10" onkeypress='numericValidate(event)' /></td>
+            <td><input type="text" id="txtMobile" class="form-control" data-required="true" data-name="Mobile Phone" maxlength="10" onkeypress='numericValidate(event)' /></td>
+            <td><input type="text" id="txtFax" class="form-control" maxlength="10" onkeypress='numericValidate(event)' /></td>
+            <td class="text-center"><input type="checkbox" id="chkActive" class="checkbox" /></td>
+            <td><div class="text-center"><input type="checkbox" id="chkCitizen" class="checkbox" /></div></td>
+
+
+        </tr>
+    </table>
+    <table class="table">
+        <tr>
+            <th>Email:</th>
+
+            <th>Assigned To:</th>
+        </tr>
+        <tr>
+            <td width="75%"><div class="form-group"><input type="text" id="txtEmail" class="form-control col-lg-9" maxlength="100" style="width:300px;" /></div></td>
+
+            <td><select id="ddlAssignedTo" class="form-control2 "></select></td>
+        </tr>
+    </table>
+</div>
+
+
+
+
+
+
+

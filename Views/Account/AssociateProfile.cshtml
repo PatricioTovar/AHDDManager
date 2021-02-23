@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Profile";
+}
+
+<script src="~/Scripts/Utilities.js"></script>
+
+<script>
+    $(function () {
+        GetStates();
+        GetColors();
+
+        $('#ddlColors').hide();
+        $('#divColor').show();
+        LoadAssociate(@ViewBag.AssociateID);
+
+        GetStates();
+
+        $("#btnSubmit").on("click", function () {
+            var res = UpdateAssociate(@ViewBag.AssociateID);
+
+            if (res == "1")
+            { location.reload(); }
+            else if (res > 0)
+            {
+                //alert('There was an error adding the new associate.');
+                $.AlertDialog('There was an error adding the new associate.', 'Error Message', function (event) { }, "lightcoral");
+            }
+        });
+
+    });
+</script>
+
+
+<h2>Profile</h2>
+
+
+@Html.Partial("~/Views/Shared/AssociateDialog.cshtml")
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 pulll-right-text"><input type="button" id="btnSubmit" class="btn btn-default" value="Submit" /></div>
+    </div>
+</div>
+
+
+
+

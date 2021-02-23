@@ -1,0 +1,243 @@
+﻿
+<script>
+
+    $(function () {
+        $('#chkActive').on('click', function () {
+
+            if ($(this).is(':checked')) {
+                $("#divColor").hide();
+                $("#ddlColors").show();
+            }
+            else {
+                $("#divColor").show();
+                $("#ddlColors").hide();
+            }
+        });
+
+    });
+
+    function GetColors() {
+
+        $.ajax({
+            url: '/admin/GetColors/',
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                if (result.length > 0) {
+                    $.each(result, function (key, value) {
+                        $("#ddlColors").append(new Option(value.ColorName, value.TextColor));
+                    });
+                }
+            }
+        });
+    }
+
+    function ClearForm() {
+        $("#txtFirst").val('');
+        $("#txtLast").val('');
+        $("#txtAddress").val('');
+        $("#txtCity").val('');
+        $("#txtZip").val('');
+        $("#txtPhone").val('');
+        $("#txtAltPhone").val('');
+        $("#ddlStates").val('');
+        $("#txtEmail").val('');
+        $("#txt").val('');
+        $("#txtPassword").val('');
+
+        $('#chkActive').prop('checked', true);
+    }
+
+    function resetRequiredBoxes() {
+        var elements = document.querySelectorAll('[data-required="true"]');
+
+        $.each(elements, function (index, item) {
+            item.style.borderColor = '#cccccc';
+        });
+    }
+
+    function GetStates() {
+        $.ajax({
+            url: '/account/GetStates/',
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                if (result.length > 0) {
+                    $.each(result, function (key, value) {
+                        $("#ddlStates").append(new Option(value.Abbreviations, value.Abbreviations));
+                    });
+                }
+            }
+        });
+    }
+
+    function LoadAssociate(associateID) {
+        $.ajax({
+            url: '/admin/GetAssociate/',
+            type: 'POST',
+            data: JSON.stringify({ AssociateID: associateID }),
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+
+                if (result.length == 0) {
+                    //THIS NEEDS TO GO
+                    //StoreFlavor = "<tr><td>No Results</td></tr>";
+                    //$("#tblCustomers").append(StoreFlavor);
+                } else {
+                    $("#txtFirst").val(result.FirstName);
+                    $("#txtLast").val(result.LastName);
+                    $("#txtAddress").val(result.Address);
+                    $("#txtCity").val(result.City);
+                    $('#ddlStates').val(result.State);
+                    $("#txtZip").val(result.Zip);
+                    $("#txtPhone").val(result.Phone);
+                    $("#txtAltPhone").val(result.AltPhone);
+                    $("#ddlColors").val(result.TextColor);
+                    if (result.Active === true) {
+                        $("#divColor").text('TEXT COLOR').css('background', result.BackgroundColor).css('color', result.TextColor).css('text-align', 'center');
+                    } else {
+                        $("#divColor").text('INACTIVE').css('text-align', 'center');
+                    }
+
+                    $("#txtEmail").val(result.Email);
+                    $("#txtUserName").val(result.UserName);
+                    $("#txtPassword").val(result.Password);
+
+                    $('#chkActive').prop('checked', result.Active);
+
+                }
+            }
+        });
+    }
+
+    function UpdateAssociate(associateID) {
+        var elements = document.querySelectorAll('[data-required="true"]');
+        var alertTriggered = false;
+
+        $.each(elements, function (index, item) {          
+            if (item.value.trim() == '') {
+                item.style.borderColor = 'red';
+
+                if (!alertTriggered) {
+                    $.AlertDialog(item.dataset.name + " is required.", 'Error Message', function (event) { }, "lightcoral");
+                }
+
+                alertTriggered = true;
+            }
+            else {
+                item.style.borderColor = '#cccccc';
+            }
+        });
+
+        if (alertTriggered) {
+            return -1;
+        }
+
+        var bgColor;
+        var txtColor;
+
+        if ($('#chkActive').prop('checked')) {
+            bgColor = $("#ddlColors option:selected").text();
+            txtColor = $("#ddlColors option:selected").val();
+        } else {
+            bgColor = '';
+            txtColor = '';
+        }
+
+        assoc = {
+            AssociateID: associateID,
+            FirstName: $("#txtFirst").val(),
+            LastName: $("#txtLast").val(),
+            Address: $("#txtAddress").val(),
+            City: $("#txtCity").val(),
+            State: $("#ddlStates").val(),
+            Zip: $("#txtZip").val(),
+            Phone: $("#txtPhone").val(),
+            AltPhone: $("#txtAltPhone").val(),
+            Email: $("#txtEmail").val(),
+            UserName: $("#txtUserName").val(),
+            Password: $("#txtPassword").val(),
+            Active: $('#chkActive').prop('checked'),
+            BackgroundColor: bgColor,
+            TextColor: txtColor
+        }
+        var ret;
+
+        $.ajax({
+            url: '/admin/UpdateAssociate/',
+            type: 'POST',
+            data: JSON.stringify({ associate: assoc }),
+            dataType: 'json',
+            async: false,
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                ret = result;
+            }
+        });
+
+        return ret;
+    }
+</script>
+
+<div id="associate-dialog" title="Associate">
+
+    <div class="container">
+
+        <table id="tblAssociate" class="table">
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="form-control" id="txtFirst" data-required="true" data-name="First Name" maxlength="50" /></td>
+                <td><input type="text" class="form-control" id="txtLast" data-required="true" data-name="Last Name" maxlength="50" /></td>
+            </tr>
+
+            <tr>
+                <th>Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="form-control" id="txtAddress" data-required="true" data-name="Address" maxlength="50" /></td>
+                <td><input type="text" class="form-control" id="txtCity" data-required="true" data-name="City" maxlength="50" /></td>
+                <td><select id="ddlStates" class="form-control"></select></td>
+
+                <td><input type="text" class="form-control" id="txtZip" data-required="true" data-name="Zip" maxlength="5" onkeypress='numericValidate(event)' /></td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <th>AltPhone</th>
+                <th>Email</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="form-control" id="txtPhone" data-required="true" data-name="Phone" maxlength="10"onkeypress='numericValidate(event)'  /></td>
+                <td><input type="text" class="form-control" id="txtAltPhone" maxlength="10" onkeypress='numericValidate(event)' /></td>
+                <td><input type="text" class="form-control col-lg-8" id="txtEmail" data-required="true" data-name="Email"  /></td>
+            </tr>
+            <tr>
+                <th>User Name</th>
+                <th>Password</th>
+                <th>Color</th>
+                <th>Active</th>
+
+            </tr>
+            <tr>
+                <td><input type="text" class="form-control" id="txtUserName" data-required="true" data-name="User Name" maxlength="20" /></td>
+                <td><input type="text" class="form-control" id="txtPassword" data-required="true" data-name="Password" maxlength="20" /></td>
+                <td id="tdColor"><select id="ddlColors" class="form-control"></select><div id="divColor">Text Color</div></td>
+                <td><input type="checkbox" class="checkbox" id="chkActive" /></td>
+
+            </tr>
+        </table>
+
+    </div>
+</div>

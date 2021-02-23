@@ -1,0 +1,329 @@
+﻿@{
+    ViewBag.Title = "Expenses";
+}
+
+
+<!-- NEEDED FOR SPINNER DIALOG -->
+
+
+<script src="~/Scripts/Utilities.js"></script>
+
+<script>
+    $(function () {
+        $("#dpStart").datepicker();
+        $("#dpEnd").datepicker();
+        $("#dpExpense").datepicker();
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+        $('[data-toggle="tooltip"]').tooltip();  
+
+        var _now = new Date;
+
+        $("#dpStart").datepicker().datepicker("setDate", new Date());
+        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+
+        var _total = 0;
+
+
+
+        var newexpensedialog = $("#new-expense-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: 500,
+            width: 700,
+            modal: true,
+            buttons: {
+                "Update": UpdateExpense,
+                Cancel: function () {
+                    newexpensedialog.dialog("close");
+                }
+            },
+            close: function () {
+                newexpensedialog.dialog("close");
+            }
+        });
+
+        function UpdateExpense() {
+            var elements = document.querySelectorAll('[data-required="true"]');
+            var alertTriggered = false;
+
+            $.each(elements, function (index, item) {
+
+                if (item.value == '') {
+                    item.style.borderColor = 'red';
+
+                    if (!alertTriggered) {                       
+                        $.AlertDialog(item.dataset.name + " is required.", 'Error Message', function (event){}, "lightcoral");
+                        item.focus();
+                    }
+
+                    alertTriggered = true;
+                }
+                else {
+                    item.style.borderColor = '#cccccc';
+                }
+            });
+
+            if (alertTriggered) {
+                return;
+            }
+
+            expense = {
+                Description: $('#txtNote').val(),
+                ExpenseAmount: $('#txtAmount').val(),
+                PaidTo: $('#txtPaidTo').val(),
+                ExpenseDate: $('#dpExpense').val(),
+            }
+
+            $.ajax({
+                url: '/expenses/UpdateExpense/',
+                type: 'POST',
+                data: JSON.stringify({ expense: expense }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    if (result == '1') {            
+                        $.AlertDialog('Expense has been added', 'Success Message', function (event) { }, 'lightgreen');
+                        newexpensedialog.dialog("close");
+
+                        $('#txtNote').val('');
+                        $('#txtAmount').val('');
+                        $('#txtPaidTo').val('');
+                        $('#txtNote').val('');
+                        $('#dpExpense').val('');
+
+                        $('#btnSearch').trigger('click');
+                    } else {
+                        $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+        }
+
+        $('#lnkAdd').on('click', function () {
+            newexpensedialog.dialog("open");
+        });
+
+        $('#lnkPrint').on('click', function (e) {
+            e.stopPropagation();
+            window.open('expensesprint/?startdate=' + $('#dpStart').val() + '&enddate=' + $('#dpEnd').val(), '', 'scrollbars=1,toolbar=1,resizable=1,width=1000,height=580,left=0,top=0')
+        });
+
+
+        $("#tblExpenses").on('click', '.refund', function (event) {
+
+            var id=$(this).attr('id');
+
+            $.ConfirmDialog('Do you want refund this expense?', 'Refund Expense', function () {
+                $.ajax({
+                    url: '/Expenses/RefundExpense/',
+                    type: 'POST',
+                    data: JSON.stringify({ ExpenseID: id }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        if (result == '0') {
+                            $.AlertDialog('There was an error refunding the expense.', 'Error Message', function (event) { }, 'lightcorral');
+                        } else {
+                            $('#btnSearch').trigger("click");
+                        }
+                    }
+                });
+            }, function () { return; }, null);
+
+        });
+
+
+
+        $("#tblExpenses").on('click', '.delete', function (event) {
+            event.preventDefault();
+
+            var id = $(this).attr("id");
+
+            $.ConfirmDialog('Do you want delete this expense?', 'Delete Expense', function () {
+                $.ajax({
+                    url: '/Expenses/DeleteExpense/',
+                    type: 'POST',
+                    data: JSON.stringify({ ExpenseID: id }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+
+                        if (result.length == 0) {                 
+                            $.AlertDialog('There was a problem deleting the expense.', 'Error Message', function (event) { }, 'lightgreen');
+                        } else {
+                            $("#btnSearch").click();
+                        }
+                    }
+                });
+            }, function () { return; }, null);
+
+
+
+        });
+
+
+        $("#btnSearch").on('click', function (event) {
+            if (Date.parse($("#dpEnd").val()) < Date.parse($("#dpStart").val())) {
+                $.AlertDialog('End Date cannot be before Start Date', 'Error Message', function (event) { }, 'lightcoral');
+         
+            }
+            else {
+                $.ajax({
+                    url: '/Expenses/SearchExpenses/',
+                    type: 'POST',
+                    data: JSON.stringify({ StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+
+                        _total = 0;
+                        $("#tblExpenses tr:gt(0)").remove();
+
+                        if (result.length == 0) {
+                            //THIS NEEDS TO GO
+                            //StoreFlavor = "<tr><td>No Results</td></tr>";
+                            //$("#tblCustomers").append(StoreFlavor);
+                        } else {
+                            $.each(result, function (key, value) {
+
+                                var _expensedate = new Date(parseInt(value.ExpenseDate.substr(6)));
+                                _expensedate = (_expensedate.getMonth() + 1) + '/' + _expensedate.getDate() + '/' + _expensedate.getFullYear();
+
+                                var _dateEntered = new Date(parseInt(value.DateEntered.substr(6)));
+                                _dateEntered = (_dateEntered.getMonth() + 1) + '/' + _dateEntered.getDate() + '/' + _dateEntered.getFullYear();
+
+                                _total += value.ExpenseAmount;
+
+                                expense = "<tr id=\"" + value.ExpenseID + "\">" +
+                                        "<td>" + value.ExpenseID + "</td>" +
+                                        "<td>" + value.PaidTo + "</td>" +
+                                        "<td class='currencyLabel'>" + value.ExpenseAmount + "</td>" +
+                                        "<td>" + value.Description + "</td>" +
+                                        "<td>" + _expensedate + "</td>" +
+                                        "<td>" + _dateEntered + "</td>" +
+                                        "<td>" + value.Refunded + "</td>" +
+                                        "<td>" + value.TakenByName + "</td>" +
+                                        "<td><img src='/images/Refund.png' id=\"" + value.ExpenseID + "\" class='refund' data-toggle='tooltip' data-placement='left' title='Refund' /></td>";
+
+                                @{
+                                               if (Context.Session["Associate"] != null)
+                                               {
+                                                   var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
+                                                   if (assoc.IsAdmin)
+                                                   {
+                                                       <text>expense += "<td><img src='/images/delete.png' id=\"" + value.ExpenseID + "\" class='delete' data-toggle='tooltip' data-placement='left' title='Delete Expense' /></td>"</text>
+                                                    }
+                                               }
+                                            }
+
+                                expense += "</tr>";
+
+                                $("#tblExpenses").append(expense);
+
+                            });
+                        }
+
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $('#divTotal').text(_total);
+                        $('.currencyLabel').formatCurrency();
+                    }
+                });
+            }
+        });
+
+
+
+        $('#btnSearch').trigger('click');
+    });
+</script>
+
+<h2>Business Expenses</h2>
+
+<div class="container">
+
+    <div class="well well-lg">
+        <div class="row">
+            <div class="col-sm-4"><strong>Start Date:</strong> <br /> <input type="text" id="dpStart" readonly="readonly" class="form-control"></div>
+            <div class="col-sm-4"><strong>End Date:</strong> <br /> <input type="text" id="dpEnd" readonly="readonly" class="form-control"></div>
+            <div class="col-sm-4"><input type="button" id="btnSearch" value="Search"></div>
+        </div>
+    </div>
+
+    <p></p>
+
+    <div class="well well-lg">
+        <div class="row">
+            <div class="col-sm-3" style="padding-left:30px">
+                <a href="#" id="lnkAdd">
+                    <img src="~/images/add expense.png" data-toggle="tooltip" data-placement="right" title="Add an Expense" />
+                </a>
+            </div>
+            <div class="col-sm-3 text-right" style="padding-left:30px">
+                <a href="#" id="lnkPrint">
+                    <img src="~/images/print.png" data-toggle="tooltip" data-placement="right" title="Print Expenses" />
+                </a>
+            </div>
+
+            <div class="col-sm-4 pull-text-right"><strong>TOTAL:</strong> </div>
+            <div class="col-sm2 currencyLabel" id="divTotal">$0.00</div>
+        </div>
+    </div>
+
+    <p></p>
+
+    <table id="tblExpenses" class="table table-responsive table-hover">
+        <tr>
+            <th>Expense ID</th>
+            <th>Paid To</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Expense Date</th>
+            <th>Date Entered</th>
+            <th>Refunded</th>
+            <th>Entered By</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </table>
+
+</div>
+
+<div id="new-expense-dialog" title="Add New Expense">
+
+    <input type="hidden" id="hdnFormID" />
+
+    <div class="container">
+        <table id="tblPayment" class="table table-hover">
+            <tr>
+                <td>
+                    <div class="ui-widget">
+                        <label for="txtPaidTo">Paid To: </label><br />
+                        <input type="text" class="form-control" id="txtPaidTo" data-required="true" data-name="Paid To" maxlength="50">
+                    </div>
+                </td>
+                <td>
+                    <label for="txtAmount">Expense Date:</label><br />
+                    <input type="text" id="dpExpense" readonly="readonly" data-required="true" data-name="Expense Date" class="form-control">
+                </td>
+                <td>
+                    <label for="txtAmount">Amount Paid:</label><br />
+                    <input type="text" id="txtAmount" class="form-control" data-required="true" data-name="Amount Paid" maxlength="10" onkeypress='currencyValidate(event, this)'>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <label for="txtNote">Expense Description</label><br />
+                    <textarea class="form-control" rows="8" style="min-width: 100%" id="txtNote" data-required="true" data-name="Expense Description" maxlength="100"></textarea>
+                </td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
+

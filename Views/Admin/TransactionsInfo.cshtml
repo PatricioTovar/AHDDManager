@@ -1,0 +1,286 @@
+﻿
+@{
+    ViewBag.Title = "Transactions Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<script src="~/Scripts/datatables.min.js"></script>
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Scripts/dataTables.buttons.min.js"></script>
+<script src="~/Scripts/buttons.html5.min.js"></script>
+<script src="~/Scripts/jszip.min.js"></script>
+<script src="~/Scripts/dataTables.rowGroup.min.js"></script>
+<link href="~/Scripts/rowGroup.dataTables.min.css" rel="stylesheet" />
+<style>
+    .dt-buttons { /*table buttons*/
+        text-align: right;
+    }
+
+    .btnExcelTbl {
+        margin-bottom: 3px;
+    }
+
+    table.dataTable tr.group td {
+        cursor: pointer;
+        border: solid 0.5px #cccccc;
+    }
+
+    .group-extra {
+        float: right;
+        font-weight: normal;
+    }
+</style>
+<script>
+    var tblTransactions;
+    var collapsedGroups = {};
+    $(document).ready(function () {
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+
+        $("#dpStart").datepicker().datepicker("setDate", new Date());
+        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        initTable();
+
+    });
+
+    function initTable() {
+        tblTransactions = $('#tblTransactions').DataTable({
+            dom: "<'row'>" + "<'row'<'col-sm-6'l><'col-sm-5'f><'col-sm-1'B>>" + "<'row'<'col-sm-62'tr>>", /*+ "<'row'<'col-sm-6'i><'col-sm-6'p>>",*/
+            pageLength: 50,
+            paging: false,
+            buttons: [
+                {
+                    extend: 'excel',
+                    className: 'btnExcelTbl btn btn-success',
+                    visible: false,
+                    exportOptions: {
+                        columns: '.exportExcel'
+                    }
+                },
+            ],
+            autoWidth: true,
+            columns: [
+                {
+                    data: "TransactionID",
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        {
+                            if (type == "exportxls") {
+                                return data;
+                            }
+
+                            return "<a href='/transactions/transactiondetails/" + data + "' target='_blank'>" + data + "</a>"
+                        }
+                    }
+                },
+                {
+                    data: "CustomerName",
+                    className: "exportExcel"
+                },
+                {
+                    data: "TransactionDate",
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        return moment(data).format('MM/DD/YYYY');
+                    }
+                },
+                {
+                    data: "ModifiedDate",
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        return moment(data).format('MM/DD/YYYY');
+                    }
+                },
+                {
+                    data: "ModifiedByName",
+                    className: "exportExcel"
+                },
+
+                {
+                    data: "TransactionStatusID",
+                    visible: false
+
+                },
+                {
+                    data: "TransactionStatus",
+                    className: "exportExcel"
+                },
+                {
+                    data: "TotalAmount",
+                    className: "exportExcel text-right",
+                    render: $.fn.dataTable.render.number(',', '.', 2)
+                },
+                {
+                    name: "totalOwned",
+                    className: "exportExcel text-right",
+                    render: function (data, type, row, meta) {
+                        {
+                            var totalOwned = row.TotalAmount - row.TotalCollected
+                            return $.fn.dataTable.render.number(',', '.', 2).display(totalOwned);
+                        }
+                    }
+                },
+                {
+                    data: "RefundedAmount",
+                    className: "exportExcel text-right",
+                    render: $.fn.dataTable.render.number(',', '.', 2)
+                }
+            ],
+            drawCallback: function (settings) {
+                $('[data-toggle="tooltip"]').tooltip();
+
+            },
+            createdRow: function (row, data, index) {
+                //
+                // if the second column cell is blank apply special formatting
+                //
+                if (data.TransactionStatusID == 1) {
+                    $(row).addClass('warning');
+                }
+                if (data.TransactionStatusID == 2) {
+                    $(row).addClass('success');
+                }
+                if (data.TransactionStatusID == 3) {
+                    $(row).addClass('danger');
+                }
+            },
+            order: [0, 'asc'], 
+            orderFixed: [5, 'asc'],// 5 = TransactionStatusID, need order for grouping
+            rowGroup: {
+                // Uses the 'row group' plugin
+                dataSrc: 'TransactionStatus',
+                startRender: function (rows, group) {
+                    var collapsed = !!collapsedGroups[group] || collapsedGroups[group] == undefined; //PT - collapsedGroups[group] == undefined make to start colapsed
+                    collapsedGroups[group] = collapsed;
+
+                    rows.nodes().each(function (r) {
+                        r.style.display = collapsed ? 'none' : '';
+                    });
+
+
+                    //PT -- EXTRA INFO -------------------------
+                    var extraInfo = "";
+                    var groupTransactionID;
+                    var rowsGroup;
+                    groupTransactionID = rows.data()[0] == undefined ? 0 : rows.data()[0].TransactionStatusID; // PT --  use the first row of group as example for use TransactionStatusID instead of status descrption
+
+                    //Get all rows of the group, ingore pagination
+                    rowsGroup = rows.rows(function (idx, data, node) {
+                        return data.TransactionStatusID == groupTransactionID;
+                    })
+
+
+                    if (groupTransactionID == 1) {
+                        var totalOwned = 0;
+                        $.each(rowsGroup.data(), function (index, item) {
+                            totalOwned = totalOwned + (item.TotalAmount - item.TotalCollected);
+                        });
+
+                        extraInfo = 'Owed: ' + $.fn.dataTable.render.number(',', '.', 2, '$').display(totalOwned);;
+                    }
+                    if (groupTransactionID == 2) {
+                        //Nothing to do whit completed transactions
+                    }
+                    if (groupTransactionID == 3) {
+                        var totalRefound = 0;
+                        $.each(rowsGroup.data(), function (index, item) {
+                            totalRefound = totalRefound - item.RefundedAmount;
+                        });
+
+                        extraInfo = 'Refound: ' + $.fn.dataTable.render.number(',', '.', 2, '$').display(totalRefound);;
+                    }
+                    //PT -- EXTRA INFO -------------------------
+
+
+                    // Add category name to the <tr>. NOTE: Hardcoded colspan
+                    return $('<tr/>')
+                        .append('<td colspan="9">(' + rowsGroup.count() + ') ' + group + '  <span class="group-extra">' + extraInfo + '</span></td>')
+                        .attr('data-name', group)
+                        .toggleClass('collapsed', collapsed);
+                }
+            }
+        });
+        $('#tblTransactions tbody').on('click', 'tr.group-start', function () {
+            var name = $(this).data('name');
+            collapsedGroups[name] = !collapsedGroups[name];
+            tblTransactions.draw(false);
+        });
+    }
+
+
+    function btnSearchClick() {
+        tblTransactions.clear().draw();
+
+        var includeOpens = $('#chkIncludeOpens').prop('checked')
+
+        $.ajax({
+            url: "/admin/GetTransactionsReport/",
+            type: "post",
+            data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val(), IncludeOpens: includeOpens }),
+            dataType: 'json',
+            contentType: 'application/json;',
+        }).done(function (result) {
+            if (result != null) {
+                tblTransactions.rows.add(result).columns.adjust().draw();
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // needs to implement if it fails
+            //  alert('Error searching customers.');
+            $.AlertDialog(textStatus, 'Error Message', null, 'lightcoral');
+        });
+    }
+</script>
+
+<h2>Transactions Info</h2>
+
+<div class="well">
+    <div class="row">
+        <div class="form-group col-md-3">
+            <label for="dpStart">Start Date:</label>
+            <div class="input-group margin-bottom-sm">
+                <input type="text" id="dpStart" class="form-control" readonly />
+                <span class="input-group-addon btn btn-default" onclick="$('#dpStart').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+            </div>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="dpEnd">End Date:</label>
+            <div class="input-group margin-bottom-sm">
+                <input type="text" id="dpEnd" class="form-control" readonly />
+                <span class="input-group-addon btn btn-default" onclick="$('#dpEnd').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+            </div>
+        </div>
+        <div class="form-group col-md-2">
+            <label class="empty-label">&nbsp;</label>
+            <div class="radio">
+                <label>
+                    <input type="checkbox" id="chkIncludeOpens" />
+                    Include Opens
+                </label>
+            </div>
+        </div>
+        <div class="form-group col-md-1">
+            <label class="empty-label">&nbsp;</label>
+            <button id="btnSearch" class="btn btn-primary" onclick="btnSearchClick()">Search</button>
+        </div>
+    </div>
+</div>
+
+<div>
+    <table id="tblTransactions" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Trans. ID</th>
+                <th>Customer</th>
+                <th>Recipe Date</th>
+                <th>Last Update</th>
+                <th>Rep</th>
+                <th>StatusID</th> @*Hidden*@
+                <th>Status</th>
+                <th>Total </th>
+                <th>Owned</th>
+                <th>Refound</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+

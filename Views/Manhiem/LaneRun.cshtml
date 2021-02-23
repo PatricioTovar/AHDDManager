@@ -1,0 +1,179 @@
+﻿@{
+    Layout = "~/Views/Manhiem/ManhiemHeader.cshtml";
+}
+
+
+<script>
+    $(function () {
+
+
+        $('#btnSubmit').on('click', function () {
+            var loc = $('#ddlLocations option:selected').val();
+            var date = $('#ddlDates option:selected').val();
+
+            $.ajax({
+                url: '/Manhiem/GetRuns/',
+                type: 'POST',
+                data: JSON.stringify({ Location: loc, PresaleDate: date }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    $("#ddlLanes").empty();
+
+                    if (result.length > 0) {
+                        $.each(result, function (key, value) {
+                            $("#ddlLanes").append(new Option(value, value));
+                        });
+                    }
+                },
+                error: function (jqXHR, exception) {
+
+                    alert('error');
+                }
+            });
+
+        });
+
+        $('#btnRuns').on('click', function () {
+            if ($("#ddlLanes").val() == null) {
+                alert('No Lanes selected');
+                return;
+            }
+
+            var loc = $('#ddlLocations option:selected').val();
+            var date = $('#ddlDates option:selected').val();
+
+            presale = {
+                Location: loc,
+                PresaleDate: date,
+                Lane: $("#ddlLanes option:selected").val()
+            }
+
+            $.ajax({
+                url: '/Manhiem/SearchPresales/',
+                type: 'POST',
+                data: JSON.stringify({ PreSale: presale }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    $("#tblRuns tr:gt(0)").remove();
+
+                    if (result.length > 0) {
+                        $.each(result, function (key, value) {
+                            var tr = "";
+
+                            if (value.Selected) { tr = "<tr style=\"color: red;\">"; }
+                            else { tr = "<tr>"; }
+
+                            var expense = tr +
+                                "<td>" + value.Lane + "</td>" +
+                                "<td>" + value.Run + "</td>" +
+                                "<td>" + value.Year + "</td>" +
+                                "<td>" + value.Make + "</td>" +
+                                "<td>" + value.Model + "</td>" +
+                                "<td>" + value.Condition + "</td>" +
+                                "<td>" + value.Engine + "</td>" +
+                                "<td>" + value.Tranny + "</td>" +
+                                "<td>" + value.TopType + "</td>" +
+                                "<td><a href=\"#\" class=\"odo\">   " + value.Odometer + "</a></td>" +
+                                "<td>" + value.Color + "</td>" +
+                                "<td><a target=\"_blank\" href=\"https://www.manheim.com/members/powersearch/redirect.do?redirectPage=VDP&vin=" + value.Vin + "&fromPresales=true&format=enhanced&locale=en_US&country=USA\">View</a></td>" +
+                                "<td><a target=\"_blank\" href=\"https://mmr.manheim.com/?WT.svl=m_uni_hdr_buy&classic=true&country=US&popup=true&region_filter=SW&vin=" + value.Vin + "&mileage=" + value.Odometer + "&condition=" + value.Condition + "\">" + value.Vin + "</a></td>"
+                            expense += "</tr>";
+
+                            $("#tblRuns").append(expense);
+
+
+
+                        });
+                    }
+                },
+                error: function (jqXHR, exception) {
+
+                    alert('error');
+                }
+            });
+        });
+
+        $("#tblRuns").on("click", ".odo", function () {
+            var odo = $(this).text();
+
+            $.ajax({
+                url: '/Manhiem/SearchPostsalesByOdometer/',
+                type: 'POST',
+                data: JSON.stringify({ Odometer: odo }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
+                    var disp = "<table class=\"table table-hover\">"
+                    disp += "<th>Year</th><th>Make</th><th>Model</th><th>Odometer</th><th>Price</th>";
+
+                    if (result.length > 0) {
+                        $.each(result, function (key, value) {
+                            disp += "<tr><td>" + value.Year + "</td><td>" + value.Make + "</td><td>" + value.Model + "</td><td>" + value.OdometerFormatted + "</td><td>" + value.PriceFormatted + "</td></tr>";
+                        });
+                    }
+                    else { disp += "<tr><td colspan=\"5\" align=\"center\">NO RECORDS FOUND</td></tr>"; }
+
+                    disp += "</table>";
+
+                    $.AlertDialog(disp, 'Odometer Search', function (event) { }, 'lightgreen');
+                },
+                error: function (jqXHR, exception) {
+                    alert('error');
+                }
+            });
+        });
+
+
+    });
+</script>
+
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+
+    <table class="table" style="width: 600px;">
+        <tr><td><h3>Lane / Run</h3></td></tr>
+        <tr>
+            <td>PreSale Date: @Html.DropDownList("ddlDates", (IEnumerable<SelectListItem>)ViewBag.SaleDates, "Select Presale Date")</td>
+
+            <td>Locations: @Html.DropDownList("ddlLocations", (IEnumerable<SelectListItem>)ViewBag.Locations, "Select Location")</td>
+
+            <td><input type="button" id="btnSubmit" value="Submit" /></td>
+        </tr>
+    </table>
+    <table class="table">
+        <tr>
+            <td>
+                <select id="ddlLanes"></select>
+
+                <input type="button" id="btnRuns" value="Get Runs" />
+            </td>
+        </tr>
+    </table>
+
+
+    <table id="tblRuns" class="table table-responsive" style="font-size:12px">
+        <tr>
+            <th>Lane</th>
+            <th>Run</th>
+            <th>Year</th>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Condition</th>
+            <th>Engine</th>
+            <th>Tranny</th>
+            <th>TopType</th>
+            <th>Odometer</th>
+            <th>Color</th>
+            <th></th>
+            <th>Vin</th>
+        </tr>
+    </table>
+

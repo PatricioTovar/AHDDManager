@@ -1,0 +1,993 @@
+﻿@model Tuple<AHDDManagerClass.TransactionDetails, AHDDManagerClass.Payments, AHDDManagerClass.Transaction, AHDDManagerClass.Refunds>
+
+@{
+    ViewBag.Title = "Transaction Details";
+}
+
+<script src="~/Scripts/Utilities.js"></script>
+
+<!-- NEEDED FOR SPINNER DIALOG -->
+
+
+<script>
+    $(function () {
+        var CustomerID;
+
+        $.fn.bootstrapBtn = $.fn.button.noConflict();
+
+        var newpaymentdialog = $("#new-payment-dialog").dialog({
+            autoOpen: false,
+            draggable:false,
+            height: 350,
+            width: 700,
+            modal: true,
+            buttons: {
+                "Update": UpdatePayment,
+                Cancel: function () {
+                    newpaymentdialog.dialog("close");
+                }
+            },
+            close: function () {
+                newpaymentdialog.dialog("close");
+            }
+        });
+
+        var refunddialog = $("#refund-dialog").dialog({
+            autoOpen: false,
+            draggable:false,
+            height: 350,
+            width: 700,
+            modal: true,
+            buttons: {
+                "Submit": function(){
+                    AddRefund();
+                },
+                "No Refund": function () {
+                    cancelTransaction();
+                }
+            },
+            close: function () {
+                refunddialog.dialog("close");
+            }
+        });
+        /*
+                $(".refund").on('click', function(){
+                    event.preventDefault();
+                    refunddialog.dialog("open");
+                });
+        */
+        $("#tblTransDetails").on('click', '.delete', function (event) {
+            event.preventDefault();
+
+            var tdid = $(this).attr("id");
+
+            //DeleteTransactionDetail
+            $.ajax({
+                url: '/transactions/DeleteTransactionDetail/',
+                type: 'POST',
+                data: JSON.stringify({ TransactionDetailID: tdid }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) { //result is returned as an arry of base flavors
+                    if (result.length == 1) {
+                        //alert('The Transaction Detail has been deleted.');
+                        $.AlertDialog('The Transaction Detail has been deleted.', 'Success', function (event) { }, 'lightgreen');
+
+                        location.reload();
+                    } else {
+                        //alert("Error: The Transaction Detail FAILED to delete.");
+                        $.AlertDialog('Error: The Transaction Detail FAILED to delete.', 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+        });
+
+        $("#tblPayments").on('click', '.deletepayment', function (event) {
+            event.preventDefault();
+
+            var payid = $(this).attr("id");
+
+            //DeleteTransactionDetail
+            $.ajax({
+                url: '/transactions/DeletePayment/',
+                type: 'POST',
+                data: JSON.stringify({ PaymentID: payid }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) { //result is returned as an arry of base flavors
+                    if (result.length == 1) {
+                        //alert('The payment has been deleted.');
+                        $.AlertDialog('The payment has been deleted.', 'Success', function (event) { }, 'lightgreen');
+
+                        location.reload();
+                    } else {
+                        // alert("Error: The payment FAILED to delete.");
+                        $.AlertDialog('Error: The payment FAILED to delete.', 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+
+        });
+
+
+
+        function AddRefund() {
+
+            if ($("#txtRefundAmount").val() == ''){
+                $("#txtRefundAmount").css('border-color','red');
+                //alert('Refund amount is required.');
+                $.AlertDialog('Refund amount is required.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+            else
+            {
+                $("#txtRefundAmount").css('border-color','#cccccc');
+            }
+
+            if ($("#txtRefundNote").val() == ''){
+                $("#txtRefundNote").css('border-color','red');
+                //alert('Refund Note is required.');
+                $.AlertDialog('Refund Note is required.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+            else
+            {
+                $("#txtRefundNote").css('border-color','#cccccc');
+            }
+
+            if (parseFloat($("#lblDialogPaid").text().replace("$","").replace(",","")) < parseFloat($("#txtRefundAmount").val())){
+                //alert('You cannot pay more than ' + $("#lblDialogPaid").text());
+                $.AlertDialog('You cannot pay more than ' + $("#lblDialogPaid").text(), 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+
+            //$("#txtAmount").formatCurrency();
+
+
+            $.ConfirmDialog('You are about to refund ' + $("#txtRefundAmount").val() + ". Continue?", 'Refund', function () {
+                var _refund = {
+                    RefundID: 0,
+                    TransactionID: @ViewContext.RouteData.Values["id"],
+                    RefundAmount: $("#txtRefundAmount").val(),
+                    Note: $("#txtRefundNote").val(), 
+                    RefundDate: new Date() //PT - add time in the client side
+                };
+
+                $.ajax({
+                    url: '/transactions/AddRefund/',
+                    type: 'POST',
+                    data: JSON.stringify({ Refund: _refund }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) { //result is returned as an arry of base flavors
+
+                        if (result == 1) {
+                            cancelTransaction();
+                            //location.reload();
+                        } else {
+                            //alert("Error: Refund was not recorded. Transaction was not cancelled.");
+                            $.AlertDialog('Error: Refund was not recorded. Transaction was not cancelled.', 'Error Message', function (event) { }, 'lightcoral');
+                        }
+                    }
+                });
+            }, function () { return; }, null);
+        }
+
+
+        function UpdatePayment() {
+            if ($("#txtPaymentAmount").val() == ''){
+                $("#txtPaymentAmount").css('border-color','red');
+                //alert('Amount is required.');
+                $.AlertDialog('Amount is required.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+            else
+            {
+                $("#txtPaymentAmount").css('border-color','#cccccc');
+            }
+
+            if ($('#ddlPayMethod').find(":selected").val() == '2' && $("#txtCheckNumber").val() == '' ){
+                $("#txtCheckNumber").css('border-color','red');
+                //alert('Amount is required.');
+                $.AlertDialog('Check Number is required if Payment Type is CHECK.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+            else
+            {
+                $("#txtCheckNumber").css('border-color','#cccccc');
+            }
+
+
+            if (parseFloat($("#lblDialogOwed").text().replace("$","").replace(",","")) < parseFloat($("#txtPaymentAmount").val())){
+                //alert('You cannot pay more than ' + $("#lblDialogOwed").text());
+                $.AlertDialog('You cannot pay more than ' + $("#lblDialogOwed").text(), 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+
+            $("#txtPaymentAmount").formatCurrency();
+
+
+
+            $.ConfirmDialog('You are about to take a payment of ' + $("#txtPaymentAmount").val() + '. Continue?', 'Payment', function () {
+                var _payment = {
+                    CustomerID: @Model.Item3.CustomerID,
+                    TransactionID: @ViewContext.RouteData.Values["id"],
+                    AssociateID: 0,
+                    PaymentAmount: $("#txtPaymentAmount").val().replace("$","").replace(",",""),
+                    PaymentMethod: $('#ddlPayMethod').find(":selected").val(),
+                    CheckNumber: $("#txtCheckNumber").val()
+                };
+
+                $.ajax({
+                    url: '/transactions/MakePayment/',
+                    type: 'POST',
+                    data: JSON.stringify({ payment: _payment }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) { //result is returned as an arry of base flavors
+                        if (result == '1') {
+                            newpaymentdialog.dialog("close");
+
+                            location.reload();
+                        } else {
+                            //alert("Error: Customer update was failed.");
+                            $.AlertDialog('Error: Customer update was failed.', 'Error Message', function (event) { }, 'lightcoral');
+                        }
+                    }
+                });
+            }, function () { return; }, null);
+
+
+        }
+
+        $('.payment').on('click', function () {
+            event.preventDefault();
+            $("#txtPaymentAmount").css('border-color','#cccccc');
+            newpaymentdialog.dialog("open");
+        });
+
+
+        function cancelTransaction(){
+            $.ajax({
+                url: '/transactions/CancelTransaction/',
+                type: 'POST',
+                data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toUTCString() }),
+                dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) { //result is returned as an arry of base flavors
+                    if (result == 1) {
+                        //alert("Transaction was cancelled.");
+                        $.AlertDialog('Transaction was cancelled.', 'Success', function (event) {
+                            refunddialog.dialog("close");
+                            location.reload();
+                        }, 'lightgreen');
+                    } else {
+                        //alert(result);
+                        $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+
+        }
+
+
+        $('.cancel').on('click', function () {
+            event.preventDefault();
+
+            refunddialog.dialog("open");
+        });
+
+        $('.complete').on('click', function () {
+            event.preventDefault();
+
+            $.ConfirmDialog('You are about to complete this transaction. Continue?', 'Complete Transaction', function () {
+                $.ajax({
+                    url: '/transactions/CompleteTransaction/',
+                    type: 'POST',
+                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toUTCString() }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) { //result is returned as an arry of base flavors
+                        if (result == 1) {
+                            //alert("Transaction was completed.");
+                            $.AlertDialog('Transaction was completed.', 'Success', function (event) { location.reload(); }, 'lightgreen');
+
+                        } else {
+                            //alert(result);
+                            $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
+                        }
+                    }
+                });
+            }, function () { return; }, null);
+        });
+
+        $('#ReOpen').on('click', function () {
+            event.preventDefault();
+
+            $.ConfirmDialog('You are about to re-open this transaction. Continue?', 'Complete Transaction', function () {
+                $.ajax({
+                    url: '/transactions/ReOpenTransaction/',
+                    type: 'POST',
+                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toUTCString() }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) { //result is returned as an arry of base flavors
+                        if (result == 1) {
+                            //alert("Transaction was completed.");
+                            $.AlertDialog('Transaction was completed.', 'Success', function (event) { location.reload(); }, 'lightgreen');
+
+                        } else {
+                            //alert(result);
+                            $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
+                        }
+                    }
+                });
+            }, function () { return; }, null);
+        });
+
+
+        var newtransactiondialog = $("#new-transaction-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: 500,
+            width: $(window).width() * .6,
+            stack: true,
+            modal: true,
+            buttons: {
+                "Update": AddTransactionDetail,
+                Cancel: function () {
+                    newtransactiondialog.dialog("close");
+                }
+            },
+            close: function () {
+                newtransactiondialog.dialog("close");
+            }
+        });
+
+
+        var listdialog = $("#list-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            height: 500,
+            width: $(window).width() * .6,
+            stack: true,
+            modal: true,
+            open: function () {
+                $.ajax({
+                    url: '/transactions/GetForms/',
+                    dataType: "json",
+                    success: function (data) {
+
+
+                        $('#lstForms').empty();
+                        var option = '';
+
+                        $.each(data, function (index, item) {
+                            option = '<option value="' + item.FormID + '" data-price=' + item.Price + '>' + item.Title + '</option>';
+                            $('#lstForms').append(option);
+                        });
+
+
+                    }, error: function (xhr) {
+                        //alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+                        $.AlertDialog('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText, 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                });
+
+            },
+            buttons: {
+                "OK": function () {
+                    $('#hdnNewDetailFormID').val($('#lstForms').find(":selected").val());
+                    $('#newDetailForms').val($('#lstForms').find(":selected").text());
+
+                    $('#txtNewDetailPrice').val($('#lstForms').find(":selected").data('price'));
+                    $('#txtNewDetailQuantity').val('1');
+
+                    updateSubtotal();
+                    listdialog.dialog("close");
+                },
+                Cancel: function () {
+                    listdialog.dialog("close");
+                }
+            },
+            close: function () {
+                listdialog.dialog("close");
+            }
+        });
+
+        $("#newDetailForms").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    beforeSend: function () {},
+                    url: '/transactions/SearchForms/',
+                    dataType: "json",
+                    data: {
+                        SearchCriteria: request.term
+                    },
+                    success: function (data) {
+                        return response($.map(data, function (item) {
+                            return {
+                                label: item.Title,
+                                value: item.FormID,
+                                formprice: item.Price
+                            };
+                        }))
+                    },
+                    minLength: 2,
+                });
+            },
+            select: function (event, ui) {
+
+                $('#newDetailForms').val(ui.item.label);
+                $('#txtNewDetailPrice').val(ui.item.formprice);
+                $('#hdnNewDetailFormID').val(ui.item.value);
+                $('#txtNewDetailQuantity').val('1');
+                updateSubtotal();
+
+                return false;
+            },
+            //focus: function (event, ui) {
+            //    event.preventDefault();
+            //    $(this).val(ui.item.label);
+            //},
+            change: function (event, ui) {
+                if (!ui.item) {
+                    $('#hdnNewDetailFormID').val('');
+                    $('#txtNewDetailPrice').val('');
+                    $('#txtNewDetailQuantity').val('');
+                    updateSubtotal();
+
+                    return false;
+                }
+            }
+        });
+    });
+
+
+    function AddTransactionDetail() {
+        var elements = document.querySelectorAll('[data-required="true"]');
+        var alertTriggered = false;
+
+        $.each(elements, function (index, item) {
+            if (item.value == '') {
+                item.style.borderColor = 'red';
+
+                if (!alertTriggered) {
+                    //alert(item.dataset.name + " is required.");
+                    $.AlertDialog(item.dataset.name + ' is required.', 'Error Message', function (event) { }, 'lightcoral');
+                    item.focus();
+                }
+
+                alertTriggered = true;
+            }
+            else {
+                item.style.borderColor = '#cccccc';
+            }
+        });
+
+        if (alertTriggered) {
+            return;
+        }
+
+
+        if ($('#hdnNewDetailFormID').val() == '') {
+            //alert('No transaction item has been selected.');
+            $.AlertDialog('No transaction item has been selected.', 'Error Message', function (event) { }, 'lightcoral');
+            return;
+        }
+
+        if ($('#txtNewDetailDiscount').val() != '' && $('#txtNewDetailNote').val() == '') {
+            //alert('You must include a note if you are discounting the price.');
+            $.AlertDialog('You must include a note if you are discounting the price.', 'Error Message', function (event) { }, 'lightcoral');
+            $('#txtNewDetailDiscount').focus();
+            return false;
+        }
+
+        var subtotal;
+
+        if ($('#txtNewDetailDiscount').val() == '') {
+            subtotal = parseFloat($('#txtNewDetailQuantity').val()) * parseFloat($('#txtNewDetailPrice').val());
+        }
+        else {
+            subtotal = parseFloat($('#txtNewDetailQuantity').val()) * parseFloat($('#txtNewDetailDiscount').val());
+        }
+
+        if ($('#txtNewDetailDiscount').val() != '') {
+            subtotal = subtotal - parseFloat($('#txtNewDetailDiscount').val());
+        }
+
+        var transactionDetail = {
+            TransactionID: @ViewContext.RouteData.Values["id"] ,
+            TransactionDetailID: 0,
+            FormID: $('#hdnNewDetailFormID').val(),
+            FormTitle: $('#newDetailForms').val(),
+            UnitPrice: $('#txtNewDetailPrice').val(),
+            DiscountPrice: parseFloat($('#txtNewDetailDiscount').val()),
+            Quantity: $('#txtNewDetailQuantity').val(),
+            Notes: $('#txtNewDetailNote').val(),
+            Total: subtotal
+        }
+
+        $.ajax({
+            url: '/transactions/AddTransactionDetail/',
+            type: 'POST',
+            data: JSON.stringify({ transactionDetail: transactionDetail }),
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                if (result != '0') {
+                    $.AlertDialog('Record saves succesfully', 'Succes', function (event) { location.reload(); }, 'lightgreen');
+                    //window.location();
+                    //return false;
+                } else {
+                    //alert("Error: Customer transaction update has failed.");
+                    $.AlertDialog('Error: Customer transaction update has failed.', 'Error Message', function (event) { }, 'lightcoral');
+                }
+            }
+        });
+
+
+
+        newtransactiondialog.dialog("close");
+    }
+
+    function btnAddTransaccionClick() {
+        $("#new-transaction-dialog").dialog("open");
+    }
+
+    function btnSearchItemClick() {
+        $("#list-dialog").dialog("open");
+    };
+
+    function updateSubtotal() {
+        if ($('#txtNewDetailQuantity').val() == '' || $('#txtNewDetailPrice').val() == '') {
+            $('#txtNewDetailSubtotal').val(0);
+            return;
+        }
+
+
+        var subtotal;
+
+        if ($('#txtNewDetailDiscount').val() == '') {
+            subtotal = parseFloat($('#txtNewDetailQuantity').val()) * parseFloat($('#txtNewDetailPrice').val());
+        }
+        else {
+            subtotal = parseFloat($('#txtNewDetailQuantity').val()) * parseFloat($('#txtNewDetailDiscount').val());
+        }
+
+        $('#txtNewDetailSubtotal').val(subtotal)
+    }
+</script>
+
+
+<h2>Transaction Details</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 pull-bottom">
+            <a href="/customer/Invoice/@Url.RequestContext.RouteData.Values["id"]" target="_blank">
+                <img src="~/images/Invoice.png" alt="View Receipt" data-toggle="tooltip" data-placement="right" title="View Receipt" />
+            </a>
+        </div>
+
+
+        <div class="col-lg-3 text-center" >
+            @{
+                if (Model.Item3.TransactionStatusID == 1)
+                {
+                    <a href="#" id="lnkAddPaymentTop" class="cancel">
+                        <img src="~/images/CancelTransaction.png" data-toggle="tooltip" data-placement="left" title="Cancel Transaction" />
+                    </a>
+                }
+            }
+        </div>
+
+        <div class="col-lg-3 text-center">
+            @{
+                if (Model.Item3.TransactionStatusID == 1)
+                {
+                    <a href="#" id="lnkRefundTop" class="complete">
+                        <img src="~/images/TransactionComplete.png" data-toggle="tooltip" data-placement="left" title="Complete Transaction" />
+                    </a>
+                }
+            }
+            @{
+                if (Context.Session["Associate"] != null && Model.Item3.TotalOwed != 0)
+                {
+                    var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
+                    if (assoc.IsAdmin && Model.Item3.TransactionStatusID != 1)
+                    {
+                        <span id="ReOpen"><i class="fa fa-undo fa-2x" aria-hidden="true"></i></span>
+                    }
+                }
+            }
+        </div>
+
+        <div class="col-lg-3 pull-text-right">
+            <a href="/Transactions/CustomerTransactions/@Model.Item3.CustomerID">
+                <img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Transactions" />
+            </a>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div class="container">
+
+        <div class="well">
+            <div class="row">
+                <div class="col-lg-3"><strong>Customer:</strong> <div>@Model.Item3.CustomerName</div></div>
+                <div class="col-lg-2"><strong>Customer ID:</strong> <div>@Model.Item3.CustomerID</div></div>
+                <div class="col-lg-2"><strong>Receipt No:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
+                <div class="col-lg-2"><strong>Rep:</strong> <div>@Model.Item3.TakenBy</div></div>
+                <div class="col-lg-3"><strong>Transaction Date:</strong> <div>@Model.Item3.TransactionDate</div></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3"><strong>Transaction Total:</strong> <div id="lblTotalTrans" class="currencyLabel">@Model.Item3.TotalAmount</div></div>
+                <div class="col-lg-2"><strong>Total Paid:</strong> <div id="lblTotalPaid" class="currencyLabel">@Model.Item3.TotalCollected</div></div>
+                <div class="col-lg-2"><strong>Refunded:</strong> <div id="lblTotalRefunded" class="currencyLabel">@Model.Item3.RefundedAmount</div></div>
+                <div class="col-lg-2"><strong>Remaining Owed:</strong> <div id="lblOwed" class="currencyLabel">@Model.Item3.TotalOwed</div></div>
+                <div class="col-lg-3"><strong>Last update:</strong> <div>@Model.Item3.ModifiedDate</div></div>
+            </div>
+        </div>
+
+        @{ if (Model.Item3.TransactionStatusID == 2)
+            {
+                <text>
+                    <div id="divMsgComplete" class="alert alert-success">
+                        <strong>This transaction has been COMPLETED.</strong>
+                    </div>
+                </text>
+            }
+            else if (Model.Item3.TransactionStatusID == 3)
+            {
+                <text>
+                    <div id="divMsgComplete" class="alert alert-danger">
+                        <strong>This transaction has been CANCELLED.</strong>
+                    </div>
+                </text>
+            }
+
+        }
+
+        @if (Model.Item3.TransactionStatusID == 1)
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <img id="btnAddTransaccion" class="imgBtn" src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" onclick="btnAddTransaccionClick()" />
+                </div>
+            </div>
+        }
+        <table id="tblTransDetails" class="table table-hover">
+            <tr>
+                <th>Transaction Item:</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Discount Price</th>
+                <th>SubTotal</th>
+                <th>Note</th>
+                <th></th>
+            </tr>
+
+            @{
+                var decRunningTotal = 0.0M;
+                var decSubTotal = 0.0M;
+
+                foreach (var item in Model.Item1.ToList())
+                {
+
+                    if (item.DiscountPrice == 0)
+                    {
+                        decSubTotal = item.Quantity * item.UnitPrice;
+                    }
+                    else
+                    {
+                        decSubTotal = item.Quantity * item.DiscountPrice;
+                    }
+                    decRunningTotal += decSubTotal;
+
+                    <tr id="@item.TransactionDetailID">
+                        <td>@item.FormTitle</td>
+                        <td>@item.Quantity</td>
+                        <td class="currencyLabel">@item.UnitPrice</td>
+                        <td class="currencyLabel">@item.DiscountPrice</td>
+                        <td class="currencyLabel">@decSubTotal</td>
+                        <td>@item.Notes</td>
+
+                        @{
+                            if (Context.Session["Associate"] != null && Model.Item3.TotalOwed != 0)
+                            {
+                                var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
+                                if (assoc.IsAdmin && Model.Item3.TransactionStatusID == 1)
+                                {
+                                    <text>
+                                        <td><img src='/images/delete.png' id="@item.TransactionDetailID" class='delete' data-toggle='tooltip' data-placement='left' title='Delete Transaction Deltail' /></td>
+                                    </text>
+                                }
+                            }
+                            else
+                            {
+                                <text>
+                                    <td></td>
+                                </text>
+                            }
+                        }
+                    </tr>
+                }
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td align="center"><strong>TOTAL:</strong></td>
+                    <td class="currencyLabel"><strong>@decRunningTotal</strong></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+        </table>
+        <script>$(function () { $("#lblTotalTrans").text(@decRunningTotal); })</script>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 pull-bottom">
+                <h3>Payments</h3>
+            </div>
+            <div class="col-lg-6 pull-text-right pull-bottom">
+                @{
+                    if (Model.Item3.TransactionStatusID == 1)
+                    {
+                        <a href="#" id="lnkAddPaymentBottom" class="payment">
+                            <img src="~/images/wallet.png" data-toggle="tooltip" data-placement="left" title="Add Payment" />
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <table id="tblPayments" class="table table-hover">
+            <tr>
+                <th>Pay ID</th>
+                <th>Pay Date</th>
+                <th>Amount</th>
+                <th>Pay Method</th>
+                <th>Check #</th>
+                <th>Receipt Creator</th>
+            </tr>
+            @{
+                var decPayTotal = 0M;
+
+                foreach (var item in Model.Item2.ToList())
+                {
+                    decPayTotal += item.PaymentAmount;
+
+                    <tr id="@item.PaymentID">
+                        <td>@item.PaymentID</td>
+                        <td>@item.PaymentDate</td>
+                        <td class="currencyLabel">@item.PaymentAmount</td>
+                        <td>@item.PaymentMethodDescription</td>
+                        <td>@item.CheckNumber</td>
+                        <td>@item.TakenBy</td>
+                        @{
+                            if (Context.Session["Associate"] != null && Model.Item3.TotalOwed != 0 && Model.Item3.TransactionStatusID == 1)
+                            {
+                                var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
+                                if (assoc.IsAdmin)
+                                {
+                                    <text>
+                                        <td><img src='/images/delete.png' id="@item.PaymentID" class='deletepayment' data-toggle='tooltip' data-placement='left' title='Delete Payment' /></td>
+                                    </text>
+                                }
+                            }
+                        }
+
+                    </tr>
+                }
+
+                <tr>
+                    <td></td>
+                    <td align="right"><strong>TOTAL:</strong></td>
+                    <td class="currencyLabel"><strong>@decPayTotal</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+        </table>
+        <script>
+            $(function () {
+
+                $("#lblDialogOwed").text(@Model.Item3.TotalOwed);
+                $("#lblDialogPaid").text(@Model.Item3.Net);
+
+                if(@Model.Item3.TransactionStatusID != 1){
+                    $("#lnkAddPaymentBottom").hide();
+                }else
+                {
+                    $("#lnkAddPaymentBottom").show();
+                }
+
+                $('.currencyLabel').formatCurrency();
+            })</script>
+    </div>
+
+
+
+
+    <!-- Model.Item4 != null && Model.Item4.Count() > 0 -->
+    @if (true)
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 pull-bottom">
+                    <h3>Refunds</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <table id="tblRefunds" class="table table-hover">
+                <tr>
+                    <th>Refund ID</th>
+                    <th>Refund Amount</th>
+                    <th>Refund Date</th>
+                    <th>Rep</th>
+                    <th>Note</th>
+                </tr>
+                @{
+
+                    foreach (var item in Model.Item4.ToList())
+                    {
+
+                        <tr id="@item.RefundID">
+                            <td>@item.RefundID</td>
+                            <td class="currencyLabel">@item.RefundAmount</td>
+                            <td>@item.RefundDate</td>
+                            <td>@item.RefundedBy</td>
+                            <td>@item.Note</td>
+
+
+                        </tr>
+                    }
+
+                    <tr>
+
+                        <td align="right"><strong>TOTAL:</strong></td>
+                        <td class="currencyLabel"><strong>@Model.Item3.RefundedAmount</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+            </table>
+            <script>
+                $(function () {
+                    $('.currencyLabel').formatCurrency();
+                })</script>
+        </div>
+    }
+</div>
+
+<div id="new-payment-dialog" title="Add New Payment">
+
+    <div class="container">
+        <div class="well well-lg">
+            <div class="row">
+                <div class="col-lg-6"><strong>Total Unpaid Amount:</strong></div>
+                <div class="col-lg-4 currencyLabel" id="lblDialogOwed"><strong></strong></div>
+            </div>
+        </div>
+        <table id="tblPayment" class="table table-hover">
+            <tr>
+                <td>
+                    <div class="ui-widget">
+                        <label for="txtPaymentAmount">Amount: </label><br />
+                        <input type="text" id="txtPaymentAmount" class="form-control" onkeypress='numericValidate(event)' maxlength="5">
+                    </div>
+                </td>
+                <td>
+                    <label for="txtQuantity">Pay Method</label><br />
+                    <select id="ddlPayMethod" class="form-control">
+                        <option value="1">CASH</option>
+                        <option value="2">CHECK</option>
+                        <option value="3">CARD</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="txtPrice">Check #</label><br />
+                    <input type="text" id="txtCheckNumber" class="form-control" onkeypress='numericValidate(event)' maxlength="6" />
+                </td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="refund-dialog" title="Transaction Refund">
+    <div class="container">
+        <div class="well well-lg">
+            <div class="row">
+                <div class="col-lg-6"><strong>Total Paid Amount:</strong></div>
+                <div class="col-lg-4 currencyLabel" id="lblDialogPaid"><strong></strong></div>
+            </div>
+        </div>
+        <table id="tblRefund" class="table table-hover">
+            <tr>
+                <td>
+                    <div class="ui-widget">
+                        <label for="txtRefundAmount">Refund Amount: </label><br />
+                        <input type="text" id="txtRefundAmount" class="form-control" onkeypress='numericValidate(event)' maxlength="5">
+                    </div>
+                </td>
+                <td>
+                    <label for="txtQuantity">Pay Method</label><br />
+                    <select id="ddlRefundMethod">
+                        <option value="1">CASH</option>
+                        <option value="2">CHECK</option>
+                        <option value="3">CARD</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="txtPrice">Refund Note:</label><br />
+                    <input type="text" id="txtRefundNote" class="form-control" maxlength="500" />
+                </td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="new-transaction-dialog" title="Add New Transaction">
+    <input type="hidden" id="hdnNewDetailFormID" />
+
+    <div class="container">
+        <table id="tblTransDetails" class="table">
+            <tr>
+                <td colspan="2">
+                    <label for="code">Transaction Item:</label><br />
+                    <input type="text" id="newDetailForms" data-required="true" data-name="Transaction Item" class="form-control" style="max-width:700px;">
+                </td>
+                <td valign="bottom" class="text-left">
+                    <label class="empty-label"></label><br />
+                    <img id="btnItemSearch" class="imgBtn" src="~/images/search.png" onclick="btnSearchItemClick()" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="txtNewDetailQuantity">Quantity</label><input type="text" id="txtNewDetailQuantity" class="form-control" data-required="true" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" onchange="updateSubtotal()" data-name="Quantity" />
+                </td>
+                <td>
+                    <label for="txtNewDetailPrice">Unit Price</label> <input type="text" id="txtNewDetailPrice" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" onchange="updateSubtotal()" maxlength="5" data-required="true" data-name="Unit Price" />
+                </td>
+                <td>
+                    <label for="txtNewDetailDiscount">Discount Price</label><input id="txtNewDetailDiscount" type="text" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" onchange="updateSubtotal()" />
+                </td>
+                <td>
+                    <label for="txtNewDetailSubtotal">Sub-total</label><input type="text" class="form-control" id="txtNewDetailSubtotal" value="0" readonly />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <div class="form-group">
+                        <label for="txtNewDetailNote">Note:</label>
+                        <textarea id="txtNewDetailNote" class="form-control" rows="6" style="min-width: 100%"></textarea>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="list-dialog" title="Forms">
+    <select id="lstForms" size="18" class="form-control"></select>
+</div>

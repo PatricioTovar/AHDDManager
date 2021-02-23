@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AHDDManager", "AHDDManager.csproj", "{84244EA9-E5C1-497C-8C9F-335A57487BB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AHDDManagerClass", "BusinessManager\AHDDManagerClass.csproj", "{BB92B36A-AD06-4261-BD6E-8EF825806F2D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84244EA9-E5C1-497C-8C9F-335A57487BB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84244EA9-E5C1-497C-8C9F-335A57487BB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84244EA9-E5C1-497C-8C9F-335A57487BB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84244EA9-E5C1-497C-8C9F-335A57487BB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB92B36A-AD06-4261-BD6E-8EF825806F2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB92B36A-AD06-4261-BD6E-8EF825806F2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB92B36A-AD06-4261-BD6E-8EF825806F2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB92B36A-AD06-4261-BD6E-8EF825806F2D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F2F0B8E2-4270-461D-B7EE-8F483FA96267}
+	EndGlobalSection
+EndGlobal

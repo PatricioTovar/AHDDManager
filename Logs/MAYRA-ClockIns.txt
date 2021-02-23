@@ -1,0 +1,33 @@
+12/22/2020 7:26:34 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 7:26:35 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 7:26:52 AM|User Logged OUT: MAYRA
+12/22/2020 8:18:57 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 8:19:22 AM|User clock in status changed to False: MAYRA (Mayra Piña)
+12/22/2020 8:19:22 AM|User Logged OUT: MAYRA
+12/22/2020 8:19:57 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 8:31:01 AM|User Logged OUT: MAYRA
+12/22/2020 8:32:41 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 8:33:08 AM|User clock in status changed to False: MAYRA (Mayra Piña)
+12/22/2020 8:33:08 AM|User Logged OUT: MAYRA
+12/22/2020 8:36:33 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 8:38:33 AM|User Logged OUT: MAYRA
+12/22/2020 8:38:47 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 8:39:07 AM|User clock in status changed to False: MAYRA (Mayra Piña)
+12/22/2020 8:39:07 AM|User Logged OUT: MAYRA
+12/22/2020 8:39:59 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 8:40:27 AM|User clock in status changed to False: MAYRA (Mayra Piña)
+12/22/2020 8:40:27 AM|User Logged OUT: MAYRA
+12/22/2020 8:45:32 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 8:45:52 AM|User clock in status changed to False: MAYRA (Mayra Piña)
+12/22/2020 8:45:52 AM|User Logged OUT: MAYRA
+12/22/2020 8:56:53 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 8:58:34 AM|User clock in status changed to True: MAYRA (Mayra Piña)
+12/22/2020 8:58:55 AM|User clock in status changed to False: MAYRA (Mayra Piña)
+12/22/2020 8:58:55 AM|User Logged OUT: MAYRA
+12/22/2020 9:06:01 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 9:06:43 AM|User clock in status changed to False: MAYRA (Mayra Piña)
+12/22/2020 9:06:43 AM|User Logged OUT: MAYRA
+12/22/2020 9:10:57 AM|User Logged in: MAYRA (Mayra Piña)
+12/22/2020 9:13:06 AM|User Logged in: MAYRA (Mayra Piña)
+1/26/2021 5:17:26 PM|User clock in status changed to False: MAYRA (Mayra Piña)
+1/26/2021 5:17:26 PM|User Logged OUT: MAYRA
