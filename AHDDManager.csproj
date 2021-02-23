@@ -555,7 +555,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\themes\base\1.10.4\" />
-    <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
