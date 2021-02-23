@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<AHDDManagerClass.BackTrack>
 
 @{
-    ViewBag.Title = "Transactions";
+    ViewBag.Title = "Receipts";
 }
 
 <script>
@@ -31,7 +31,7 @@
     });
 </script>
 
-<h1 style="font-weight:800; color:red;">*** Backtrack: Customer Transactions ***</h1>
+<h1 style="font-weight:800; color:red;">*** Backtrack: Customer Receipts ***</h1>
 <hr />
 <div>
     @{
@@ -45,7 +45,7 @@
             <div class="col-sm-4">
                 <span class="pull-right" id="lblCount">
                     <a href="/backtrack/addtransaction/@id" id="lnkTrans">
-                        <img src="~/images/addtransaction.png" data-toggle="tooltip" data-placement="left" title="Add a Transaction" />
+                        <img src="~/images/addtransaction.png" data-toggle="tooltip" data-placement="left" title="Create Receipt" />
                     </a>
                 </span>
             </div>
@@ -57,7 +57,7 @@
         <table id="tblTransactions" class="table table-hover">
             <tr>
                 <th>Receipt ID</th>
-                <th>Transaction Date</th>
+                <th>Receipt Date</th>
                 <th>Amount</th>
                 <th>Paid</th>
                 <th>Owed</th>

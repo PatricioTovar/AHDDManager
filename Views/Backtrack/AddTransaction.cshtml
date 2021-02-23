@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Add Transaction";
+    ViewBag.Title = "Create Receipt";
 }
 
 <!-- NEEDED FOR SPINNER DIALOG -->
@@ -443,7 +443,7 @@
     var custname = ((AHDDManagerClass.Customer)Session["SelectedCustomer"]).FullName;
 }
 
-<h1 style="font-weight:800; color:red;">*** Backtrack: Add Transaction ***</h1>
+<h1 style="font-weight:800; color:red;">*** Backtrack: New Receipt ***</h1>
 
 <div class="well well-lg">
     <div class="row">
@@ -454,7 +454,7 @@
 <div class="well well-lg">
     <div class="row">
         <div class="col-lg-3">
-            <strong>Transaction ID:</strong>
+            <strong>Receipt No.:</strong>
             <div>
                 <input type="text" id="txtTransactionID" class="form-control input-lg" />
             </div>
@@ -468,7 +468,7 @@
         </div>
 
         <div class="col-lg-3">
-            <strong>Transaction Status:</strong>
+            <strong>Receipt Status:</strong>
             <div>
                 <select id="ddlStatus" class="form-control input-lg">
                     <option value="1">OPEN</option>
@@ -479,7 +479,7 @@
         </div>
 
         <div class="col-lg-3">
-            <strong>Transaction Date:</strong> <div>
+            <strong>Receipt Date:</strong> <div>
                 <input type="text" id="txtTransactionDate" class="form-control input-lg" />
             </div>
         </div>
@@ -494,19 +494,19 @@
     <div class="row">
         <div class="col-lg-6">
             <a href="#" id="lnkAdd">
-                <img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" />
+                <img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add Item" />
             </a>
         </div>
         <div class="col-lg-6 pull-text-right">
             <a href="/backtrack/transactions/@Url.RequestContext.RouteData.Values["id"]">
-                <img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Transactions" />
+                <img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Receipts" />
             </a>
         </div>
     </div>
 
     <table id="tblTrans" class="table table-hover">
         <tr>
-            <th>Transaction Item</th>
+            <th>Receipt Item</th>
             <th>Quantity</th>
             <th>Unit Price</th>
             <th>Discount Price</th>
@@ -530,7 +530,7 @@
     <table id="tblPayments" class="table table-hover">
         <tr>
             <th>Customer ID</th>
-            <th>Trans ID</th>
+            <th>Receipt ID</th>
             <th>Assoc ID</th>
             <th>Pay Date</th>
             <th>Pay Amount</th>
@@ -543,7 +543,7 @@
 </div>
 
 
-<div id="new-transaction-dialog" title="Add New Transaction">
+<div id="new-transaction-dialog" title="Add Item">
     <input type="hidden" id="hdnFormID" />
 
     <div class="container">
@@ -553,8 +553,8 @@
             <tr>
                 <td colspan="2">
 
-                    <label for="code">Transaction Item:</label><br />
-                    <input type="text" id="forms" data-required="true" data-name="Transaction Item" class="form-control" style="max-width:700px;">
+                    <label for="code">Receipt Item:</label><br />
+                    <input type="text" id="forms" data-required="true" data-name="Receipt Item" class="form-control" style="max-width:700px;">
 
 
 

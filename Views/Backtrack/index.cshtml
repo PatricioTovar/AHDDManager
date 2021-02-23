@@ -104,10 +104,10 @@
                             "data": "CustomerID",
                             "render": function (data, type, row) {
                                 if (row.TotalOwed == 0) {
-                                    return '<a href="/backtrack/transactions/' + data + '" class="link" id="' + data + '"  data-toggle="tooltip" data-placement="right" title="View Transactions">' + data + '</a>';
+                                    return '<a href="/backtrack/transactions/' + data + '" class="link" id="' + data + '"  data-toggle="tooltip" data-placement="right" title="View Receipts">' + data + '</a>';
                                 }
                                 else {
-                                    return '<a href="/backtrack/transactions/' + data + '" class="link" id="' + data + '" style="color:red;"  data-toggle="tooltip" data-placement="right" title="View Transactions">' + data + '</a>';
+                                    return '<a href="/backtrack/transactions/' + data + '" class="link" id="' + data + '" style="color:red;"  data-toggle="tooltip" data-placement="right" title="View Receipts">' + data + '</a>';
                                 }
 
                             }
@@ -594,7 +594,7 @@
         <div class="container-fluid">
             <ul class="nav navbar-nav">
                 <li><a href="#" id="lnkNotes">Notes</a></li>
-                <li><a href="#" id="lnkTransactions">Transactions</a></li>
+                <li><a href="#" id="lnkTransactions">Receipts</a></li>
                 <li><a href="#" id="lnkPayments">Payments</a></li>
 
             </ul>

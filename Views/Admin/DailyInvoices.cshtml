@@ -229,11 +229,11 @@
                 $("#tblTransCancelledWORefunds tr:gt(0)").remove();
                 $("#tblTransOpenedWORefunds tr:gt(0)").remove();
 
-                $('#hdrTransactions').text('Transactions with Payments (0)');
-                $('#hdrCompleteWOPay').text('Transactions Completed with out Payments (0)');
-                $('hdrCancelledWRef').text('Transactions Cancelled with Refunds (0)');
-                $('#hdrCancelledWORef').text('Transactions Cancelled with out Refunds (0)');
-                $('#hdrOpenWOPay').text('Transactions Opened with out Payments (0)');
+                $('#hdrTransactions').text('Receipts with Payments (0)');
+                $('#hdrCompleteWOPay').text('Receipts Completed with out Payments (0)');
+                $('hdrCancelledWRef').text('Receipts Cancelled with Refunds (0)');
+                $('#hdrCancelledWORef').text('Receipts Cancelled with out Refunds (0)');
+                $('#hdrOpenWOPay').text('Receipts Opened with out Payments (0)');
 
             }
 
@@ -246,15 +246,15 @@
                     resetTables();
 
                     //get today's transactions with Payments
-                    loadTransactions('/admin/GetTransactionsWithPayments/', $("#tblTransactions"), 'Error getting today\'s transactions with payments.', true, false, $('#hdrTransactions'), 'Transactions with Payments');
+                    loadTransactions('/admin/GetTransactionsWithPayments/', $("#tblTransactions"), 'Error getting today\'s transactions with payments.', true, false, $('#hdrTransactions'), 'Receipts with Payments');
                     //get today's transactions completed w/o Payments
-                    loadTransactions('/admin/GetTransCompletedWOPaymentByDate/', $("#tblTransCompletedWOPayents"), 'Error getting today\'s transactions completed with out payments.', false, false, $('#hdrCompleteWOPay'), 'Transactions Completed with out Payments');
-                    //get Transactions Cancelled with Refunds
-                    loadTransactions('/admin/GetTransCancelledWRefundByDate/', $("#tblTransCancelledWRefunds"), 'Error getting today\'s transactions cancelled with refunds.', false, true, $('hdrCancelledWRef'), "Transactions Cancelled with Refunds");
-                    //get Transactions Cancelled with out Refunds
-                    loadTransactions('/admin/GetTransCancelledWORefundByDate/', $("#tblTransCancelledWORefunds"), 'Error getting today\'s transactions cancelled with out refunds.', false, false, $('#hdrCancelledWORef'), 'Transactions Cancelled with out Refunds');
-                    //get Transactions Cancelled with out Refunds
-                    loadTransactions('/admin/GetTransOpenWOPaymentByDate/', $("#tblTransOpenedWORefunds"), 'Error getting today\'s transactions Opened with out payments.', false, false, $('#hdrOpenWOPay'), 'Transactions Opened with out Payments');
+                    loadTransactions('/admin/GetTransCompletedWOPaymentByDate/', $("#tblTransCompletedWOPayents"), 'Error getting today\'s transactions completed with out payments.', false, false, $('#hdrCompleteWOPay'), 'Receipts Completed with out Payments');
+                    //get Receipts Cancelled with Refunds
+                    loadTransactions('/admin/GetTransCancelledWRefundByDate/', $("#tblTransCancelledWRefunds"), 'Error getting today\'s transactions cancelled with refunds.', false, true, $('hdrCancelledWRef'), "Receipts Cancelled with Refunds");
+                    //get Receipts Cancelled with out Refunds
+                    loadTransactions('/admin/GetTransCancelledWORefundByDate/', $("#tblTransCancelledWORefunds"), 'Error getting today\'s transactions cancelled with out refunds.', false, false, $('#hdrCancelledWORef'), 'Receipts Cancelled with out Refunds');
+                    //get Receipts Cancelled with out Refunds
+                    loadTransactions('/admin/GetTransOpenWOPaymentByDate/', $("#tblTransOpenedWORefunds"), 'Error getting today\'s transactions Opened with out payments.', false, false, $('#hdrOpenWOPay'), 'Receipts Opened with out Payments');
 
 
                     LoadPayMethodCounts();
@@ -392,7 +392,7 @@
 </head>
 <body>
 
-    <h2>Today's Transactions</h2>
+    <h2>Today's Receipts</h2>
 
 
     <div class="well">
@@ -433,7 +433,7 @@
             <div class="card mb-0">
                 <div class="card-header collapsed" data-toggle="collapse" style="background-color:beige;" href="#collapseOne">
                     <a class="card-title">
-                        <h4 id="hdrTransactions">Transactions with Payments (0)</h4>
+                        <h4 id="hdrTransactions">Receipts with Payments (0)</h4>
                     </a>
                 </div>
                 <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
@@ -456,7 +456,7 @@
 
                 <div class="card-header collapsed" data-toggle="collapse" style="background-color:beige;" data-parent="#accordion" href="#collapseThree">
                     <a class="card-title">
-                        <h4 id="hdrCancelledWRef">Transactions Cancelled with Refunds (0)</h4>
+                        <h4 id="hdrCancelledWRef">Receipts Cancelled with Refunds (0)</h4>
                     </a>
                 </div>
                 <div id="collapseThree" class="collapse" data-parent="#accordion">
@@ -480,7 +480,7 @@
 
                 <div class="card-header collapsed" data-toggle="collapse" style="background-color:beige;" data-parent="#accordion" href="#collapseTwo">
                     <a class="card-title">
-                        <h4 id="hdrCompleteWOPay">Transactions Completed with out Payments (0)</h4>
+                        <h4 id="hdrCompleteWOPay">Receipts Completed with out Payments (0)</h4>
                     </a>
                 </div>
                 <div id="collapseTwo" class="collapse" data-parent="#accordion">
@@ -503,7 +503,7 @@
 
                 <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" style="background-color:beige;" href="#collapseFour">
                     <a class="card-title">
-                        <h4 id="hdrCancelledWORef">Transactions Cancelled with out Refunds (0)</h4>
+                        <h4 id="hdrCancelledWORef">Receipts Cancelled with out Refunds (0)</h4>
                     </a>
                 </div>
                 <div id="collapseFour" class="collapse" data-parent="#accordion">
@@ -529,7 +529,7 @@
 
                 <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" style="background-color:beige;" href="#collapseFive">
                     <a class="card-title">
-                        <h4 id="hdrOpenWOPay">Transactions Opened with out Payments (0)</h4>
+                        <h4 id="hdrOpenWOPay">Receipts Opened with out Payments (0)</h4>
                     </a>
                 </div>
                 <div id="collapseFive" class="collapse" data-parent="#accordion">
@@ -591,7 +591,7 @@
             <table id="tblRefunds" class="table table-striped">
                 <tr>
                     <th>Refund ID</th>
-                    <th>Trans ID</th>
+                    <th>Receipt ID</th>
                     <th>Amount</th>
                     <th>Refund Date</th>
                     <th>Refunded By</th>
