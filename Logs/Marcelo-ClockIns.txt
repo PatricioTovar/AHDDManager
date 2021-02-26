@@ -185,3 +185,10 @@
 2/23/2021 12:42:44 PM|User Logged in: Marcelo (Patricio Tovar)
 2/23/2021 2:21:49 PM|User Logged in: Marcelo (Patricio Tovar)
 2/23/2021 5:24:32 PM|User Logged in: Marcelo (Patricio Tovar)
+2/23/2021 6:04:20 PM|User Logged in: Marcelo (Patricio Tovar)
+2/25/2021 11:57:29 AM|User Logged in: Marcelo (Patricio Tovar)
+2/25/2021 1:07:38 PM|User Logged in: Marcelo (Patricio Tovar)
+2/25/2021 1:51:30 PM|User Logged in: Marcelo (Patricio Tovar)
+2/25/2021 6:37:33 PM|User Logged in: Marcelo (Patricio Tovar)
+2/25/2021 7:01:53 PM|User clock in status changed to False: Marcelo (Patricio Tovar)
+2/25/2021 7:01:53 PM|User Logged OUT: Marcelo

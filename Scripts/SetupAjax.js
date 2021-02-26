@@ -19,11 +19,13 @@
             },
             error: function (x, status, error) {
                 if (x.status == 901) {
-                    alert("Sorry, your session has expired. Please login again to continue");
+                    //alert("Sorry, your session has expired. Please login again to continue");
+                    $.AlertDialog("Sorry, your session has expired. Please login again to continue", 'Session expired', null, 'lightcoral');
                     document.location.href = "/Home/";
                 }
                 else {
-                    alert("An error occurred: " + status + "nError: " + error);
+                    //alert("An error occurred: " + status + "nError: " + error);
+                    $.AlertDialog("An error occurred: " + status + "nError: " + error, 'System error', null, 'lightcoral');
                 }
             }
         });

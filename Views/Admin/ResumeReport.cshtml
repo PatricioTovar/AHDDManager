@@ -120,6 +120,17 @@
                     }
                 },
                 {
+                    name: "Deposit",
+                    visible: false,
+                    className: "exportExcel",
+                    render: function (data, type, row, meta) {
+                        if (row.PaymentMethod == 4) {
+                            return row.PaymentAmount;
+                        }
+                        return "";
+                    }
+                },
+                {
                     data: "MethodDescription",
                     render: function (data, type, row, meta) {
                         if (type == "exportxls") {
@@ -135,6 +146,9 @@
                                 break;
                             case 3:
                                 return '<i class="fa fa-credit-card fa-fw"></i>' + data
+                                break;
+                            case 4:
+                                return '<i class="fa fa-money fa-fw"></i>' + data
                                 break;
                             default:
                                 return data
@@ -200,6 +214,9 @@
                 var totalCard = 0;
                 var countCard = 0;
 
+                var totalDeposit = 0;
+                var countDeposit = 0;
+
                 $.each(result, function (index, item) {
                     if (!isNaN(item.PaymentAmount)) {
                         if (item.PaymentMethod == 1) {
@@ -211,6 +228,9 @@
                         } else if (item.PaymentMethod == 3) {
                             totalCard = totalCard + item.PaymentAmount;
                             countCard++;
+                        } else if (item.PaymentMethod == 4) {
+                            totalDeposit = totalDeposit + item.PaymentAmount;
+                            countDeposit++;
                         }
                     }
                 });
@@ -224,8 +244,11 @@
                 $('#lblCardAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalCard));
                 $('#lblCardCount').text('(' + countCard + ')');
 
-                var totalAmount = totalCash + totalCheck + totalCard;
-                var totalCount = countCash + countCheck + countCard;
+                $('#lblDepositAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalDeposit));
+                $('#lblDepositCount').text('(' + countDeposit + ')');
+
+                var totalAmount = totalCash + totalCheck + totalCard + totalDeposit;
+                var totalCount = countCash + countCheck + countCard + countDeposit;
                 $('#lblTotalAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalAmount));
                 $('#lblTotalCount').text('(' + totalCount + ')');
             }
@@ -268,8 +291,6 @@
                 <div class="col-sm-3 text-right">
                     <span id="lblCashAmount">$0.00</span>
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-sm-9 text-right">
                     <label>Check: </label>
                     <span id="lblCheckCount">(0)</span>
@@ -277,8 +298,6 @@
                 <div class="col-sm-3 text-right">
                     <span id="lblCheckAmount">$0.00</span>
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-sm-9 text-right">
                     <label>Visa: </label>
                     <span id="lblCardCount">(0)</span>
@@ -286,8 +305,13 @@
                 <div class="col-sm-3 text-right">
                     <span id="lblCardAmount">$0.00</span>
                 </div>
-            </div>
-            <div class="row">
+                <div class="col-sm-9 text-right">
+                    <label>Deposit: </label>
+                    <span id="lblDepositCount">(0)</span>
+                </div>
+                <div class="col-sm-3 text-right">
+                    <span id="lblDepositAmount">$0.00</span>
+                </div>
                 <div class="col-sm-9 text-right">
                     <label>Total: </label>
                     <span id="lblTotalCount">(0)</span>

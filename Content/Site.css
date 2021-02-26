@@ -73,6 +73,10 @@ html, body {
         border-bottom-color: #000000;
     }
 
+.row {
+    margin-bottom: 5px;
+}
+
 .user-container {
     background: #f6f6f6;
     border-radius: 25px;
@@ -113,7 +117,7 @@ table.dataTable tbody td {
 }
 
 .table-hover > tbody > tr:hover > td {
-    cursor:pointer
+    cursor: pointer
 }
 /*MODALS*/
 @media (min-width: 992px) {
@@ -131,9 +135,12 @@ table.dataTable tbody td {
 
 /*---------*/
 
-.ui-dialog-buttonset {
-    width:100%;
-    text-align: right;
+.i .fa {
+    color: #333333
+}
+
+.fa-shadow {
+    text-shadow: 1px 0px 1px #333333;
 }
 
 @media print {
@@ -142,9 +149,7 @@ table.dataTable tbody td {
         margin: 14mm;
     }
 
-    .container
-
-{
-    width: 1170px;
-}
+    .container {
+        width: 1170px;
+    }
 }

@@ -14,22 +14,18 @@
 <style>
     .DetailLinks {
         color: cornflowerblue;
-        text-shadow: 1px 1px 1px #000000;
     }
 
     .EditLinks {
         color: lightskyblue;
-        text-shadow: 1px 1px 1px #000000;
     }
 
     .CustomersNotesLinks {
         color: gold;
-        text-shadow: 1px 1px 1px #000000;
     }
 
     .deletecustomer {
         color: crimson;
-        text-shadow: 1px 1px 1px #000000;
     }
 </style>
 
@@ -170,7 +166,7 @@
                     "className": "text-center",
                     "render": function (data, type, row) {
 
-                        return "<span class='DetailLinks imgBtn' id='detail_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='View details'><i class='fa fa-info-circle fa-2x'></a>";
+                        return "<span class='DetailLinks imgBtn' id='detail_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='View details'><i class='fa fa-info-circle fa-shadow fa-2x'></a>";
                     }
                 },
                 {
@@ -179,7 +175,7 @@
                     "className": "text-center",
                     "render": function (data, type, row) {
 
-                        return "<span class='EditLinks imgBtn' id='edit_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Edit'><i class='fa fa-pencil fa-2x'></a>";
+                        return "<span class='EditLinks imgBtn' id='edit_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Edit'><i class='fa fa-pencil fa-shadow fa-2x'></a>";
                     }
                 },
                 //{
@@ -197,7 +193,7 @@
                     "className": "text-center",
                     "render": function (data, type, row) {
 
-                        return "<span class='CustomersNotesLinks imgBtn' id='customerNotes_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Notes'><i class='fa fa-sticky-note fa-2x'></a>";
+                        return "<span class='CustomersNotesLinks imgBtn' id='customerNotes_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Notes'><i class='fa fa-sticky-note fa-shadow fa-2x'></a>";
                     }
                 },
                 {
@@ -210,7 +206,7 @@
                             var i = 0;
                         }
 
-                        return data == 1 ? "<span class='deletecustomer text-danger imgBtn' id='" + full.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-2x'></a>" : ''
+                        return data == 1 ? "<span class='deletecustomer text-danger imgBtn' id='" + full.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x'></a>" : ''
                     }
                 }
             ],
