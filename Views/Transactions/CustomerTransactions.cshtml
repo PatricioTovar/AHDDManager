@@ -32,72 +32,70 @@
 </script>
 
 <h2>Customer Receipts</h2>
-<hr />
 <div>
     @{
         var id = ViewContext.RouteData.Values["id"];
     }
 
-    <div class="container">
+    <div class="well">
         <div class="row">
-            <div class="col-sm-4"><strong>Customer:</strong> @ViewBag.CustomerName</div>
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4">
-                <span class="pull-right" id="lblCount">
-                    <a href="/transactions/addtransaction/@id" id="lnkTrans">
-                        <img src="~/images/addtransaction.png" data-toggle="tooltip" data-placement="left" title="Create Receipt" />
-                    </a>
-                </span>
-            </div>
+            <div class="col-md-2"><strong>Customer ID:</strong> <div>@id</div></div>
+            <div class="col-md-6"><strong>Name:</strong> <div>@ViewBag.CustomerName</div></div>
         </div>
     </div>
 
-    <p></p>
-    <div class="container">
-        <table id="tblTransactions" class="table table-hover table-condensed">
-            <tr>
-                <th>Receipt ID</th>
-                <th>Receipt Date</th>
-                <th>Amount</th>
-                <th>Paid</th>
-                <th>Owed</th>
-                <th>Created By</th>
-            </tr>
-
-            @{
-
-
-
-                foreach (var item in Model.ToList())
-                {
-
-                    <tr id="@item.TransactionID" data-status="@item.TransactionStatusID">
-                        <td>@item.TransactionID</td>
-                        <td>@item.TransactionDate</td>
-                        <td>@item.TotalAmount</td>
-                        <td>@item.TotalCollected</td>
-                        <td>@item.TotalOwed</td>
-                        <td>@item.TakenBy</td>
-                    </tr>
-                }
-            }
-
-        </table>
-
-        <script>
-            $(function () {
-                $('#tblTransactions tr').each(function (i, row) {
-                    var $row = $(row);
-
-                    if ($row.attr('data-status') == '3') {
-                       $row.addClass('danger');
-                    } if ($row.attr('data-status') == '2') {
-                        $row.addClass('success');
-                    }
-
-
-                });
-            });
-        </script>
+    <div class="row">
+        <div class="col-lg-12 text-right">
+            <a href="/transactions/addtransaction/@id" id="lnkTrans">
+                @*<img src="~/images/addtransaction.png" data-toggle="tooltip" data-placement="left" title="Create Receipt" />*@
+                <i class="fa fa-plus fa-3x" aria-hidden="true" data-toggle="tooltip" title="New receipt"></i>
+            </a>
+        </div>
     </div>
+
+    <table id="tblTransactions" class="table table-hover table-condensed">
+        <tr>
+            <th>Receipt ID</th>
+            <th>Receipt Date</th>
+            <th>Amount</th>
+            <th>Paid</th>
+            <th>Owed</th>
+            <th>Created By</th>
+        </tr>
+
+        @{
+
+
+
+            foreach (var item in Model.ToList())
+            {
+
+                <tr id="@item.TransactionID" data-status="@item.TransactionStatusID">
+                    <td>@item.TransactionID</td>
+                    <td>@item.TransactionDate</td>
+                    <td>@item.TotalAmount</td>
+                    <td>@item.TotalCollected</td>
+                    <td>@item.TotalOwed</td>
+                    <td>@item.TakenBy</td>
+                </tr>
+            }
+        }
+
+    </table>
+
+    <script>
+        $(function () {
+            $('#tblTransactions tr').each(function (i, row) {
+                var $row = $(row);
+
+                if ($row.attr('data-status') == '3') {
+                    $row.addClass('danger');
+                } if ($row.attr('data-status') == '2') {
+                    $row.addClass('success');
+                }
+
+
+            });
+        });
+    </script>
 </div>

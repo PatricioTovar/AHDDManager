@@ -33,12 +33,13 @@ html, body {
     border-top: 2px solid #eeeeee;
     margin-top: -22px;
     padding-right: 10px;
+    margin-bottom: 0px;
 }
 
 .navbar.main-navbar {
     background-color: #687d0b;
     background-image: url('../images/flowers.png');
-    background-repeat: repeat-x;
+    background-repeat: repeat;
 }
 
 .navbar {
@@ -56,10 +57,10 @@ html, body {
 
 .navbar-nav > li > a {
     color: #ffffff;
-    text-decoration-color: #000000
 }
 
-    .navbar-nav > li > a:hover {
+    .navbar-nav > li > a:hover,
+    .navbar-nav > li > a:focus {
         color: #000000;
     }
 
@@ -68,10 +69,15 @@ html, body {
     border-bottom-color: #ffffff;
 }
 
-    .navbar-nav > .dropdown > a .caret:hover {
+    .navbar-nav > .dropdown > a .caret:hover,
+    .navbar-nav > .dropdown > a .caret:active {
         border-top-color: #000000;
         border-bottom-color: #000000;
     }
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    background-color: #8da71b;
+}
 
 .row {
     margin-bottom: 5px;
@@ -119,6 +125,7 @@ table.dataTable tbody td {
 .table-hover > tbody > tr:hover > td {
     cursor: pointer
 }
+
 /*MODALS*/
 @media (min-width: 992px) {
     .modal-xl {
@@ -135,13 +142,24 @@ table.dataTable tbody td {
 
 /*---------*/
 
-.i .fa {
+
+/*ICONS*/
+i.fa {
     color: #333333
 }
 
 .fa-shadow {
     text-shadow: 1px 0px 1px #333333;
 }
+
+a > i.fa:hover {
+    cursor: pointer
+}
+
+a > i.fa:hover {
+    opacity: 0.85;
+}
+/*---------*/
 
 @media print {
     @page {

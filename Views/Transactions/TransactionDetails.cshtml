@@ -668,14 +668,20 @@
         @if (Model.Item3.TransactionStatusID == 1)
         {
             <div class="row">
-                <div class="col-lg-12">
-                    <img id="btnAddTransaccion" class="imgBtn" src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" onclick="btnAddTransaccionClick()" />
+                <div class="col-sm-6">
+                    <h3>Products / Services</h3>
+                </div>
+                <div class="col-sm-6 text-right">
+                    @*<img id="btnAddTransaccion" class="imgBtn" src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" onclick="btnAddTransaccionClick()" />*@
+                    <a href="#" id="btnAddTransaccion">
+                        <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add product"></i>
+                    </a>
                 </div>
             </div>
         }
         <table id="tblTransDetails" class="table table-hover">
             <tr>
-                <th>Receipt Item:</th>
+                <th>Description:</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
                 <th>Discount Price</th>
@@ -716,7 +722,7 @@
                                 if (assoc.IsAdmin && Model.Item3.TransactionStatusID == 1)
                                 {
                                     <text>
-                                        <td><i id="@item.TransactionDetailID" class='delete imgBtn fa fa-trash fa-shadow fa-2x' style="color:red" data-toggle='tooltip' data-placement='right' title='Delete item'></i></td>
+                                        <td><a><i id="@item.TransactionDetailID" class='delete fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete item'></i></a></td>
                                     </text>
                                 }
                             }
@@ -745,15 +751,18 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 pull-bottom">
+            <div class="col-lg-6">
                 <h3>Payments</h3>
             </div>
-            <div class="col-lg-6 pull-text-right pull-bottom">
+            <div class="col-lg-6 pull-text-right">
                 @{
                     if (Model.Item3.TransactionStatusID == 1)
                     {
+                        @*<a href="#" id="lnkAddPaymentBottom" class="payment">
+                                <img src="~/images/wallet.png" data-toggle="tooltip" data-placement="left" title="Add Payment" />
+                            </a>*@
                         <a href="#" id="lnkAddPaymentBottom" class="payment">
-                            <img src="~/images/wallet.png" data-toggle="tooltip" data-placement="left" title="Add Payment" />
+                            <i class="fa fa-usd fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add payment"></i>
                         </a>
                     }
                 }
@@ -778,27 +787,27 @@
                 {
                     decPayTotal += item.PaymentAmount;
 
-                    <tr id="@item.PaymentID">
-                        <td>@item.PaymentID</td>
-                        <td>@item.PaymentDate</td>
-                        <td class="currencyLabel">@item.PaymentAmount</td>
-                        <td>@item.PaymentMethodDescription</td>
-                        <td>@item.CheckNumber</td>
-                        <td>@item.TakenBy</td>
-                        @{
-                            if (Context.Session["Associate"] != null && Model.Item3.TotalOwed != 0 && Model.Item3.TransactionStatusID == 1)
-                            {
-                                var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
-                                if (assoc.IsAdmin)
+                        <tr id="@item.PaymentID">
+                            <td>@item.PaymentID</td>
+                            <td>@item.PaymentDate</td>
+                            <td class="currencyLabel">@item.PaymentAmount</td>
+                            <td>@item.PaymentMethodDescription</td>
+                            <td>@item.CheckNumber</td>
+                            <td>@item.TakenBy</td>
+                            @{
+                                if (Context.Session["Associate"] != null && Model.Item3.TotalOwed != 0 && Model.Item3.TransactionStatusID == 1)
                                 {
-                                    <text>
-                                        <td><i id="@item.PaymentID" class='deletepayment imgBtn fa fa-trash fa-shadow fa-2x' style="color:red" data-toggle='tooltip' data-placement='right' title='Delete payment'></i></td>
-                                    </text>
+                                    var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
+                                    if (assoc.IsAdmin)
+                                    {
+                                        <text>
+                                            <td><a><i id="@item.PaymentID" class='deletepayment imgBtn fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete payment'></i></a></td>
+                                        </text>
+                                    }
                                 }
                             }
-                        }
 
-                    </tr>
+                        </tr>
                 }
 
                 <tr>
@@ -830,9 +839,7 @@
 
 
 
-
-    <!-- Model.Item4 != null && Model.Item4.Count() > 0 -->
-    @if (true)
+    @if (Model.Item4 != null && Model.Item4.Count() > 0)
     {
         <div class="container">
             <div class="row">

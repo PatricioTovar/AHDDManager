@@ -101,7 +101,7 @@
                     <table class="table" id="tblTrans">
                         <thead>
                             <tr>
-                                <th><h5>Item #</h5></th>
+                                @*<th><h5>Item #</h5></th>*@
                                 <th><h5>Description</h5></th>
                                 <th><h5>Quantity</h5></th>
                                 <th><h5>Price</h5></th>
@@ -114,8 +114,8 @@
                                 {
 
                                     <tr>
-                                        <td class="col-md-2">@item.TransactionDetailID</td>
-                                        <td class="col-md-5">@item.FormTitle</td>
+                                        @*<td class="col-md-2">@item.TransactionDetailID</td>*@
+                                        <td class="col-md-7">@item.FormTitle</td>
                                         <td class="col-md-1 text-right">@item.Quantity</td>
                                         <td class="col-md-2 text-right">@item.PriceCharged.ToString("C") </td>
                                         <td class="col-md-2 text-right"> @item.Total.ToString("C") </td>
@@ -123,7 +123,7 @@
                                     if (!string.IsNullOrEmpty(item.Notes))
                                     {
                                         <tr class="tr-note" style="font-size:15px">
-                                            <td class="col-md-2"></td>
+                                            @*<td class="col-md-2"></td>*@
                                             <td class="col-md-10" colspan="4">*Note: @item.Notes</td>
                                         </tr>
                                     }
@@ -132,7 +132,7 @@
                             }
 
                             <tr>
-                                <td class="col-md-2"></td>
+                                @*<td class="col-md-2"></td>*@
                                 <td class="col-md-5"></td>
                                 <td class="col-md-1"></td>
                                 <td class="col-md-2 text-right">
@@ -155,6 +155,7 @@
                             <tr>
                                 <th>Receipt Creator</th>
                                 <th>Date</th>
+                                <th>Method</th>
                                 <th style="text-align:right;">Amount</th>
                             </tr>
 
@@ -164,6 +165,7 @@
                                     <tr>
                                         <td class="col-md-3 text-left">@item.TakenBy</td>
                                         <td class="col-md-3 text-left">@item.PaymentDate</td>
+                                        <td class="col-md-3 text-left">@item.PaymentMethodDescription</td>
                                         <td class="col-md-3 text-right">@item.PaymentAmount.ToString("C") </td>
                                     </tr>
                                 }

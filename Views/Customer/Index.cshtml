@@ -11,24 +11,6 @@
 
 <!-- NEEDED FOR SPINNER DIALOG -->
 
-<style>
-    .DetailLinks {
-        color: cornflowerblue;
-    }
-
-    .EditLinks {
-        color: lightskyblue;
-    }
-
-    .CustomersNotesLinks {
-        color: gold;
-    }
-
-    .deletecustomer {
-        color: crimson;
-    }
-</style>
-
 <script>
     $(function () {
         var _associateID = '@(ViewBag.AssociateID)';
@@ -166,7 +148,7 @@
                     "className": "text-center",
                     "render": function (data, type, row) {
 
-                        return "<span class='DetailLinks imgBtn' id='detail_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='View details'><i class='fa fa-info-circle fa-shadow fa-2x'></a>";
+                        return "<a class='DetailLinks' id='detail_" + row.CustomerID + "' ><i class='fa fa-info-circle fa-shadow fa-2x' style='color: cornflowerblue;' data-toggle='tooltip' data-placement='top' title='View details'></i></a>";
                     }
                 },
                 {
@@ -175,7 +157,7 @@
                     "className": "text-center",
                     "render": function (data, type, row) {
 
-                        return "<span class='EditLinks imgBtn' id='edit_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Edit'><i class='fa fa-pencil fa-shadow fa-2x'></a>";
+                        return "<a class='EditLinks imgBtn' id='edit_" + row.CustomerID + "' ><i class='fa fa-pencil fa-shadow fa-2x' style='color: lightskyblue;' data-toggle='tooltip' data-placement='top' title='Edit'></i></a>";
                     }
                 },
                 //{
@@ -193,7 +175,7 @@
                     "className": "text-center",
                     "render": function (data, type, row) {
 
-                        return "<span class='CustomersNotesLinks imgBtn' id='customerNotes_" + row.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Notes'><i class='fa fa-sticky-note fa-shadow fa-2x'></a>";
+                        return "<a class='CustomersNotesLinks imgBtn' id='customerNotes_" + row.CustomerID + "' ><i class='fa fa-sticky-note fa-shadow fa-2x' style='color: gold;' data-toggle='tooltip' data-placement='top' title='Notes'></i></a>";
                     }
                 },
                 {
@@ -206,7 +188,7 @@
                             var i = 0;
                         }
 
-                        return data == 1 ? "<span class='deletecustomer text-danger imgBtn' id='" + full.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x'></a>" : ''
+                        return data == 1 ? "<a class='deletecustomer text-danger imgBtn' id='" + full.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;'></i></a>" : ''
                     }
                 }
             ],
@@ -631,12 +613,12 @@
             else {
                 $('#txtSearch').val($('#txtSearch').val().trim());
             }
-
             $.ajax({
                 url: "/customer/SearchCustomers/",
                 type: "post",
                 data: { SearchCriteria: $('#txtSearch').val() }
             }).done(function (result) {
+                Table.search(''); //Clear filter
                 Table.clear().draw();
                 Table.rows.add(result).draw();
                 $('[data-toggle="tooltip"]').tooltip();
@@ -668,9 +650,9 @@
             <button type="submit" class="btn btn-primary" id="btnSearch" onclick="btnSearchClick();">Search</button>
         </div>
         <div class="col-sm-6 text-right">
-            <span id="lnkNewCustomer" class="imgBtn">
-                <i class="fa fa-user-plus fa-2x" style="color:black" data-toggle="tooltip" title="Add New Customer"></i>
-            </span>
+            <a id="lnkNewCustomer">
+                <i class="fa fa-user-plus fa-2x" data-toggle="tooltip" title="Add New Customer"></i>
+            </a>
         </div>
     </form>
 </div>

@@ -328,27 +328,27 @@
 
 <h2>Create Receipt</h2>
 
+@*<a href="/transactions/customertransactions/@Url.RequestContext.RouteData.Values["id"]">
+    <img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Receipts" />
+</a>*@
+
 <div class="well">
     <div class="row">
-        <div class="col-lg-6"><strong>Customer:</strong> <div>@custname</div></div>
-        <div class="col-lg-6"><strong>Customer ID:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
+        <div class="col-md-2"><strong>Customer ID:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
+        <div class="col-md-6"><strong>Name:</strong> <div>@custname</div></div>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-12 text-right">
         <a href="#" id="lnkAdd">
-            <img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add Item" />
-        </a>
-    </div>
-    <div class="col-lg-6">
-        <a href="/transactions/customertransactions/@Url.RequestContext.RouteData.Values["id"]" class="pull-right">
-            <img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Receipts" />
+            @*<img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add Item" />*@
+            <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add product"></i>
         </a>
     </div>
 </div>
 
-<table id="tblTrans" class="table table-hover">
+<table id="tblTrans" class="table table-striped">
     <tr>
         <th>Receipt Item</th>
         <th>Quantity</th>
@@ -367,8 +367,11 @@
     </tr>
 </table>
 <div class="row">
-    <div class="col-sm-12">
-        <button id="btnSubmit" class="btn btn-success pull-right">Submit</button>
+    <div class="col-sm-6">
+        <a id="btnCancel" href="/transactions/customertransactions/@Url.RequestContext.RouteData.Values["id"]" class="btn btn-danger">Cancel</a>
+    </div>
+    <div class="col-sm-6 text-right">
+        <button id="btnSubmit" class="btn btn-success">Submit</button>
     </div>
 </div>
 
@@ -381,13 +384,8 @@
         <table id="tblTransDetails" class="table">
             <tr>
                 <td colspan="2">
-
                     <label for="code">Item:</label><br />
                     <input type="text" id="forms" data-required="true" data-name="Item" class="form-control" style="max-width:700px;">
-
-
-
-
                 </td>
                 <td valign="bottom" class="text-left"><img src="~/images/search.png" id="search" style="padding-top:20px;" /></td>
             </tr>
@@ -402,7 +400,7 @@
                     <label for="txtDiscount">Discount Price</label><input type="text" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" id="txtDiscount" onchange="updateSubtotal()" />
                 </td>
                 <td>
-                    <label for="txtSubtotal">Sub-total</label><input type="text" class="form-control" id="txtSubtotal" value="0" readonly/>
+                    <label for="txtSubtotal">Sub-total</label><input type="text" class="form-control" id="txtSubtotal" value="0" readonly />
                 </td>
             </tr>
 
