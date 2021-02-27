@@ -119,7 +119,8 @@
                     "className": "text-center",
                     "render": function (data, type, row) {
 
-                        return "<span class='dot' style='background-color:" + row.BackgroundColor + "' data-toggle='tooltip' title='" + data + "'></span>";
+                        //return "<span class='dot' style='background-color:" + row.BackgroundColor + "' data-toggle='tooltip' title='" + data + "'></span>";
+                        return "<i class='fa fa-circle fa-lg fa-fw' style='color:" + row.BackgroundColor + "' data-toggle='tooltip' title='" + data + "'></i>";
                     }
                 },
                 { "data": "FirstName" },
@@ -292,7 +293,7 @@
             event.preventDefault();
             //$("#ConfirmDialog").dialog("open");
 
-            $.ConfirmDialog('Are you sure you want to delete this customer?', 'Confirm required', DeleteCustomer, null, CustomerID, 'lightcoral')
+            $.ConfirmDialog('Are you sure you want to delete this customer?', 'Confirm required', DeleteCustomer, null, CustomerID, 'lightcoral');
 
         });
 
@@ -487,7 +488,11 @@
                         //alert('The customer was deleted.');
                         $.AlertDialog('The customer was deleted.', 'Success', function (event) { }, 'lightgreen');
                         formID = 0;
-                        location.reload();
+                        //location.reload();//Only delete the row instead of reload the page
+                        
+                        Table.rows(function (idx, data, node) {
+                            return data['CustomerID'] === CustomerID;
+                        }).remove().draw();
                     } else {
                         //alert(result);
                         $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');

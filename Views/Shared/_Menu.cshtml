@@ -91,18 +91,20 @@
         {
             var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
             <li>
-                <div class="container user-container" style="background-color:white; ">
+                <div class="user-container" style="background-color:white; ">
                     <h4>
                         <a href="/account/associateprofile/">Welcome @assoc.FirstName</a>
-                        &nbsp;&nbsp;
-                        <span class='dot' style='background-color: @assoc.BackgroundColor'></span>
+
+                        @*<span class='dot' style='background-color: @assoc.BackgroundColor'></span>*@
+                        <i class="fa fa-circle fa-lg fa-fw" style='color: @assoc.BackgroundColor' data-toggle='tooltip' title='Your color'></i>
                         @{
                             if (Context.Session["Associate"] != null)
                             {
                                 if (assoc.IsAdmin)
                                 {
-                                    <text>&nbsp; &nbsp;</text>
-                                    <img src="~/images/admin.png" />
+                                    @*<text>&nbsp; &nbsp;</text>*@
+                                    @*<img src="~/images/admin.png" />*@
+                                    <i class="fa fa-key fa-shadow" style="color: gold;" data-toggle='tooltip' title='You are Admin!'></i>
                                 }
                             }
                         }

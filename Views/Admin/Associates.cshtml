@@ -188,16 +188,14 @@
 
 
         $('#lnkNew').on('click', function (e) {
-            $('#ddlColors').show();
-            $('#divColor').hide();
+            
             ClearForm();
             resetRequiredBoxes();
             AssociateDialog.dialog("open");
         });
 
         $('#tblAssociates').on('click', '.name', function () {
-            $('#ddlColors').hide();
-            $('#divColor').show();
+            
             $('#divColor').css('background', 'silver')
             ClearForm();
             resetRequiredBoxes();

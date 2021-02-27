@@ -86,10 +86,12 @@ html, body {
 .user-container {
     background: #f6f6f6;
     border-radius: 25px;
+    padding: 5px 10px;
 }
 
     .user-container a {
-        color: #000000
+        color: #000000;
+        text-decoration:none;
     }
 
 .dot {
@@ -144,7 +146,7 @@ table.dataTable tbody td {
 
 
 /*ICONS*/
-i.fa {
+a i.fa {
     color: #333333
 }
 

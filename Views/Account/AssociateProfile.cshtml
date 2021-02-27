@@ -9,8 +9,6 @@
         GetStates();
         GetColors();
 
-        $('#ddlColors').hide();
-        $('#divColor').show();
         LoadAssociate(@ViewBag.AssociateID);
 
         GetStates();
@@ -36,11 +34,8 @@
 
 @Html.Partial("~/Views/Shared/AssociateDialog.cshtml")
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-12 pulll-right-text"><input type="button" id="btnSubmit" class="btn btn-default" value="Submit" /></div>
-    </div>
-</div>
+
+<input type="button" id="btnSubmit" class="btn btn-success pull-right" value="Submit" />
 
 
 

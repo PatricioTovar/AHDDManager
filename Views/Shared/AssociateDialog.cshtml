@@ -1,21 +1,6 @@
 ﻿
 <script>
 
-    $(function () {
-        $('#chkActive').on('click', function () {
-
-            if ($(this).is(':checked')) {
-                $("#divColor").hide();
-                $("#ddlColors").show();
-            }
-            else {
-                $("#divColor").show();
-                $("#ddlColors").hide();
-            }
-        });
-
-    });
-
     function GetColors() {
 
         $.ajax({
@@ -26,8 +11,10 @@
             contentType: 'application/json;',
             success: function (result) {
                 if (result.length > 0) {
+                    $('#ddlColors').find('option').remove();
                     $.each(result, function (key, value) {
-                        $("#ddlColors").append(new Option(value.ColorName, value.TextColor));
+                        var option = new Option(value.ColorName, value.TextColor);
+                        $("#ddlColors").append(option);
                     });
                 }
             }
@@ -98,13 +85,14 @@
                     $("#txtZip").val(result.Zip);
                     $("#txtPhone").val(result.Phone);
                     $("#txtAltPhone").val(result.AltPhone);
-                    $("#ddlColors").val(result.TextColor);
-                    if (result.Active === true) {
-                        $("#divColor").text('TEXT COLOR').css('background', result.BackgroundColor).css('color', result.TextColor).css('text-align', 'center');
-                    } else {
-                        $("#divColor").text('INACTIVE').css('text-align', 'center');
-                    }
+                    //if (result.TextColor) {
+                    //    var option = new Option(result.BackgroundColor, result.TextColor);
+                    //    $("#ddlColors").append(option);
+                    //}
+                    //$("#ddlColors").val(result.TextColor);
+                    $("#ddlColors").val('');
 
+                    $("#colorSample").css('background', result.BackgroundColor).css('color', result.TextColor);
                     $("#txtEmail").val(result.Email);
                     $("#txtUserName").val(result.UserName);
                     $("#txtPassword").val(result.Password);
@@ -116,11 +104,17 @@
         });
     }
 
+    function ddlColorsChange() {
+        var bgColor = $("#ddlColors option:selected").text();
+        var txtColor = $("#ddlColors option:selected").val();
+        $("#colorSample").css('background', bgColor).css('color', txtColor);
+    }
+
     function UpdateAssociate(associateID) {
         var elements = document.querySelectorAll('[data-required="true"]');
         var alertTriggered = false;
 
-        $.each(elements, function (index, item) {          
+        $.each(elements, function (index, item) {
             if (item.value.trim() == '') {
                 item.style.borderColor = 'red';
 
@@ -219,9 +213,9 @@
                 <th>Email</th>
             </tr>
             <tr>
-                <td><input type="text" class="form-control" id="txtPhone" data-required="true" data-name="Phone" maxlength="10"onkeypress='numericValidate(event)'  /></td>
+                <td><input type="text" class="form-control" id="txtPhone" data-required="true" data-name="Phone" maxlength="10" onkeypress='numericValidate(event)' /></td>
                 <td><input type="text" class="form-control" id="txtAltPhone" maxlength="10" onkeypress='numericValidate(event)' /></td>
-                <td><input type="text" class="form-control col-lg-8" id="txtEmail" data-required="true" data-name="Email"  /></td>
+                <td><input type="text" class="form-control col-lg-8" id="txtEmail" data-required="true" data-name="Email" /></td>
             </tr>
             <tr>
                 <th>User Name</th>
@@ -233,7 +227,12 @@
             <tr>
                 <td><input type="text" class="form-control" id="txtUserName" data-required="true" data-name="User Name" maxlength="20" /></td>
                 <td><input type="text" class="form-control" id="txtPassword" data-required="true" data-name="Password" maxlength="20" /></td>
-                <td id="tdColor"><select id="ddlColors" class="form-control"></select><div id="divColor">Text Color</div></td>
+                <td id="tdColor">
+                    <div class="input-group">
+                        <span id="colorSample" class="input-group-addon"><i class="fa fa-font"></i></span>
+                        <select id="ddlColors" class="form-control" onchange="ddlColorsChange();"></select>
+                    </div>
+                </td>
                 <td><input type="checkbox" class="checkbox" id="chkActive" /></td>
 
             </tr>
