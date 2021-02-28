@@ -506,7 +506,7 @@ namespace AHDDManagerClass
         }
 
 
-        public List<Transaction> GetTransactionPaymentsReport(DateTime StartDate, DateTime EndDate)
+        public List<Transaction> GetTransactionPaymentsReport(DateTime StartDate, DateTime EndDate, int AssociateID = 0)
         {
             Data objData = new Data();
             DataTable dt;
@@ -514,7 +514,7 @@ namespace AHDDManagerClass
 
             List<Transaction> retList = new List<Transaction>();
 
-            dt = objData.GetTransactionPaymentsReport(StartDate, EndDate);
+            dt = objData.GetTransactionPaymentsReport(StartDate, EndDate, AssociateID);
 
             if (dt != null && dt.Rows.Count > 0)
             {

@@ -198,3 +198,13 @@
 2/27/2021 3:43:22 PM|User Logged in: Marcelo (Patricio Tovar)
 2/27/2021 5:25:22 PM|User Logged in: Marcelo (Patricio Tovar)
 2/27/2021 5:35:05 PM|User Logged in: Marcelo (Patricio Tovar)
+2/28/2021 11:10:19 AM|User Logged in: Marcelo (Patricio Tovar)
+2/28/2021 11:42:56 AM|User Logged in: Marcelo (Patricio Tovar)
+2/28/2021 11:46:20 AM|User Logged in: Marcelo (Patricio Tovar)
+2/28/2021 1:07:07 PM|User Logged in: Marcelo (Patricio Tovar)
+2/28/2021 1:45:36 PM|User Logged OUT: Marcelo
+2/28/2021 2:13:27 PM|User Logged in: Marcelo (Patricio Tovar)
+2/28/2021 2:54:28 PM|User Logged in: Marcelo (Patricio Tovar)
+2/28/2021 4:00:46 PM|User Logged in: Marcelo (Patricio Tovar)
+2/28/2021 4:01:05 PM|User Logged OUT: Marcelo
+2/28/2021 4:01:11 PM|User Logged in: Marcelo (Patricio Tovar)

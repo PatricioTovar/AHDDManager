@@ -203,7 +203,7 @@
                                     "<td class='currencyLabel'>" + $('#txtDiscount').val() + "</td>" +
                                     "<td class='currencyLabel'>" + subtotal + "</td>" +
                                     "<td>" + $('#txtNote').val() + "</td>" +
-                                    "<td> <a href='#' class='removeTrans'><img src='/images/delete.png' /></a> </td>" +
+                                    "<td> <a><i class='delete fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' data-placement='right' title='Delete'></i></a> </td>" +
                                 "</tr>";
 
             $("#tblTrans").append(TransactionDetail);
@@ -389,6 +389,7 @@
         <th>Discount Price</th>
         <th>Sub-Total</th>
         <th>Note</th>
+        <th></th>
     </tr>
     <tr>
         <td></td>
