@@ -311,7 +311,6 @@
     <Content Include="images\CancelTransaction.png" />
     <Content Include="images\ClockedIn.png" />
     <Content Include="images\ClockedOut.png" />
-    <Content Include="images\.svg" />
     <Content Include="images\delete.png" />
     <Content Include="images\details.png" />
     <Content Include="images\edit.png" />
