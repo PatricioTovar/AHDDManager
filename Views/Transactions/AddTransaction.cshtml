@@ -9,6 +9,7 @@
 
 <script>
     $(function () {
+        var _assosiateID = '@ViewBag.AssociateID'
         var CustomerID;
 
         $('[data-toggle="tooltip"]').tooltip();
@@ -25,7 +26,7 @@
                 transaction = {
                     BusinessID: 0,
                     CustomerID: @Url.RequestContext.RouteData.Values["id"],
-                    AssociateID: 0,
+                    AssociateID: $('#ddlAtendedBy').val(),
                     TotalAmount: $('#tblTrans').find('tr:last td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', ''),
                     TransactionDate: (new Date()).toUTCString(), //PT - add time in the client side
                     ModifiedDate: (new Date()).toUTCString() //PT - add time in the client side
@@ -299,6 +300,28 @@
                 }
             }
         });
+
+        //load associates
+        $.ajax({
+            url: '/customer/GetAssociates/',
+            type: 'POST',
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                if (result != '0') {
+                    $.each(result, function (i, item) {
+                        $('#ddlAtendedBy').append($('<option>', {
+                            value: item.AssociateID,
+                            text: item.FirstName + ' ' + item.LastName
+                        }));
+                    });
+                    $('#ddlAtendedBy').val(_assosiateID)
+                } else {
+                    $.AlertDialog('There was an error assosiates.', 'Error Message', function (event) { }, 'lightcoral');
+                }
+            }
+        });
     });
 
     function updateSubtotal() {
@@ -329,13 +352,23 @@
 <h2>Create Receipt</h2>
 
 @*<a href="/transactions/customertransactions/@Url.RequestContext.RouteData.Values["id"]">
-    <img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Receipts" />
-</a>*@
+        <img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Receipts" />
+    </a>*@
 
 <div class="well">
     <div class="row">
-        <div class="col-md-2"><strong>Customer ID:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
-        <div class="col-md-6"><strong>Name:</strong> <div>@custname</div></div>
+        <div class="col-md-2">
+            <label>Customer ID:</label>
+            <div>@Url.RequestContext.RouteData.Values["id"]</div>
+        </div>
+        <div class="col-md-6">
+            <label>Name:</label>
+            <div>@custname</div>
+        </div>
+        <div class="col-md-4">
+            <label>Attended by:</label>
+            <select id="ddlAtendedBy" class="form-control"></select>
+        </div>
     </div>
 </div>
 

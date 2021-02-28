@@ -57,7 +57,10 @@ namespace AHDDManager.Controllers
         {
             //transaction.TransactionDate = DateTime.Now; //PT - add time in the client side
             transaction.BusinessID = base.Business.BusinessID;
-            transaction.AssociateID = base.Associate.AssociateID;
+            if (transaction.AssociateID == 0)
+            {
+                transaction.AssociateID = base.Associate.AssociateID;
+            }
             transaction.TransactionStatusID = 1;
             transaction.TransactionStatus = "OPEN";
             //transaction.ModifiedDate = DateTime.UtcNow.AddHours(-6); //PT - add time in the client side

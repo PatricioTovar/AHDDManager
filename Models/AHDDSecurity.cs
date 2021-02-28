@@ -11,7 +11,6 @@ namespace AHDDManager.Models
         public AHDDManagerClass.Associate Associate { get; set; }
         public AHDDManagerClass.Business Business { get; set; }
 
-
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             base.OnActionExecuting(filterContext);
@@ -26,7 +25,7 @@ namespace AHDDManager.Models
             else
             {
                 this.Associate = (AHDDManagerClass.Associate)Session["Associate"];
-                
+                this.ViewBag.AssociateID = Associate.AssociateID;
 
                 this.Business = ((AHDDManagerClass.Business)Session["Business"]);
 
