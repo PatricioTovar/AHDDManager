@@ -40,6 +40,7 @@ html, body {
     background-color: #687d0b;
     background-image: url('../images/flowers.png');
     background-repeat: repeat;
+    margin-bottom: 0px;
 }
 
 .navbar {

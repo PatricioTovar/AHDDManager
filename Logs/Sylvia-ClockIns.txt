@@ -1,2 +1,4 @@
 1/26/2021 5:20:41 PM|User clock in status changed to False: Sylvia (Silvia Balderas)
 1/26/2021 5:20:41 PM|User Logged OUT: Sylvia
+2/28/2021 1:45:43 PM|User Logged in: Sylvia (Silvia Balderas)
+2/28/2021 2:08:29 PM|User Logged OUT: Sylvia

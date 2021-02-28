@@ -37,6 +37,11 @@ namespace AHDDManager.Controllers
             return View();
         }
 
+        public ActionResult ResumeAssociate()
+        {
+            return View();
+        }
+
         public ActionResult SearchClockIns(string StartDate, string EndDate)
         {
             try
@@ -71,7 +76,16 @@ namespace AHDDManager.Controllers
 
         }
 
+        public JsonResult GetAssociateTransactionPayments(DateTime StartDate, DateTime EndDate)
+        {
+            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
 
+            int AssociateID = base.Associate.AssociateID;
+
+            var ret = objTs.GetTransactionPaymentsReport(StartDate, EndDate, AssociateID);
+
+            return Json(ret);
+        }
 
 
         public ActionResult SearchClockIns2(string StartDate, string EndDate)

@@ -52,7 +52,7 @@
         $("#tblTrans").on('click', '.deleteform', function (event) {
             formID = 0;
             formID = $(this).attr("id");
-           
+
             event.preventDefault();
             $("#ConfirmDialog").dialog("open");
         });
@@ -128,7 +128,7 @@
                         formID = 0;
                         location.reload();
                     } else {
-                       // alert(result);
+                        // alert(result);
                         $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
                     }
                 }
@@ -137,7 +137,7 @@
         }
 
 
-        $('#tblTrans').on('click', '.link', function (e) {
+        $('#tblTrans').on('click', '.editForm', function (e) {
             var row = $(this).closest('tr').find('td');
             resetForm();
             formID = $(this).attr("id");
@@ -145,7 +145,8 @@
             event.preventDefault();
 
             $('#txtFormTitle').val(row[0].innerText);
-            $('#chkActive').prop('checked', row.find('input:checkBox').is(':checked'))
+            //$('#chkActive').prop('checked', row.find('input:checkBox').is(':checked'));
+            $('#chkActive').prop('checked', true);
             $('#txtFormPrice').val(row[2].innerText);
 
             newformdialog.dialog('option', 'title', 'Update Form');
@@ -170,10 +171,10 @@
             "ordering": true,
             "info": true,
             "searching": true,
-            "drawCallback": function( settings ) {
+            "drawCallback": function (settings) {
                 $('[data-toggle="tooltip"]').tooltip();
             },
-            "initComplete": function(settings, json) {
+            "initComplete": function (settings, json) {
                 $('[data-toggle="tooltip"]').tooltip();
             },
             "ajax": {
@@ -185,30 +186,40 @@
             ],
             "columns": [
                 {
-                    "data": "Title",
-                    "render": function (data, type, full, meta) {
-                        return '<a href="#" class="link" id="' + full.FormID + '">' + data + '</a>';
-                    }
+                    "data": "Title"
                 },
                 {
                     "data": "Active",
+                    "orderable": false,
                     "render": function (data, type, full, meta) {
-                        return data ? '<input type="checkbox" disabled checked/>' : '<input type="checkbox" disabled/>'
+                        return data ? '<span><i class="fa fa-check fa-2x" style="color:green"></i></span>' : '<span><i class="fa fa-times fa-2x" style="color:red"></i></span>'
                     }
                 },
                 {
                     "data": "Price",
-                    render: $.fn.dataTable.render.number(",", ".", 2)
+                    "className": "text-right",
+                    render: $.fn.dataTable.render.number(",", ".", 2, "$ ")
+                },
+                {
+                    "orderable": false,
+                    "className": "text-center",
+                    "render": function (data, type, full) {
+
+                        return "<a class='editForm' id='" + full.FormID + "' ><i class='fa fa-pencil fa-shadow fa-2x' style='color: lightskyblue;' data-toggle='tooltip' data-placement='top' title='Edit'></i></a>";
+                    }
                 },
                 {
                     "data": "Deleteable",
+                    "orderable": false,
+                    "className": "text-center",
                     "render": function (data, type, full, meta) {
-                        if (data == 1) {                            
+                        if (data == 1) {
                             var i = 0;
-                            
+
                         }
 
-                        return data == 1 ? '<img src="/images/delete.png" id="' + full.FormID + '" class="deleteform" data-toggle="tooltip" data-placement="left" title="Delete Form"  />' : ''
+                        //return data == 1 ? '<img src="/images/delete.png" id="' + full.FormID + '" class="deleteform" data-toggle="tooltip" data-placement="left" title="Delete Form"  />' : '';
+                        return data == 1 ? "<a id='" + full.FormID + "' class='deleteform'><i class='delete fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' title='Delete'></i></a></td >" : '';
                     }
                 }
             ]
@@ -225,36 +236,27 @@
     });
 </script>
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-6">
-            <h2>Forms</h2>
-        </div>
-        <div class="col-lg-6 pull-bottom text-right" style="padding-top: 10px">
-            <a href="#" id="lnkAdd">
-                <img src="~/images/add form.png" data-toggle="tooltip" data-placement="left" title="Add New Form" />
-            </a>
-        </div>
+<div class="row">
+    <div class="col-lg-6">
+        <h2>Products & Services</h2>
+    </div>
+    <div class="col-lg-6 pull-bottom text-right" style="padding-top: 10px">
+        <a href="#" id="lnkAdd">
+            @*<img src="~/images/add form.png" data-toggle="tooltip" data-placement="left" title="Add New Form" />*@
+            <i class="fa fa-plus fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add new"></i>
+        </a>
     </div>
 </div>
-<p></p>
-<table id="tblTrans" class="display table table-striped" style="width:100%">
+<table id="tblTrans" class="table table-striped table-condensed" style="width:100%">
     <thead>
         <tr>
-            <th>Form Title</th>
+            <th>Description</th>
             <th>Active</th>
-            <th>Form Price</th>
+            <th>Price</th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
-    <tfoot>
-        <tr>
-            <th>Form Title</th>
-            <th>Active</th>
-            <th>Form Price</th>
-            <th></th>
-        </tr>
-    </tfoot>
 </table>
 
 <div id="ConfirmDialog" title="Confirmation Required">

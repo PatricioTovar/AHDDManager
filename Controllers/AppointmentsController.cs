@@ -13,11 +13,13 @@ namespace AHDDManager.Controllers
         // GET: Appointments
         public ActionResult Index()
         {
-            ViewBag.AssociateID = base.Associate.AssociateID;
             return View();
         }
 
-
+        public ActionResult Test()
+        {
+            return View();
+        }
 
         public ActionResult GetAppointments(int Month, int Year)
         {

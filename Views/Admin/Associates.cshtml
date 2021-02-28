@@ -251,7 +251,7 @@
     @foreach (var item in Model)
     {
         <tr id="@item.AssociateID">
-            <td><span class='dot' style='background-color: @item.BackgroundColor'></span></td>
+            <td><i class="fa fa-circle fa-lg fa-fw" style="color: @item.BackgroundColor" data-toggle="tooltip" title="" data-original-title="@item.BackgroundColor"></i></td>
             <td><a href="#" class="name">@item.FirstName @item.LastName</a></td>
             <td>@item.Address</td>
             <td>@item.City</td>

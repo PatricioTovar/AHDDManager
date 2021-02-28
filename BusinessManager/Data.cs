@@ -1926,7 +1926,7 @@ namespace AHDDManagerClass
         }
 
 
-        public DataTable GetTransactionPaymentsReport(DateTime StartDate, DateTime EndDate)
+        public DataTable GetTransactionPaymentsReport(DateTime StartDate, DateTime EndDate, int AssociateID)
         {
             SqlConnection Conn = new SqlConnection(this.ConnString);
 
@@ -1941,6 +1941,7 @@ namespace AHDDManagerClass
 
                 selectCMD.Parameters.Add(new SqlParameter("@StartDate", StartDate));
                 selectCMD.Parameters.Add(new SqlParameter("@EndDate", EndDate));
+                selectCMD.Parameters.Add(new SqlParameter("@AssociateID", AssociateID));
 
                 Conn.Open();
 

@@ -489,9 +489,9 @@
                         $.AlertDialog('The customer was deleted.', 'Success', function (event) { }, 'lightgreen');
                         formID = 0;
                         //location.reload();//Only delete the row instead of reload the page
-                        
+
                         Table.rows(function (idx, data, node) {
-                            return data['CustomerID'] === CustomerID;
+                            return data['CustomerID'] == CustomerID;
                         }).remove().draw();
                     } else {
                         //alert(result);
@@ -784,13 +784,15 @@
 <div id="customer-notes-dialog" title="Customer Notes">
     <div class="container">
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-10">
+                <label id="lblNoteCount">Count: 0</label>
+            </div>
+            <div class="col-sm-2 text-right" >
                 <a href="#" id="lnkAddNote">
-                    <img src="~/images/sticky note.png" data-toggle="tooltip" data-placement="right" title="Add Customer Note" />
+                    @*<img src="~/images/sticky note.png" data-toggle="tooltip" data-placement="right" title="Add Customer Note" />*@
+                    <i class="fa fa-plus fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add Note"></i>
                 </a>
             </div>
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4"><span class="pull-right" id="lblNoteCount">Count: 0</span></div>
         </div>
     </div>
     <p></p>

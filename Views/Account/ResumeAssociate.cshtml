@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Resume Report";
+    ViewBag.Title = "My Day Resume";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -15,26 +15,16 @@
     $(document).ready(function () {
         $.fn.bootstrapBtn = $.fn.button.noConflict();
 
-        $("#dpStart").datepicker().datepicker("setDate", new Date());
-        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        $("#dpDate").datepicker().datepicker("setDate", new Date());
         initTable();
-
+        btnSearchClick();
     });
 
     function initTable() {
         tblPayments = $('#tblPayments').DataTable({
-            dom: "<'row'>" + "<'row'<'col-sm-6'l><'col-sm-5'f><'col-sm-1 text-right'B>>" + "<'row'<'col-sm-62'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
-            pageLength: 50,
-            buttons: [
-                {
-                    extend: 'excel',
-                    className: 'btnExcelTbl btn btn-success',
-                    visible: false,
-                    exportOptions: {
-                        columns: '.exportExcel'
-                    }
-                },
-            ],
+            paging: false,
+            ordering: false,
+            searching: false,
             autoWidth: true,
             columns: [
                 {
@@ -75,50 +65,6 @@
                         } else {
                             return "";
                         }
-                    }
-                },
-                {
-                    name: "Cash",
-                    visible: false,
-                    className: "exportExcel",
-                    render: function (data, type, row, meta) {
-                        if (row.PaymentMethod == 1) {
-                            return row.PaymentAmount;
-                        }
-                        return "";
-                    }
-                },
-                {
-                    name: "Check",
-                    visible: false,
-                    className: "exportExcel",
-                    render: function (data, type, row, meta) {
-                        if (row.PaymentMethod == 2) {
-                            return row.PaymentAmount;
-                        }
-                        return "";
-                    }
-                },
-                {
-                    name: "Card",
-                    visible: false,
-                    className: "exportExcel",
-                    render: function (data, type, row, meta) {
-                        if (row.PaymentMethod == 3) {
-                            return row.PaymentAmount;
-                        }
-                        return "";
-                    }
-                },
-                {
-                    name: "Deposit",
-                    visible: false,
-                    className: "exportExcel",
-                    render: function (data, type, row, meta) {
-                        if (row.PaymentMethod == 4) {
-                            return row.PaymentAmount;
-                        }
-                        return "";
                     }
                 },
                 {
@@ -163,22 +109,13 @@
 
     }
 
-    var formatterCurrency = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-
-        // These options are needed to round to whole numbers if that's what you want.
-        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-    });
-
     function btnSearchClick() {
         tblPayments.clear().draw();
 
         $.ajax({
-            url: "/admin/GetTransactionPaymentsReport/",
+            url: "/account/GetAssociateTransactionPayments/",
             type: "post",
-            data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
+            data: JSON.stringify({ StartDate: $("#dpDate").val(), EndDate: $("#dpDate").val() }),
             dataType: 'json',
             contentType: 'application/json;',
         }).done(function (result) {
@@ -235,58 +172,52 @@
                 $('#lblTotalCount').text('(' + totalCount + ')');
             }
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            $.AlertDialog(textStatus + ': ' + errorThrown , 'Error Message', null, 'lightcoral');
+
+            $.AlertDialog(textStatus + ': ' + errorThrown, 'Error Message', null, 'lightcoral');
         });
     }
 </script>
 
-<h2>Resume Report</h2>
+<h2>My Day</h2>
 
 <div class="well">
     <div class="row">
         <div class="form-group col-md-3">
-            <label for="dpStart">Start Date:</label>
+            <label for="dpStart">Date:</label>
             <div class="input-group margin-bottom-sm">
-                <input type="text" id="dpStart" class="form-control" readonly />
-                <span class="input-group-addon btn btn-default" onclick="$('#dpStart').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
-            </div>
-        </div>
-        <div class="form-group col-md-3">
-            <label for="dpEnd">End Date:</label>
-            <div class="input-group margin-bottom-sm">
-                <input type="text" id="dpEnd" class="form-control" readonly />
-                <span class="input-group-addon btn btn-default" onclick="$('#dpEnd').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                <input type="text" id="dpDate" class="form-control" readonly />
+                <span class="input-group-addon btn btn-default" onclick="$('#dpDate').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
             </div>
         </div>
         <div class="form-group col-md-1">
             <label class="empty-label">&nbsp;</label>
             <button id="btnSearch" class="btn btn-primary" onclick="btnSearchClick()">Search</button>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-8">
             <div class="row">
                 <div class="col-sm-9 text-right">
-                    <label>Cash: </label>
+                    <span>Cash: </span>
                     <span id="lblCashCount">(0)</span>
                 </div>
                 <div class="col-sm-3 text-right">
                     <span id="lblCashAmount">$0.00</span>
                 </div>
                 <div class="col-sm-9 text-right">
-                    <label>Check: </label>
+                    <span>Check: </span>
                     <span id="lblCheckCount">(0)</span>
                 </div>
                 <div class="col-sm-3 text-right">
                     <span id="lblCheckAmount">$0.00</span>
                 </div>
                 <div class="col-sm-9 text-right">
-                    <label>Visa: </label>
+                    <span>Visa: </span>
                     <span id="lblCardCount">(0)</span>
                 </div>
                 <div class="col-sm-3 text-right">
                     <span id="lblCardAmount">$0.00</span>
                 </div>
                 <div class="col-sm-9 text-right">
-                    <label>Deposit: </label>
+                    <span>Deposit: </span>
                     <span id="lblDepositCount">(0)</span>
                 </div>
                 <div class="col-sm-3 text-right">
@@ -305,6 +236,7 @@
 
 </div>
 
+
 <div>
     <table id="tblPayments" class="table table-striped table-condensed">
         <thead>
@@ -314,10 +246,6 @@
                 <th>Customer</th>
                 <th>Total Amount</th>
                 <th>Payment Date</th>
-                <th>Cash</th>
-                <th>Check</th>
-                <th>Visa</th>
-                <th>Deposit</th>
                 <th>Method</th>
                 <th>Amount</th>
                 <th>Rep</th>
@@ -325,6 +253,3 @@
         </thead>
     </table>
 </div>
-
-
-
