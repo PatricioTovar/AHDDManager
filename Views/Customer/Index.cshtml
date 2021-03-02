@@ -686,7 +686,7 @@
     </thead>
 </table>
 
-<div id="customer-dialog" title="Customer Information">
+<div id="customer-dialog" title="Customer Information" autocomplete="chrome-off">
     <nav class="navbar" id="dialog_menu">
         <div class="container-fluid">
             <ul class="nav navbar-nav nav-pills">
@@ -698,7 +698,7 @@
     </nav>
 
     @*<div id="divCustomerError" style="color: red; display: none;"></div>*@
-    <div style="padding: 0px 15px">
+    <div style="padding: 0px 15px" autocomplete="chrome-off">
         <div id="rowClientId" class="row">
             <div class="col-md-3 form-group">
                 <label class="control-label">Client ID:</label>
@@ -708,29 +708,29 @@
         <div class="row">
             <div class="col-md-3 form-group">
                 <label for="txtFirst">*First Name:</label>
-                <input type="text" id="txtFirst" class="form-control" data-required="true" maxlength="50" autofocus />
+                <input type="text" id="txtFirst" class="form-control" data-required="true" maxlength="50" autofocus autocomplete="chrome-off"/>
             </div>
             <div class="col-md-3 form-group">
                 <label for="txtLast">*Last Name:</label>
-                <input type="text" id="txtLast" class="form-control" data-required="true" maxlength="50" />
+                <input type="text" id="txtLast" class="form-control" data-required="true" maxlength="50" autocomplete="chrome-off" />
             </div>
             <div class="col-md-3 form-group">
                 <label for="txtFirst2">2nd Name:</label>
-                <input type="text" id="txtFirst2" class="form-control" maxlength="50" />
+                <input type="text" id="txtFirst2" class="form-control" maxlength="50" autocomplete="chrome-off" />
             </div>
             <div class="col-md-3 form-group">
                 <label for="txtLast2">2nd Last Name:</label>
-                <input type="text" id="txtLast2" class="form-control" maxlength="50" />
+                <input type="text" id="txtLast2" class="form-control" maxlength="50" autocomplete="chrome-off" />
             </div>
         </div>
         <div class="row">
             <div class="col-md-6 form-group">
                 <label for="txtAddress">*Address:</label>
-                <input type="text" id="txtAddress" class="form-control" data-required="true" maxlength="50" />
+                <input type="text" id="txtAddress" class="form-control" data-required="true" maxlength="50" autocomplete="chrome-off" />
             </div>
             <div class="col-md-3 form-group">
                 <label for="txtCity">*City:</label>
-                <input type="text" id="txtCity" class="form-control" data-required="true" maxlength="50" />
+                <input type="text" id="txtCity" class="form-control" data-required="true" maxlength="50" autocomplete="chrome-off" />
             </div>
             <div class="col-md-1 form-group">
                 <label for="ddlStates">*State:</label>
@@ -738,25 +738,25 @@
             </div>
             <div class="col-md-2 form-group">
                 <label for="txtZip">*Zip code:</label>
-                <input type="text" id="txtZip" class="form-control" data-required="true" onkeypress='numericValidate(event)' maxlength="5" />
+                <input type="text" id="txtZip" class="form-control" data-required="true" onkeypress='numericValidate(event)' maxlength="5" autocomplete="chrome-off" />
             </div>
         </div>
         <div class="row">
             <div class="col-md-3 form-group">
                 <label for="txtMobile">Mobile:</label>
-                <input type="text" id="txtMobile" class="form-control" maxlength="10" onkeypress='numericValidate(event)' />
+                <input type="text" id="txtMobile" class="form-control" maxlength="10" onkeypress='numericValidate(event)' autocomplete="chrome-off" />
             </div>
             <div class="col-md-3 form-group">
                 <label for="txtPhone">Phone:</label>
-                <input type="text" id="txtPhone" class="form-control" maxlength="10" onkeypress='numericValidate(event)' />
+                <input type="text" id="txtPhone" class="form-control" maxlength="10" onkeypress='numericValidate(event)' autocomplete="chrome-off" />
             </div>
             <div class="col-md-3 form-group">
                 <label for="txtFax">Other number:</label>
-                <input type="text" id="txtFax" class="form-control" maxlength="10" onkeypress='numericValidate(event)' />
+                <input type="text" id="txtFax" class="form-control" maxlength="10" onkeypress='numericValidate(event)' autocomplete="chrome-off" />
             </div>
             <div class="col-md-3 form-group">
                 <label for="txtEmail">Email:</label>
-                <input type="text" id="txtEmail" class="form-control" maxlength="50" />
+                <input type="text" id="txtEmail" class="form-control" maxlength="50" autocomplete="chrome-off" />
             </div>
         </div>
         <div class="row">
