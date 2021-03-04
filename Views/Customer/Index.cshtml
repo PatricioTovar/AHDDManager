@@ -21,7 +21,9 @@
         $('[data-toggle="tooltip"]').tooltip();
 
         GetStates();
-
+        //jquery.mask.jas
+        $('#txtMobile').mask('(000) 000-0000');
+        $('#txtPhone').mask('(000) 000-0000');
 
         var CustomerDialog = $("#customer-dialog").dialog({
             autoOpen: false,
@@ -365,8 +367,10 @@
                         $("#txtCity").val(result.City);
                         $("#ddlStates").val(result.State);
                         $("#txtZip").val(result.Zip);
-                        $("#txtPhone").val(result.Phone);
-                        $("#txtMobile").val(result.Mobile);
+                        //$("#txtPhone").val(result.Phone);
+                        $('#txtPhone').val($('#txtPhone').masked(result.Phone));
+                        //$("#txtMobile").val(result.Mobile);
+                        $('#txtMobile').val($('#txtMobile').masked(result.Phone));
                         $("#txtFax").val(result.Fax);
                         $("#txtEmail").val(result.Email);
                         $("#txtDateCreated").val(_date);
@@ -415,14 +419,14 @@
                 return;
             }
 
-            if ($("#txtPhone").val().trim().length > 0 && $("#txtPhone").val().length != 10) {
+            if ($("#txtPhone").cleanVal().trim().length > 0 && $("#txtPhone").cleanVal().length != 10) {
                 //alert('The phone number is invalid.');
                 $.AlertDialog('The phone number is invalid.', 'Error Message', function (event) { }, 'lightcoral');
                 $('#txtPhone').css("border-color", "red");
                 $('#txtPhone').focus();
                 return;
             }
-            if ($("#txtMobile").val().length != 10) {
+            if ($("#txtMobile").cleanVal().length != 10) {
                 //alert('The mobile number is invalid.');
                 $.AlertDialog('The mobile number is invalid.', 'Error Message', function (event) { }, 'lightcoral');
                 $('#txtMobile').css("border-color", "red");
@@ -441,8 +445,8 @@
                 City: $("#txtCity").val(),
                 State: $("#ddlStates").val(),
                 Zip: $("#txtZip").val(),
-                Phone: $("#txtPhone").val().replace(/\./g, "", ""),
-                Mobile: $("#txtMobile").val().replace(/\./g, "", ""),
+                Phone: $("#txtPhone").cleanVal().replace(/\./g, "", ""),
+                Mobile: $("#txtMobile").cleanVal().replace(/\./g, "", ""),
                 Fax: $("#txtFax").val().replace(/\./g, "", ""),
                 Email: $("#txtEmail").val(),
                 DateCreated: $("#txtDateCreated").val(),

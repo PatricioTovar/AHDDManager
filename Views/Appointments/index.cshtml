@@ -251,7 +251,7 @@
 
 
         function resetDialog() {
-            
+
             $('#txtCreateTitledlg').val('');
             $('#txtCreateDescdlg').val('');
 
@@ -336,7 +336,7 @@
             eventOverlap: true,
             unselectAuto: false, // prevent unselect when click outside of the calendar
             slotLabelFormat: ['h:mm', 'h:mm'],  // top level of text ,  lower level of text
-            eventTimeFormat: 'h(:mm)', 
+            eventTimeFormat: 'h(:mm)',
             displayEventEnd: true,
             loading: function (bool) {
 
@@ -710,8 +710,11 @@
         max-width: 100%;
         padding: 0px 40px;
     }
-</style>
 
+    #calendar {
+        margin-top: 20px;
+    }
+</style>
 
 <div id='calendar'></div>
 

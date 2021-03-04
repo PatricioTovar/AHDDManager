@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AHDDManagerClass;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
@@ -282,6 +283,51 @@ namespace AHDDManager.Controllers
         //}
 
 
+        public ActionResult UpdateTransactionCustomer(int TransactionID, int CustomerID)
+        {
+            var result = new Result();
+            try
+            {
+                Transaction objT = new Transaction(TransactionID);
 
+                if (objT.TransactionsExists)
+                {
+                    var objC = new Customer(CustomerID);
+                    if (objC.CustomersExist)
+                    {
+                        objT.CustomerID = CustomerID;
+                        if (objT.Update())
+                        {
+                            result.Res = true;
+                            result.Message = "Records updated successfully.";
+                        }
+                        else
+                        {
+                            result.Res = false;
+                            result.Message = "There was an error updating the records.";
+                        }
+                    }
+                    else
+                    {
+                        result.Res = false;
+                        result.Message = "The customer was not found.";
+                    }
+
+                }
+                else
+                {
+                    result.Res = false;
+                    result.Message = "The transaction was not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Res = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(result);
+        }
     }
+
 }

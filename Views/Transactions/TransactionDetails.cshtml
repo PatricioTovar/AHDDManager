@@ -565,6 +565,36 @@
 
         $('#txtNewDetailSubtotal').val(subtotal)
     }
+
+
+    $("#modalChangeCustomer").on("show.bs.modal", function () {
+        $("txtNewClientID").val("");
+    })
+
+    function btnChangeCustomerClick() {
+        var ClientID = $("txtNewClientID").val().trim();
+
+        if (ClientID == "" || isNaN(ClientID)) {
+            $.AlertDialog('Error: New ClientID field is invalid', 'Error Message', function (event) { }, 'lightcoral');
+            return;
+        }
+        $.ajax({
+            url: '/transactions/ReOpenTransaction/',
+            type: 'POST',
+            data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ClientID: (new Date()).toUTCString() }),
+            dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                if (result.Res) {
+                    $.AlertDialog(result.Message, 'Success', function (event) { $("#modalChangeCustomer").modal('hide'); location.reload(); }, 'lightgreen');
+
+                } else {
+                    $.AlertDialog(result.Message, 'Error Message', function (event) { }, 'lightcoral');
+                }
+            }
+        });
+    }
 </script>
 
 
@@ -632,7 +662,16 @@
         <div class="well">
             <div class="row">
                 <div class="col-lg-3"><strong>Customer:</strong> <div>@Model.Item3.CustomerName</div></div>
-                <div class="col-lg-2"><strong>Customer ID:</strong> <div>@Model.Item3.CustomerID</div></div>
+                <div class="col-lg-2">
+                    <strong>Customer ID:</strong>
+                    <div>
+                        @if (ViewBag.IsAdmin)
+                        {
+                            <a id="btnChangeCustomer" data-toggle="modal" href="#modalChangeCustomer"><i class="fa fa-share-square-o fa-fw" aria-hidden="true" data-toggle="tooltip" title="Change customer"></i></a>
+                        }
+                        @Model.Item3.CustomerID
+                    </div>
+                </div>
                 <div class="col-lg-2"><strong>Receipt No:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
                 <div class="col-lg-2"><strong>Rep:</strong> <div>@Model.Item3.TakenBy</div></div>
                 <div class="col-lg-3"><strong>Receipt Date:</strong> <div>@Model.Item3.TransactionDate</div></div>
@@ -673,7 +712,7 @@
                 </div>
                 <div class="col-sm-6 text-right">
                     @*<img id="btnAddTransaccion" class="imgBtn" src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" onclick="btnAddTransaccionClick()" />*@
-                    <a href="#" id="btnAddTransaccion">
+                    <a href="#" id="btnAddTransaccion" onclick="btnAddTransaccionClick()">
                         <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add product"></i>
                     </a>
                 </div>
@@ -716,7 +755,7 @@
                         <td>@item.Notes</td>
 
                         @{
-                            if (Context.Session["Associate"] != null && Model.Item3.TotalOwed != 0)
+                            if (Context.Session["Associate"] != null)
                             {
                                 var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
                                 if (assoc.IsAdmin && Model.Item3.TransactionStatusID == 1)
@@ -762,7 +801,7 @@
                                 <img src="~/images/wallet.png" data-toggle="tooltip" data-placement="left" title="Add Payment" />
                             </a>*@
                         <a href="#" id="lnkAddPaymentBottom" class="payment">
-                            <i class="fa fa-usd fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add payment"></i>
+                            <i class="fa fa-money fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add payment"></i>
                         </a>
                     }
                 }
@@ -787,27 +826,27 @@
                 {
                     decPayTotal += item.PaymentAmount;
 
-                        <tr id="@item.PaymentID">
-                            <td>@item.PaymentID</td>
-                            <td>@item.PaymentDate</td>
-                            <td class="currencyLabel">@item.PaymentAmount</td>
-                            <td>@item.PaymentMethodDescription</td>
-                            <td>@item.CheckNumber</td>
-                            <td>@item.TakenBy</td>
-                            @{
-                                if (Context.Session["Associate"] != null && Model.Item3.TotalOwed != 0 && Model.Item3.TransactionStatusID == 1)
+                    <tr id="@item.PaymentID">
+                        <td>@item.PaymentID</td>
+                        <td>@item.PaymentDate</td>
+                        <td class="currencyLabel">@item.PaymentAmount</td>
+                        <td>@item.PaymentMethodDescription</td>
+                        <td>@item.CheckNumber</td>
+                        <td>@item.TakenBy</td>
+                        @{
+                            if (Context.Session["Associate"] != null && Model.Item3.TransactionStatusID == 1)
+                            {
+                                var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
+                                if (assoc.IsAdmin)
                                 {
-                                    var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
-                                    if (assoc.IsAdmin)
-                                    {
-                                        <text>
-                                            <td><a><i id="@item.PaymentID" class='deletepayment imgBtn fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete payment'></i></a></td>
-                                        </text>
-                                    }
+                                    <text>
+                                        <td><a><i id="@item.PaymentID" class='deletepayment imgBtn fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete payment'></i></a></td>
+                                    </text>
                                 }
                             }
+                        }
 
-                        </tr>
+                    </tr>
                 }
 
                 <tr>
@@ -970,11 +1009,14 @@
             <tr>
                 <td colspan="2">
                     <label for="code">Item:</label><br />
-                    <input type="text" id="newDetailForms" data-required="true" data-name="Item" class="form-control" style="max-width:700px;">
+                    <input type="text" id="newDetailForms" data-required="true" data-name="Item" class="form-control" placeholder="Type here to search">
                 </td>
-                <td valign="bottom" class="text-left">
-                    <label class="empty-label"></label><br />
-                    <img id="btnItemSearch" class="imgBtn" src="~/images/search.png" onclick="btnSearchItemClick()" />
+                <td colspan="2" class="text-right">
+                    <label class="empty-label"></label>
+                    @*<img src="~/images/search.png" id="search" style="padding-top:20px;" />*@
+                    <button id="btnItemSearch" class="btn btn-info">
+                        <i class="fa fa-list-alt fa-fw" aria-hidden="true"></i>View list
+                    </button>
                 </td>
             </tr>
             <tr>
@@ -1005,4 +1047,29 @@
 
 <div id="list-dialog" title="Forms">
     <select id="lstForms" size="18" class="form-control"></select>
+</div>
+
+<div class="modal fade" id="modalChangeCustomer" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Change customer</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="txtNewClientID" class="col-lg-4 control-label">New ClientID:</label>
+                        <div class="col-lg-6">
+                            <input id="txtNewClientID" class="form-control" onkeypress='numericValidate(event)'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnChangeCustomer" class="btn btn-primary" onclick="btnChangeCustomerClick()">Accept</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>

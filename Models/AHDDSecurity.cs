@@ -26,6 +26,7 @@ namespace AHDDManager.Models
             {
                 this.Associate = (AHDDManagerClass.Associate)Session["Associate"];
                 this.ViewBag.AssociateID = Associate.AssociateID;
+                this.ViewBag.IsAdmin = Associate.IsAdmin;
 
                 this.Business = ((AHDDManagerClass.Business)Session["Business"]);
 

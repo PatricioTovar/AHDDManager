@@ -226,7 +226,7 @@
             TotalUp();
         });
 
-        $('#search').on('click', function () {
+        $('#btnItemSearch').on('click', function () {
             listdialog.dialog("open");
         });
 
@@ -419,9 +419,15 @@
             <tr>
                 <td colspan="2">
                     <label for="code">Item:</label><br />
-                    <input type="text" id="forms" data-required="true" data-name="Item" class="form-control" style="max-width:700px;">
+                    <input type="text" id="forms" data-required="true" data-name="Item" class="form-control" placeholder="Type here to search">
                 </td>
-                <td valign="bottom" class="text-left"><img src="~/images/search.png" id="search" style="padding-top:20px;" /></td>
+                <td colspan="2" class="text-right">
+                    <label class="empty-label"></label>
+                    @*<img src="~/images/search.png" id="search" style="padding-top:20px;" />*@
+                    <button id="btnItemSearch" class="btn btn-info">
+                        <i class="fa fa-list-alt fa-fw" aria-hidden="true"></i>View list
+                    </button>
+                </td>
             </tr>
             <tr>
                 <td>

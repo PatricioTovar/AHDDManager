@@ -1,6 +1,10 @@
 ﻿
 <script>
 
+    //jquery.mask.jas
+    $('#txtPhone').mask('(000) 000-0000');
+    $('#txtAltPhone').mask('(000) 000-0000');
+
     function GetColors() {
 
         $.ajax({
@@ -83,8 +87,10 @@
                     $("#txtCity").val(result.City);
                     $('#ddlStates').val(result.State);
                     $("#txtZip").val(result.Zip);
-                    $("#txtPhone").val(result.Phone);
-                    $("#txtAltPhone").val(result.AltPhone);
+                    //$("#txtPhone").val(result.Phone);
+                    $('#txtPhone').val($('#txtPhone').masked(result.Phone));
+                    //$("#txtAltPhone").val(result.AltPhone);
+                    $('#txtAltPhone').val($('#txtAltPhone').masked(result.AltPhone));
                     //if (result.TextColor) {
                     //    var option = new Option(result.BackgroundColor, result.TextColor);
                     //    $("#ddlColors").append(option);
@@ -152,8 +158,8 @@
             City: $("#txtCity").val(),
             State: $("#ddlStates").val(),
             Zip: $("#txtZip").val(),
-            Phone: $("#txtPhone").val(),
-            AltPhone: $("#txtAltPhone").val(),
+            Phone: $("#txtPhone").cleanVal(),
+            AltPhone: $("#txtAltPhone").cleanVal(),
             Email: $("#txtEmail").val(),
             UserName: $("#txtUserName").val(),
             Password: $("#txtPassword").val(),

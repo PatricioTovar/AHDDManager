@@ -131,18 +131,14 @@ table.dataTable tbody td {
 
 /*MODALS*/
 @media (min-width: 992px) {
+    .modal {
+        overflow: auto;
+    }
+
     .modal-xl {
         width: 900px;
     }
 }
-
-@media (min-width: 1200px) {
-    .modal-xl {
-        width: 90%;
-        max-width: 1200px;
-    }
-}
-
 /*---------*/
 
 

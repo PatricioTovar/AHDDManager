@@ -13,7 +13,7 @@ namespace AHDDManager
                       "~/Scripts/jquery.formatCurrency-1.4.0.js",
                       "~/Scripts/jquery-ui-1.10.4.js",
                       "~/Scripts/ConfirmDialog.js",
-                      "~/Scripts/SetupAjax.js"));
+                      "~/Scripts/jquery.mask.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
