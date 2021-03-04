@@ -7,7 +7,16 @@
 <script src="~/Scripts/Utilities.js"></script>
 
 <!-- NEEDED FOR SPINNER DIALOG -->
+<style>
+    #payMethodButtons .btn {
+        color: #888888;
+    }
 
+    #payMethodButtons button.selected {
+        color: #ffffff;
+        background-color: #5cb85c;
+    }
+</style>
 
 <script>
     $(function () {
@@ -18,8 +27,8 @@
         var newpaymentdialog = $("#new-payment-dialog").dialog({
             autoOpen: false,
             draggable:false,
-            height: 350,
-            width: 700,
+            //height: 350,
+            width: 600,
             modal: true,
             buttons: {
                 "Update": UpdatePayment,
@@ -178,8 +187,8 @@
 
 
         function UpdatePayment() {
-            if ($("#txtPaymentAmount").val() == ''){
-                $("#txtPaymentAmount").css('border-color','red');
+            if ($("#txtPaymentAmount").val() == '' || $("#txtPaymentAmount").val() <= 0){
+                $("#txtPaymentAmount").css('border-color', 'red');
                 //alert('Amount is required.');
                 $.AlertDialog('Amount is required.', 'Error Message', function (event) { }, 'lightcoral');
                 return;
@@ -189,9 +198,22 @@
                 $("#txtPaymentAmount").css('border-color','#cccccc');
             }
 
-            if ($('#ddlPayMethod').find(":selected").val() == '2' && $("#txtCheckNumber").val() == '' ){
+            //if ($('#ddlPayMethod').find(":selected").val() == '2' && $("#txtCheckNumber").val() == '' ){
+            //    $("#txtCheckNumber").css('border-color','red');
+            //    //alert('Amount is required.');
+            //    $.AlertDialog('Check Number is required if Payment Type is CHECK.', 'Error Message', function (event) { }, 'lightcoral');
+            //    return;
+            //}
+
+            if ($("#payMethodButtons").find(".selected").length == 0) {
+                $.AlertDialog('Select a payment method.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+
+
+
+            if ($("#payMethodButtons").find(".selected").data('value') == 2 && $("#txtCheckNumber").val() == '' ){
                 $("#txtCheckNumber").css('border-color','red');
-                //alert('Amount is required.');
                 $.AlertDialog('Check Number is required if Payment Type is CHECK.', 'Error Message', function (event) { }, 'lightcoral');
                 return;
             }
@@ -207,17 +229,21 @@
                 return;
             }
 
-            $("#txtPaymentAmount").formatCurrency();
+
+            if (parseFloat($("#lblDialogOwed").text().replace("$", "").replace(",", "")) != parseFloat($("#txtPaymentAmount").val())) {
+                $.ConfirmDialog('You are about to take a payment of $' + $("#txtPaymentAmount").val() + '. Continue?', 'Confirm', MakePayment, function () {  }, null, 'skyblue');
+            }
 
 
+        }
 
-            $.ConfirmDialog('You are about to take a payment of ' + $("#txtPaymentAmount").val() + '. Continue?', 'Payment', function () {
+        function MakePayment() {
                 var _payment = {
                     CustomerID: @Model.Item3.CustomerID,
                     TransactionID: @ViewContext.RouteData.Values["id"],
                     AssociateID: 0,
-                    PaymentAmount: $("#txtPaymentAmount").val().replace("$","").replace(",",""),
-                    PaymentMethod: $('#ddlPayMethod').find(":selected").val(),
+                    PaymentAmount: $("#txtPaymentAmount").val(),
+                    PaymentMethod: $("#payMethodButtons").find(".selected").data('value'),
                     CheckNumber: $("#txtCheckNumber").val()
                 };
 
@@ -239,14 +265,13 @@
                         }
                     }
                 });
-            }, function () { return; }, null, 'skyblue');
-
-
-        }
+            }
 
         $('.payment').on('click', function () {
             event.preventDefault();
-            $("#txtPaymentAmount").css('border-color','#cccccc');
+            $("#txtPaymentAmount").css('border-color', '#cccccc');
+            $("#payMethodButtons").find(".selected").removeClass("selected");
+            $("#txtPaymentAmount").val(@Model.Item3.TotalOwed);
             newpaymentdialog.dialog("open");
         });
 
@@ -262,10 +287,11 @@
                 success: function (result) { //result is returned as an arry of base flavors
                     if (result == 1) {
                         //alert("Transaction was cancelled.");
-                        $.AlertDialog('Transaction was cancelled.', 'Success', function (event) {
-                            refunddialog.dialog("close");
-                            location.reload();
-                        }, 'lightgreen');
+                        //$.AlertDialog('Transaction was cancelled.', 'Success', function (event) {
+                        //    refunddialog.dialog("close");
+                        //    location.reload();
+                        //}, 'lightgreen');
+                        location.reload();
                     } else {
                         //alert(result);
                         $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
@@ -296,7 +322,8 @@
                     success: function (result) { //result is returned as an arry of base flavors
                         if (result == 1) {
                             //alert("Receipt was completed.");
-                            $.AlertDialog('Receipt was completed.', 'Success', function (event) { location.reload(); }, 'lightgreen');
+                            location.reload();
+                            //$.AlertDialog('Receipt was completed.', 'Success', function (event) { location.reload(); }, 'lightgreen');
 
                         } else {
                             //alert(result);
@@ -336,7 +363,7 @@
         var newtransactiondialog = $("#new-transaction-dialog").dialog({
             autoOpen: false,
             draggable: false,
-            height: 500,
+            //height: 500,
             width: $(window).width() * .6,
             stack: true,
             modal: true,
@@ -863,6 +890,8 @@
             $(function () {
 
                 $("#lblDialogOwed").text(@Model.Item3.TotalOwed);
+                
+
                 $("#lblDialogPaid").text(@Model.Item3.Net);
 
                 if(@Model.Item3.TransactionStatusID != 1){
@@ -934,36 +963,67 @@
 <div id="new-payment-dialog" title="Add New Payment">
 
     <div class="container">
-        <div class="well well-lg">
-            <div class="row">
-                <div class="col-lg-6"><strong>Total Unpaid Amount:</strong></div>
-                <div class="col-lg-4 currencyLabel" id="lblDialogOwed"><strong></strong></div>
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <div id="payMethodButtons">
+                    <div class="btn-group">
+                        <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="1">
+                            <i class="fa fa-usd"></i><br>CASH
+                        </button>
+                        <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="2">
+                            <i class="fa fa-university"></i><br>CHECK
+                        </button>
+                        <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="3">
+                            <i class="fa fa-credit-card"></i><br>VISA
+                        </button>
+                        <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="4">
+                            <i class="fa fa-paper-plane-o"></i><br>DEPOSIT
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-        <table id="tblPayment" class="table table-hover">
-            <tr>
-                <td>
-                    <div class="ui-widget">
-                        <label for="txtPaymentAmount">Amount: </label><br />
-                        <input type="text" id="txtPaymentAmount" class="form-control" onkeypress='numericValidate(event)' maxlength="5">
-                    </div>
-                </td>
-                <td>
-                    <label for="txtQuantity">Pay Method</label><br />
-                    <select id="ddlPayMethod" class="form-control">
-                        <option value="1">CASH</option>
-                        <option value="2">CHECK</option>
-                        <option value="3">CARD</option>
-                        <option value="4">DEPOSIT</option>
-                    </select>
-                </td>
-                <td>
-                    <label for="txtPrice">Check #</label><br />
-                    <input type="text" id="txtCheckNumber" class="form-control" onkeypress='numericValidate(event)' maxlength="6" />
-                </td>
+        <div class="row">
+            <div class="col-md-2 text-right">
+                <label>Total:</label>
+            </div>
+            <div class="col-md-2 ">
+                <label id="lblDialogOwed" class="currencyLabel"></label>
+            </div>
+            <div class="col-md-5 text-right">
+                <label for="txtPaymentAmount">Amount: </label>
+            </div>
+            <div class="col-md-3 ">
+                <input type="text" id="txtPaymentAmount" class="form-control text-right" onkeypress='numericValidate(event)' autofocus>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9 text-right">
+                <label for="txtCheckNumber">Check #:</label>
+            </div>
+            <div class="col-md-3">
+                <input type="text" id="txtCheckNumber" class="form-control" onkeypress='numericValidate(event)' />
+            </div>
+        </div>
+    </div>
+</div>
 
-            </tr>
-        </table>
+
+
+@*<table class="table table-hover">
+        <tr>
+            <td>
+                <label for="txtQuantity">Pay Method</label><br />
+                <select id="ddlPayMethod" class="form-control">
+                    <option value="1">CASH</option>
+                    <option value="2">CHECK</option>
+                    <option value="3">CARD</option>
+                    <option value="4">DEPOSIT</option>
+                </select>
+            </td>
+
+        </tr>
+    </table>*@
     </div>
 </div>
 

@@ -322,7 +322,7 @@
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay,listMonth'
             },
-            aspectRatio: 2.8, //PatricioTovar
+            aspectRatio: 2.6, //PatricioTovar
             defaultDate: today.getMonth() + 1 + '/' + today.getDate() + '/' + today.getFullYear(),
             locale: initialLocaleCode,
             buttonIcons: true, // show the prev/next text
@@ -712,8 +712,13 @@
     }
 
     #calendar {
-        margin-top: 20px;
+        margin-top:20px;
     }
+
+    #calendar a{
+        color: inherit;
+    }
+
 </style>
 
 <div id='calendar'></div>
