@@ -137,11 +137,18 @@ $.AlertDialog = function (message, title, callbackYes, TitleBarColor) {
             buttons: {
                 Close: function () {
                     if (callbackYes && typeof (callbackYes) === "function") {
-                        callbackYes('test');
+                        callbackYes();
                     }
 
                     $(this).dialog("close");
                 }
+            },
+            close: function () {
+                if (callbackYes && typeof (callbackYes) === "function") {
+                    callbackYes();
+                }
+
+                $(this).dialog("close");
             }
         });
     if (TitleBarColor) {

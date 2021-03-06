@@ -23,7 +23,6 @@
     }
 }
 
-
 function numericValidate(evt) {
     var theEvent = evt || window.event;
 

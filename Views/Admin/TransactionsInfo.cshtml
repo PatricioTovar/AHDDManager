@@ -11,7 +11,7 @@
 <script src="~/Scripts/buttons.html5.min.js"></script>
 <script src="~/Scripts/jszip.min.js"></script>
 <script src="~/Scripts/dataTables.rowGroup.min.js"></script>
-<link href="~/Scripts/rowGroup.dataTables.min.css" rel="stylesheet" />
+<link href="~/Content/rowGroup.dataTables.min.css" rel="stylesheet" />
 <style>
     .dt-buttons { /*table buttons*/
         text-align: right;
@@ -144,7 +144,7 @@
                     $(row).addClass('danger');
                 }
             },
-            order: [0, 'asc'], 
+            order: [0, 'asc'],
             orderFixed: [5, 'asc'],// 5 = TransactionStatusID, need order for grouping
             rowGroup: {
                 // Uses the 'row group' plugin

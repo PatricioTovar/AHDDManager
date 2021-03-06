@@ -23,12 +23,13 @@
         var CustomerID;
 
         $.fn.bootstrapBtn = $.fn.button.noConflict();
+        $('[data-toggle="popover"]').popover();
 
         var newpaymentdialog = $("#new-payment-dialog").dialog({
             autoOpen: false,
             draggable:false,
             //height: 350,
-            width: 600,
+            width: 500,
             modal: true,
             buttons: {
                 "Update": UpdatePayment,
@@ -231,7 +232,9 @@
 
 
             if (parseFloat($("#lblDialogOwed").text().replace("$", "").replace(",", "")) != parseFloat($("#txtPaymentAmount").val())) {
-                $.ConfirmDialog('You are about to take a payment of $' + $("#txtPaymentAmount").val() + '. Continue?', 'Confirm', MakePayment, function () {  }, null, 'skyblue');
+                $.ConfirmDialog('You are about to take a payment of $' + $("#txtPaymentAmount").val() + '. Continue?', 'Confirm', MakePayment, function () { }, null, 'skyblue');
+            } else {
+                MakePayment()
             }
 
 
@@ -280,7 +283,7 @@
             $.ajax({
                 url: '/transactions/CancelTransaction/',
                 type: 'POST',
-                data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toUTCString() }),
+                data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: new Date() }),
                 dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
@@ -315,7 +318,7 @@
                 $.ajax({
                     url: '/transactions/CompleteTransaction/',
                     type: 'POST',
-                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toUTCString() }),
+                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: new Date() }),
                     dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
@@ -341,7 +344,7 @@
                 $.ajax({
                     url: '/transactions/ReOpenTransaction/',
                     type: 'POST',
-                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toUTCString() }),
+                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: new Date() }),
                     dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
@@ -475,6 +478,48 @@
                 }
             }
         });
+
+
+    var changeCustomerDialog = $("#change-customer-dialog").dialog({
+        autoOpen: false,
+        draggable: false,
+        width: 400,
+        stack: true,
+        modal: true,
+        open: function () {
+            $("#txtNewCustomerID").val("");
+        },
+        buttons: {
+            "Accept": function () {
+                var CustomerID = $("#txtNewCustomerID").val().trim();
+
+                if (CustomerID == "" || isNaN(CustomerID)) {
+                    $.AlertDialog('Error: New CustomerID field is invalid', 'Error Message', function (event) { }, 'lightcoral');
+                    return;
+                }
+                $.ajax({
+                    url: '/transactions/UpdateTransactionCustomer/',
+                    type: 'POST',
+                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], CustomerID: CustomerID }),
+                    dataType: 'json',
+                    traditional: true,
+                    contentType: 'application/json;',
+                    success: function (result) {
+                        if (result.Res) {
+                            changeCustomerDialog.dialog("close");
+                            $.AlertDialog(result.Message, 'Success', function (event) { location.reload(); }, 'lightgreen');
+
+                        } else {
+                            $.AlertDialog(result.Message, 'Error Message', function (event) { }, 'lightcoral');
+                        }
+                    }
+                });
+            },
+            Cancel: function () {
+                changeCustomerDialog.dialog("close");
+            }
+        }
+    });
     });
 
 
@@ -593,304 +638,267 @@
         $('#txtNewDetailSubtotal').val(subtotal)
     }
 
-
-    $("#modalChangeCustomer").on("show.bs.modal", function () {
-        $("txtNewClientID").val("");
-    })
-
-    function btnChangeCustomerClick() {
-        var ClientID = $("txtNewClientID").val().trim();
-
-        if (ClientID == "" || isNaN(ClientID)) {
-            $.AlertDialog('Error: New ClientID field is invalid', 'Error Message', function (event) { }, 'lightcoral');
-            return;
-        }
-        $.ajax({
-            url: '/transactions/ReOpenTransaction/',
-            type: 'POST',
-            data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ClientID: (new Date()).toUTCString() }),
-            dataType: 'json',
-            traditional: true,
-            contentType: 'application/json;',
-            success: function (result) {
-                if (result.Res) {
-                    $.AlertDialog(result.Message, 'Success', function (event) { $("#modalChangeCustomer").modal('hide'); location.reload(); }, 'lightgreen');
-
-                } else {
-                    $.AlertDialog(result.Message, 'Error Message', function (event) { }, 'lightcoral');
-                }
-            }
-        });
+    function ChosePaymentMethod(btn) {
+        $("#payMethodButtons").find(".selected").removeClass("selected");
+        $(btn).addClass("selected");
     }
+
 </script>
 
 
 <h2>Receipt Details</h2>
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-3 pull-bottom">
-            <a href="/customer/Invoice/@Url.RequestContext.RouteData.Values["id"]" target="_blank">
-                @*<img src="~/images/Invoice.png" alt="View Receipt" data-toggle="tooltip" data-placement="right" title="View Receipt" />*@
-                <i class="fa fa-file-text-o fa-3x fa-shadow" aria-hidden="true" style="color:steelblue" data-toggle="tooltip" title="View receipt"></i>
+<div class="row">
+    <div class="col-lg-3 pull-bottom">
+        <a href="/customer/Invoice/@Url.RequestContext.RouteData.Values["id"]" target="_blank">
+            @*<img src="~/images/Invoice.png" alt="View Receipt" data-toggle="tooltip" data-placement="right" title="View Receipt" />*@
+            <i class="fa fa-file-text-o fa-3x fa-shadow" aria-hidden="true" style="color:steelblue" data-toggle="tooltip" title="View receipt"></i>
+        </a>
+    </div>
+
+
+    <div class="col-lg-3 text-center">
+        @{
+            if (Model.Item3.TransactionStatusID == 1)
+            {
+                <a href="#" id="lnkAddPaymentTop" class="cancel">
+                    @*<img src="~/images/CancelTransaction.png" data-toggle="tooltip" data-placement="left" title="Cancel Receipt" />*@
+                    <i class="fa fa-ban fa-3x fa-shadow" aria-hidden="true" style="color: red;" data-toggle="tooltip" title="Cancel"></i>
+                </a>
+            }
+        }
+        @if (ViewBag.IsAdmin && Model.Item3.TransactionStatusID != 1)
+        {
+            <a href="#" id="lnkReOpen" class="reopen">
+                @*<img src="~/images/TransactionComplete.png" data-toggle="tooltip" data-placement="left" title="Complete Receipt" />*@
+                <i class="fa fa-undo fa-3x fa-shadow" aria-hidden="true" style="color: orangered;" data-toggle="tooltip" title="Reopen"></i>
             </a>
-        </div>
+        }
+    </div>
 
-
-        <div class="col-lg-3 text-center">
-            @{
-                if (Model.Item3.TransactionStatusID == 1)
-                {
-                    <a href="#" id="lnkAddPaymentTop" class="cancel">
-                        @*<img src="~/images/CancelTransaction.png" data-toggle="tooltip" data-placement="left" title="Cancel Receipt" />*@
-                        <i class="fa fa-ban fa-3x fa-shadow" aria-hidden="true" style="color: red;" data-toggle="tooltip" title="Cancel"></i>
-                    </a>
-                }
+    <div class="col-lg-3 text-center">
+        @{
+            if (Model.Item3.TransactionStatusID == 1)
+            {
+                <a href="#" id="lnkRefundTop" class="complete">
+                    @*<img src="~/images/TransactionComplete.png" data-toggle="tooltip" data-placement="left" title="Complete Receipt" />*@
+                    <i class="fa fa-check-circle-o fa-3x fa-shadow" aria-hidden="true" style="color: forestgreen;" data-toggle="tooltip" title="Complete"></i>
+                </a>
             }
-            @{
-                if (Context.Session["Associate"] != null)
-                {
-                    var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
-                    if (assoc.IsAdmin && Model.Item3.TransactionStatusID != 1)
-                    {
-                        <a href="#" id="lnkReOpen" class="reopen">
-                            @*<img src="~/images/TransactionComplete.png" data-toggle="tooltip" data-placement="left" title="Complete Receipt" />*@
-                            <i class="fa fa-undo fa-3x fa-shadow" aria-hidden="true" style="color: orangered;" data-toggle="tooltip" title="Reopen"></i>
-                        </a>
-                    }
-                }
-            }
-        </div>
+        }
+    </div>
 
-        <div class="col-lg-3 text-center">
-            @{
-                if (Model.Item3.TransactionStatusID == 1)
-                {
-                    <a href="#" id="lnkRefundTop" class="complete">
-                        @*<img src="~/images/TransactionComplete.png" data-toggle="tooltip" data-placement="left" title="Complete Receipt" />*@
-                        <i class="fa fa-check-circle-o fa-3x fa-shadow" aria-hidden="true" style="color: forestgreen;" data-toggle="tooltip" title="Complete"></i>
-                    </a>
-                }
-            }
-        </div>
-
-        <div class="col-lg-3 pull-text-right">
-            <a href="/Transactions/CustomerTransactions/@Model.Item3.CustomerID">
-                @*<img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Receipts" />*@
-                <i class="fa fa-arrow-circle-o-left fa-shadow fa-3x" aria-hidden="true" style="color:yellowgreen" data-toggle="tooltip" title="Go back"></i>
-            </a>
-        </div>
+    <div class="col-lg-3 pull-text-right">
+        <a href="/Transactions/CustomerTransactions/@Model.Item3.CustomerID">
+            @*<img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Receipts" />*@
+            <i class="fa fa-arrow-circle-o-left fa-shadow fa-3x" aria-hidden="true" style="color:yellowgreen" data-toggle="tooltip" title="Go back"></i>
+        </a>
     </div>
 </div>
 
-<div>
-    <div class="container">
 
-        <div class="well">
-            <div class="row">
-                <div class="col-lg-3"><strong>Customer:</strong> <div>@Model.Item3.CustomerName</div></div>
-                <div class="col-lg-2">
-                    <strong>Customer ID:</strong>
-                    <div>
-                        @if (ViewBag.IsAdmin)
-                        {
-                            <a id="btnChangeCustomer" data-toggle="modal" href="#modalChangeCustomer"><i class="fa fa-share-square-o fa-fw" aria-hidden="true" data-toggle="tooltip" title="Change customer"></i></a>
-                        }
-                        @Model.Item3.CustomerID
-                    </div>
-                </div>
-                <div class="col-lg-2"><strong>Receipt No:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
-                <div class="col-lg-2"><strong>Rep:</strong> <div>@Model.Item3.TakenBy</div></div>
-                <div class="col-lg-3"><strong>Receipt Date:</strong> <div>@Model.Item3.TransactionDate</div></div>
-            </div>
-            <div class="row">
-                <div class="col-lg-3"><strong>Receipt Total:</strong> <div id="lblTotalTrans" class="currencyLabel">@Model.Item3.TotalAmount</div></div>
-                <div class="col-lg-2"><strong>Total Paid:</strong> <div id="lblTotalPaid" class="currencyLabel">@Model.Item3.TotalCollected</div></div>
-                <div class="col-lg-2"><strong>Refunded:</strong> <div id="lblTotalRefunded" class="currencyLabel">@Model.Item3.RefundedAmount</div></div>
-                <div class="col-lg-2"><strong>Remaining Owed:</strong> <div id="lblOwed" class="currencyLabel">@Model.Item3.TotalOwed</div></div>
-                <div class="col-lg-3"><strong>Last update:</strong> <div>@Model.Item3.ModifiedDate</div></div>
+<div class="well">
+    <div class="row">
+        <div class="col-lg-3"><strong>Customer:</strong> <div>@Model.Item3.CustomerName</div></div>
+        <div class="col-lg-2">
+            <strong>Customer ID:</strong>
+            <div>
+                @if (ViewBag.IsAdmin)
+                {
+                    <a id="btnChangeCustomer" onclick="$('#change-customer-dialog').dialog('open')"><i class="fa fa-share-square-o fa-lg fa-fw" aria-hidden="true" data-toggle="tooltip" title="Change customer"></i></a>
+                }
+                @Model.Item3.CustomerID
             </div>
         </div>
+        <div class="col-lg-2"><strong>Receipt No:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
+        <div class="col-lg-2"><strong>Rep:</strong> <div>@Model.Item3.TakenBy</div></div>
+        <div class="col-lg-3"><strong>Receipt Date:</strong> <div>@Model.Item3.TransactionDate</div></div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3"><strong>Receipt Total:</strong> <div id="lblTotalTrans" class="currencyLabel">@Model.Item3.TotalAmount</div></div>
+        <div class="col-lg-2"><strong>Paid:</strong> <div id="lblTotalPaid" class="currencyLabel">@Model.Item3.TotalCollected</div></div>
+        <div class="col-lg-2"><strong>Refunded:</strong> <div id="lblTotalRefunded" class="currencyLabel">@Model.Item3.RefundedAmount</div></div>
+        <div class="col-lg-2"><strong>Remaining Owed:</strong> <div id="lblOwed" class="currencyLabel">@Model.Item3.TotalOwed</div></div>
+        <div class="col-lg-3"><strong>Last update:</strong> <div>@Model.Item3.ModifiedDate</div></div>
+    </div>
+</div>
 
-        @{ if (Model.Item3.TransactionStatusID == 2)
-            {
-                <text>
-                    <div id="divMsgComplete" class="alert alert-success">
-                        <strong>This transaction has been COMPLETED.</strong>
-                    </div>
-                </text>
-            }
-            else if (Model.Item3.TransactionStatusID == 3)
-            {
-                <text>
-                    <div id="divMsgComplete" class="alert alert-danger">
-                        <strong>This transaction has been CANCELLED.</strong>
-                    </div>
-                </text>
-            }
+@{ if (Model.Item3.TransactionStatusID == 2)
+    {
+        <text>
+            <div id="divMsgComplete" class="alert alert-success">
+                <strong>This transaction has been COMPLETED.</strong>
+            </div>
+        </text>
+    }
+    else if (Model.Item3.TransactionStatusID == 3)
+    {
+        <text>
+            <div id="divMsgComplete" class="alert alert-danger">
+                <strong>This transaction has been CANCELLED.</strong>
+            </div>
+        </text>
+    }
 
-        }
+}
 
-        @if (Model.Item3.TransactionStatusID == 1)
+@if (Model.Item3.TransactionStatusID == 1)
+{
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Products / Services</h3>
+        </div>
+        <div class="col-sm-6 text-right">
+            @*<img id="btnAddTransaccion" class="imgBtn" src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" onclick="btnAddTransaccionClick()" />*@
+            <a href="#" id="btnAddTransaccion" onclick="btnAddTransaccionClick()">
+                <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add product" style="color:royalblue"></i>
+            </a>
+        </div>
+    </div>
+}
+<table id="tblTransDetails" class="table table-striped table-condensed">
+    <tr>
+        <th class="col-sm-5">Description</th>
+        <th class="col-sm-1">Notes</th>
+        <th class="col-sm-1">Quantity</th>
+        <th class="col-sm-1">Unit Price</th>
+        <th class="col-sm-2">Discount Price</th>
+        <th class="col-sm-1">SubTotal</th>
+        @if (ViewBag.IsAdmin)
         {
-            <div class="row">
-                <div class="col-sm-6">
-                    <h3>Products / Services</h3>
-                </div>
-                <div class="col-sm-6 text-right">
-                    @*<img id="btnAddTransaccion" class="imgBtn" src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" onclick="btnAddTransaccionClick()" />*@
-                    <a href="#" id="btnAddTransaccion" onclick="btnAddTransaccionClick()">
-                        <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add product"></i>
-                    </a>
-                </div>
-            </div>
+            <th class="col-sm-1"></th>
+
         }
-        <table id="tblTransDetails" class="table table-hover">
-            <tr>
-                <th>Description:</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Discount Price</th>
-                <th>SubTotal</th>
-                <th>Note</th>
-                <th></th>
-            </tr>
+    </tr>
 
-            @{
-                var decRunningTotal = 0.0M;
-                var decSubTotal = 0.0M;
+    @{
+        var decRunningTotal = 0.0M;
+        var decSubTotal = 0.0M;
 
-                foreach (var item in Model.Item1.ToList())
-                {
+        foreach (var item in Model.Item1.ToList())
+        {
 
-                    if (item.DiscountPrice == 0)
-                    {
-                        decSubTotal = item.Quantity * item.UnitPrice;
-                    }
-                    else
-                    {
-                        decSubTotal = item.Quantity * item.DiscountPrice;
-                    }
-                    decRunningTotal += decSubTotal;
-
-                    <tr id="@item.TransactionDetailID">
-                        <td>@item.FormTitle</td>
-                        <td>@item.Quantity</td>
-                        <td class="currencyLabel">@item.UnitPrice</td>
-                        <td class="currencyLabel">@item.DiscountPrice</td>
-                        <td class="currencyLabel">@decSubTotal</td>
-                        <td>@item.Notes</td>
-
-                        @{
-                            if (Context.Session["Associate"] != null)
-                            {
-                                var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
-                                if (assoc.IsAdmin && Model.Item3.TransactionStatusID == 1)
-                                {
-                                    <text>
-                                        <td><a><i id="@item.TransactionDetailID" class='delete fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete'></i></a></td>
-                                    </text>
-                                }
-                            }
-                            else
-                            {
-                                <text>
-                                    <td></td>
-                                </text>
-                            }
-                        }
-                    </tr>
-                }
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td align="center"><strong>TOTAL:</strong></td>
-                    <td class="currencyLabel"><strong>@decRunningTotal</strong></td>
-                    <td></td>
-                    <td></td>
-                </tr>
+            if (item.DiscountPrice == 0)
+            {
+                decSubTotal = item.Quantity * item.UnitPrice;
             }
-        </table>
-        <script>$(function () { $("#lblTotalTrans").text(@decRunningTotal); })</script>
-    </div>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6">
-                <h3>Payments</h3>
-            </div>
-            <div class="col-lg-6 pull-text-right">
-                @{
-                    if (Model.Item3.TransactionStatusID == 1)
-                    {
-                        @*<a href="#" id="lnkAddPaymentBottom" class="payment">
-                                <img src="~/images/wallet.png" data-toggle="tooltip" data-placement="left" title="Add Payment" />
-                            </a>*@
-                        <a href="#" id="lnkAddPaymentBottom" class="payment">
-                            <i class="fa fa-money fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add payment"></i>
-                        </a>
-                    }
-                }
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <table id="tblPayments" class="table table-hover">
-            <tr>
-                <th>Pay ID</th>
-                <th>Pay Date</th>
-                <th>Amount</th>
-                <th>Pay Method</th>
-                <th>Check #</th>
-                <th>Rep</th>
-            </tr>
-            @{
-                var decPayTotal = 0M;
-
-                foreach (var item in Model.Item2.ToList())
-                {
-                    decPayTotal += item.PaymentAmount;
-
-                    <tr id="@item.PaymentID">
-                        <td>@item.PaymentID</td>
-                        <td>@item.PaymentDate</td>
-                        <td class="currencyLabel">@item.PaymentAmount</td>
-                        <td>@item.PaymentMethodDescription</td>
-                        <td>@item.CheckNumber</td>
-                        <td>@item.TakenBy</td>
-                        @{
-                            if (Context.Session["Associate"] != null && Model.Item3.TransactionStatusID == 1)
-                            {
-                                var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
-                                if (assoc.IsAdmin)
-                                {
-                                    <text>
-                                        <td><a><i id="@item.PaymentID" class='deletepayment imgBtn fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete payment'></i></a></td>
-                                    </text>
-                                }
-                            }
-                        }
-
-                    </tr>
-                }
-
-                <tr>
-                    <td></td>
-                    <td align="right"><strong>TOTAL:</strong></td>
-                    <td class="currencyLabel"><strong>@decPayTotal</strong></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
+            else
+            {
+                decSubTotal = item.Quantity * item.DiscountPrice;
             }
-        </table>
-        <script>
+            decRunningTotal += decSubTotal;
+
+            <tr id="@item.TransactionDetailID">
+                <td>@item.FormTitle</td>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(@item.Notes))
+                    {
+                        <a data-toggle="popover" title="Note" data-content="@item.Notes" data-trigger="hover"><i class="fa fa-commenting-o fa-2x" aria-hidden="true"></i></a>
+                    }
+                </td>
+                <td>@item.Quantity</td>
+                <td class="text-right currencyLabel">@item.UnitPrice</td>
+                <td class="text-right currencyLabel">@item.DiscountPrice</td>
+                <td class="text-right currencyLabel">@decSubTotal</td>
+                @if (ViewBag.IsAdmin)
+                {
+                    <td class="text-center">
+                        <a><i id="@item.TransactionDetailID" class='delete fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete'></i></a>
+                    </td>
+                }
+            </tr>
+        }
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="text-right"><label>Total:</label></td>
+            <td class="text-right currencyLabel">@decRunningTotal</td>
+            @if (ViewBag.IsAdmin)
+            {
+                <td></td>
+            }
+        </tr>
+    }
+</table>
+<script>$(function () { $("#lblTotalTrans").text(@decRunningTotal); })</script>
+
+
+<div class="row">
+    <div class="col-lg-6">
+        <h3>Payments</h3>
+    </div>
+    <div class="col-lg-6 pull-text-right">
+        @{
+            if (Model.Item3.TransactionStatusID == 1)
+            {
+                @*<a href="#" id="lnkAddPaymentBottom" class="payment">
+                        <img src="~/images/wallet.png" data-toggle="tooltip" data-placement="left" title="Add Payment" />
+                    </a>*@
+                <a href="#" id="lnkAddPaymentBottom" class="payment">
+                    <i class="fa fa-money fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add payment" style="color:green"></i>
+                </a>
+            }
+        }
+    </div>
+</div>
+
+<table id="tblPayments" class="table table-striped table-condensed">
+    <tr>
+        @*<th>Pay ID</th>*@
+        <th class="col-sm-5">Rep</th>
+        <th class="col-sm-2">Pay Date</th>
+        <th class="col-sm-2">Pay Method</th>
+        <th class="col-sm-1">Check #</th>
+        <th class="col-sm-1">Amount</th>
+        @if (ViewBag.IsAdmin)
+        {
+            <th class=""></th>
+        }
+    </tr>
+    @{
+        var decPayTotal = 0M;
+
+        foreach (var item in Model.Item2.ToList())
+        {
+            decPayTotal += item.PaymentAmount;
+
+            <tr id="@item.PaymentID">
+                @*<td>@item.PaymentID</td>*@
+                <td>@item.TakenBy</td>
+                <td>@item.PaymentDate</td>
+                <td>@item.PaymentMethodDescription</td>
+                <td>@item.CheckNumber</td>
+                <td class="text-right currencyLabel">@item.PaymentAmount</td>
+                @if (ViewBag.IsAdmin)
+                {
+                    <td class="text-center">
+                        <a><i id="@item.PaymentID" class='deletepayment fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete payment'></i></a>
+                    </td>
+                }
+            </tr>
+        }
+
+        <tr>
+            @*<td></td>*@
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="text-right"><label>Paid:</label></td>
+            <td class="text-right currencyLabel">@decPayTotal</td>
+            @if (ViewBag.IsAdmin)
+            {
+                <td></td>
+            }
+        </tr>
+    }
+</table>
+<script>
             $(function () {
 
                 $("#lblDialogOwed").text(@Model.Item3.TotalOwed);
-                
+
 
                 $("#lblDialogPaid").text(@Model.Item3.Net);
 
@@ -903,111 +911,115 @@
 
                 $('.currencyLabel').formatCurrency();
             })</script>
+
+
+
+@if (Model.Item4 != null && Model.Item4.Count() > 0)
+{
+    <div class="row">
+        <div class="col-lg-6 pull-bottom">
+            <h3>Refunds</h3>
+        </div>
     </div>
 
+    <table id="tblRefunds" class="table table-striped table-condensed">
+        <tr>
+            <th>Refund ID</th>
+            <th>Refund Amount</th>
+            <th>Refund Date</th>
+            <th>Rep</th>
+            <th>Notes</th>
+        </tr>
+        @{
 
+            foreach (var item in Model.Item4.ToList())
+            {
 
-    @if (Model.Item4 != null && Model.Item4.Count() > 0)
-    {
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 pull-bottom">
-                    <h3>Refunds</h3>
-                </div>
+                <tr id="@item.RefundID">
+                    <td>@item.RefundID</td>
+                    <td class="currencyLabel">@item.RefundAmount</td>
+                    <td>@item.RefundDate</td>
+                    <td>@item.RefundedBy</td>
+                    <td class="text-center">
+                        @if (!string.IsNullOrWhiteSpace(@item.Note))
+                        {
+                            <a data-toggle="popover" data-title="Note" data-content="@item.Note"><i class="fa fa-commenting-o fa-2x" aria-hidden="true"></i></a>
+                        }
+                    </td>
+                </tr>
+            }
+
+            <tr>
+
+                <td class="text-right"><label>Refound:</label></td>
+                <td class="text-right currencyLabel">@Model.Item3.RefundedAmount</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+    </table>
+    <script>
+        $(function () {
+            $('.currencyLabel').formatCurrency();
+        })</script>
+}
+
+<div>
+    <div class="form-horizontal">
+        <div class="form-group" style="color:red">
+            <label for="lblOwedBottom" class="col-md-2 col-md-offset-8 control-label">Remaining Owed:</label>
+            <div class="col-md-1 text-right">
+                <p id="lblOwedBottom" class="form-control-static currencyLabel">@Model.Item3.TotalOwed</p>
             </div>
         </div>
-
-        <div class="container">
-            <table id="tblRefunds" class="table table-hover">
-                <tr>
-                    <th>Refund ID</th>
-                    <th>Refund Amount</th>
-                    <th>Refund Date</th>
-                    <th>Rep</th>
-                    <th>Note</th>
-                </tr>
-                @{
-
-                    foreach (var item in Model.Item4.ToList())
-                    {
-
-                        <tr id="@item.RefundID">
-                            <td>@item.RefundID</td>
-                            <td class="currencyLabel">@item.RefundAmount</td>
-                            <td>@item.RefundDate</td>
-                            <td>@item.RefundedBy</td>
-                            <td>@item.Note</td>
-
-
-                        </tr>
-                    }
-
-                    <tr>
-
-                        <td align="right"><strong>TOTAL:</strong></td>
-                        <td class="currencyLabel"><strong>@Model.Item3.RefundedAmount</strong></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                }
-            </table>
-            <script>
-                $(function () {
-                    $('.currencyLabel').formatCurrency();
-                })</script>
-        </div>
-    }
+    </div>
 </div>
 
 <div id="new-payment-dialog" title="Add New Payment">
-
     <div class="container">
-        <div class="row">
-            <div class="col-md-12 text-right">
-                <div id="payMethodButtons">
-                    <div class="btn-group">
-                        <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="1">
-                            <i class="fa fa-usd"></i><br>CASH
-                        </button>
-                        <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="2">
-                            <i class="fa fa-university"></i><br>CHECK
-                        </button>
-                        <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="3">
-                            <i class="fa fa-credit-card"></i><br>VISA
-                        </button>
-                        <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="4">
-                            <i class="fa fa-paper-plane-o"></i><br>DEPOSIT
-                        </button>
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="lblDialogOwed" class="col-md-6 control-label">Remaining Owed:</label>
+                <div class="col-md-3 text-right">
+                    <p id="lblDialogOwed" class="form-control-static currencyLabel">$0.00</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12 text-center">
+                    <div id="payMethodButtons">
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="1">
+                                <i class="fa fa-usd"></i><br>CASH
+                            </button>
+                            <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="2">
+                                <i class="fa fa-university"></i><br>CHECK
+                            </button>
+                            <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="3">
+                                <i class="fa fa-credit-card"></i><br>VISA
+                            </button>
+                            <button class="btn btn-default btn-lg" onclick="ChosePaymentMethod(this)" data-value="4">
+                                <i class="fa fa-paper-plane-o"></i><br>DEPOSIT
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2 text-right">
-                <label>Total:</label>
+            <div class="form-group">
+                <label for="txtPaymentAmount" class="col-md-6 control-label">Amount:</label>
+                <div class="col-md-3">
+                    <input type="text" id="txtPaymentAmount" class="form-control text-right" onkeypress='numericValidate(event)' autofocus>
+                </div>
             </div>
-            <div class="col-md-2 ">
-                <label id="lblDialogOwed" class="currencyLabel"></label>
-            </div>
-            <div class="col-md-5 text-right">
-                <label for="txtPaymentAmount">Amount: </label>
-            </div>
-            <div class="col-md-3 ">
-                <input type="text" id="txtPaymentAmount" class="form-control text-right" onkeypress='numericValidate(event)' autofocus>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-9 text-right">
-                <label for="txtCheckNumber">Check #:</label>
-            </div>
-            <div class="col-md-3">
-                <input type="text" id="txtCheckNumber" class="form-control" onkeypress='numericValidate(event)' />
+            <div class="form-group">
+                <label for="txtCheckNumber" class="col-md-6 control-label">Check #:</label>
+                <div class="col-md-3">
+                    <input type="text" id="txtCheckNumber" class="form-control" onkeypress='numericValidate(event)' />
+                </div>
             </div>
         </div>
     </div>
 </div>
-
 
 
 @*<table class="table table-hover">
@@ -1024,9 +1036,6 @@
 
         </tr>
     </table>*@
-    </div>
-</div>
-
 <div id="refund-dialog" title="Receipt Refund">
     <div class="container">
         <div class="well well-lg">
@@ -1035,7 +1044,7 @@
                 <div class="col-lg-4 currencyLabel" id="lblDialogPaid"><strong></strong></div>
             </div>
         </div>
-        <table id="tblRefund" class="table table-hover">
+        <table id="tblRefund" class="table table-striped">
             <tr>
                 <td>
                     <div class="ui-widget">
@@ -1074,7 +1083,7 @@
                 <td colspan="2" class="text-right">
                     <label class="empty-label"></label>
                     @*<img src="~/images/search.png" id="search" style="padding-top:20px;" />*@
-                    <button id="btnItemSearch" class="btn btn-info">
+                    <button id="btnItemSearch" class="btn btn-info" onclick="btnSearchItemClick()">
                         <i class="fa fa-list-alt fa-fw" aria-hidden="true"></i>View list
                     </button>
                 </td>
@@ -1109,27 +1118,10 @@
     <select id="lstForms" size="18" class="form-control"></select>
 </div>
 
-<div class="modal fade" id="modalChangeCustomer" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Change customer</h4>
-            </div>
-            <div class="modal-body">
-                <div class="form-horizontal" role="form">
-                    <div class="form-group">
-                        <label for="txtNewClientID" class="col-lg-4 control-label">New ClientID:</label>
-                        <div class="col-lg-6">
-                            <input id="txtNewClientID" class="form-control" onkeypress='numericValidate(event)'>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="btnChangeCustomer" class="btn btn-primary" onclick="btnChangeCustomerClick()">Accept</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
+
+<div id="change-customer-dialog" title="Change customer">
+    <div class="form-group">
+        <label for="txtNewCustomerID" class="control-label">New CustomerID:</label>
+        <input id="txtNewCustomerID" class="form-control" onkeypress='numericValidate(event)' maxlength="8">
     </div>
 </div>

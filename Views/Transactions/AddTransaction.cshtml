@@ -13,6 +13,7 @@
         var CustomerID;
 
         $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover();
         $.fn.bootstrapBtn = $.fn.button.noConflict();
 
         $("#lnkAdd").on('click', function (event) {
@@ -195,16 +196,16 @@
                 subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtDiscount').val());
             }
 
-            TransactionDetail = "<tr id=\"" + $('#hdnFormID').val() + "\">" +
-
-                                    "<td>" + $('#forms').val() + "</td>" +
-                                    "<td>" + $('#txtQuantity').val() + "</td>" +
-                                    "<td class='currencyLabel'>" + $('#txtPrice').val() + "</td>" +
-                                    "<td class='currencyLabel'>" + $('#txtDiscount').val() + "</td>" +
-                                    "<td class='currencyLabel'>" + subtotal + "</td>" +
-                                    "<td>" + $('#txtNote').val() + "</td>" +
-                                    "<td> <a><i class='delete fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' data-placement='right' title='Delete'></i></a> </td>" +
-                                "</tr>";
+            TransactionDetail =
+                "<tr id=\"" + $('#hdnFormID').val() + "\">" +
+                    "<td>" + $('#forms').val() + "</td>" +
+                    "<td>" + $('#txtQuantity').val() + "</td>" +
+                    "<td class='text-right currencyLabel'>" + $('#txtPrice').val() + "</td>" +
+                    "<td class='text-right currencyLabel'>" + $('#txtDiscount').val() + "</td>" +
+                    "<td class='text-right currencyLabel'>" + subtotal + "</td>" +
+                    "<td>" + ($('#txtNote').val().trim() != '' ? " <a  data-toggle='popover' data-title='Note' data-content='" + $('#txtNote').val().trim() + "' data-trigger='hover'><i class='fa fa-commenting-o fa-2x' aria-hidden='true'></i></a>" : '') + "</td>" +
+                    "<td> <a><i class='delete fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' data-placement='right' title='Delete'></i></a> </td>" +
+                "</tr>";
 
             $("#tblTrans").append(TransactionDetail);
 
@@ -218,17 +219,19 @@
             TotalUp();
 
             newtransactiondialog.dialog("close");
+            $('[data-toggle="popover"]').popover();
         }
 
-        $(document).on('click', '.removeTrans', function () {
+        $(document).on('click', '.delete', function () {
             $(this).closest('tr').remove();
             $('#tblTrans tr:last').remove();
             TotalUp();
         });
 
-        $('#btnItemSearch').on('click', function () {
-            listdialog.dialog("open");
-        });
+
+        function btnSearchItemClick() {
+            $("#list-dialog").dialog("open");
+        };
 
         function TotalUp() {
             var total = 0;
@@ -244,8 +247,8 @@
                                             "<td></td>" +
                                             "<td></td>" +
                                             "<td></td>" +
-                                            "<td><strong>TOTAL:</strong></td>" +
-                                            "<td class='currencyLabel'>" + total + "</td>" +
+                                            "<td><label>Total:</label></td>" +
+                                            "<td class='text-right currencyLabel'>" + total + "</td>" +
                                             "<td></td>" +
                                             "<td></td>" +
                                         "</tr>";
@@ -376,27 +379,28 @@
     <div class="col-lg-12 text-right">
         <a href="#" id="lnkAdd">
             @*<img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add Item" />*@
-            <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add product"></i>
+            <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add product" style="color:royalblue"></i>
         </a>
     </div>
 </div>
 
 <table id="tblTrans" class="table table-striped">
     <tr>
-        <th>Receipt Item</th>
-        <th>Quantity</th>
-        <th>Unit Price</th>
-        <th>Discount Price</th>
-        <th>Sub-Total</th>
-        <th>Note</th>
+        <th class="col-sm-5">Description</th>
+        <th class="col-sm-1">Quantity</th>
+        <th class="col-sm-1">Unit Price</th>
+        <th class="col-sm-2">Discount Price</th>
+        <th class="col-sm-1">SubTotal</th>
+        <th class="col-sm-1">Note</th>
         <th></th>
     </tr>
     <tr>
         <td></td>
         <td></td>
         <td></td>
-        <td>TOTAL:</td>
-        <td>0</td>
+        <td>Total:</td>
+        <td>$0.00</td>
+        <td></td>
         <td></td>
     </tr>
 </table>
@@ -424,7 +428,7 @@
                 <td colspan="2" class="text-right">
                     <label class="empty-label"></label>
                     @*<img src="~/images/search.png" id="search" style="padding-top:20px;" />*@
-                    <button id="btnItemSearch" class="btn btn-info">
+                    <button id="btnItemSearch" class="btn btn-info" onclick="btnSearchItemClick()">
                         <i class="fa fa-list-alt fa-fw" aria-hidden="true"></i>View list
                     </button>
                 </td>

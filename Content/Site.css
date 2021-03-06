@@ -93,7 +93,7 @@ html, body {
 
     .user-container a {
         color: #000000;
-        text-decoration:none;
+        text-decoration: none;
     }
 
 .dot {
@@ -122,7 +122,12 @@ html, body {
     background-color: #ffffff;
 }
 
-table.dataTable tbody td {
+.table thead > tr > th, 
+.table tbody > tr > th, 
+.table tfoot > tr > th, 
+.table thead > tr > td, 
+.table tbody > tr > td, 
+.table tfoot > tr > td {
     vertical-align: middle;
 }
 
@@ -131,11 +136,16 @@ table.dataTable tbody td {
 }
 
 /*MODALS*/
-@media (min-width: 992px) {
-    .modal {
-        overflow: auto;
-    }
 
+.modal {
+    overflow: auto;
+}
+
+.modal-footer {
+    margin-top: 0px;
+}
+
+@media (min-width: 992px) {
     .modal-xl {
         width: 900px;
     }

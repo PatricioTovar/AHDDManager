@@ -481,7 +481,7 @@
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\rowGroup.dataTables.min.css" />
+    <Content Include="Content\rowGroup.dataTables.min.css" />
     <Content Include="Scripts\SetupAjax.js" />
     <Content Include="Scripts\States.js" />
     <Content Include="Scripts\Utilities.js" />

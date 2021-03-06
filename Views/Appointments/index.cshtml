@@ -690,7 +690,7 @@
             var endHour = $("#ddlLOHours").val();
             var endMinutes = $("#ddlLOMinutes").val();
 
-            if ((startHour < endHour && endHour != 12) || (startHour == endHour && startMinutes >= endMinutes)) {
+            if ((startHour < endHour && endHour != 12) || (startHour == 12 && startHour > endHour) || (startHour == endHour && startMinutes >= endMinutes)) {
                 $("#ddlLOAMPM").val(startAMPM);
             } else {
                 if (startAMPM == "AM") {

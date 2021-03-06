@@ -163,15 +163,6 @@
                         return "<a class='EditLinks imgBtn' id='edit_" + row.CustomerID + "' ><i class='fa fa-pencil fa-shadow fa-2x' style='color: lightskyblue;' data-toggle='tooltip' data-placement='top' title='Edit'></i></a>";
                     }
                 },
-                //{
-                //    "data": "CustomerID",
-                //    'name': 'note',
-                //    "orderable": false,
-                //    "className": "text-center",
-                //    "render": function (data, type, row, meta) {
-                //        return "<span class='CustomerNotes imgBtn' data-toggle='tooltip' data-placement='top' title='View notes'><i class='fa fa-sticky-note fa-2x'></a>";
-                //    }
-                //},
                 {
                     "data": "CustomerID",
                     "orderable": false,
@@ -278,13 +269,8 @@
             var customerID = this.id.replace("customerNotes_", "");
 
             CustomerID = customerID;
+            LoadCustomerNotes();
             $("#customer-notes-dialog").dialog('open');
-
-        });
-
-        $('#tblCustomers').on('click', '.CustomerNotes', function () {
-            var data = Table.row($(this).parents('tr')).data();
-            var clientId = data.ClienteId;
 
         });
 

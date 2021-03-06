@@ -23,13 +23,23 @@
 
     function initTable() {
         tblPayments = $('#tblPayments').DataTable({
-            dom: "<'row'>" + "<'row'<'col-sm-6'l><'col-sm-5'f><'col-sm-1 text-right'B>>" + "<'row'<'col-sm-62'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+            dom: "<'row'>" + "<'row'<'col-sm-6'l><'col-sm-5'f><'col-sm-1 text-right'B>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
             pageLength: 50,
             buttons: [
                 {
                     extend: 'excel',
                     className: 'btnExcelTbl btn btn-success',
-                    visible: false,
+                    filename: function () {
+                        var title = "ResumeReport ";
+
+                        title += $("#dpStart").val().replaceAll("/", "-");
+
+                        if ($("#dpStart").val() != $("#dpStart").val()) {
+                            title += "_" + $("#dpEnd").val().replaceAll("/", "-");
+                        }
+
+                        return title;
+                    },
                     exportOptions: {
                         columns: '.exportExcel'
                     }
