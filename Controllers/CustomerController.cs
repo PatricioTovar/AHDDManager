@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using AHDDManagerClass;
 
 namespace AHDDManager.Controllers
 {
@@ -18,22 +19,22 @@ namespace AHDDManager.Controllers
 
         public ActionResult Invoice(int id) // transaction id
         {
-            AHDDManager.Models.Invoice objI = new Models.Invoice();
+            Models.Invoice objI = new Models.Invoice();
 
-            AHDDManagerClass.Transaction objT = new AHDDManagerClass.Transaction(id);
-            AHDDManagerClass.Customer objC;
-            AHDDManagerClass.Business objB;
-            AHDDManagerClass.TransactionDetails objTDs;
-            AHDDManagerClass.Payments objPs;
-            AHDDManagerClass.Refunds objRs;
+            Transaction objT = new Transaction(id);
+            Customer objC;
+            Business objB;
+            TransactionDetails objTDs;
+            Payments objPs;
+            Refunds objRs;
 
             if (objT.TransactionsExists)
             {
-                objC = new AHDDManagerClass.Customer(objT.CustomerID);
-                objB = new AHDDManagerClass.Business(objT.BusinessID);
-                objTDs = new AHDDManagerClass.TransactionDetails(id);
-                objPs = new AHDDManagerClass.Payments(id);
-                objRs = new AHDDManagerClass.Refunds(id);
+                objC = new Customer(objT.CustomerID);
+                objB = new Business(objT.BusinessID);
+                objTDs = new TransactionDetails(id);
+                objPs = new Payments(id);
+                objRs = new Refunds(id);
                 
 
                 objI.Customer = objC;
@@ -54,21 +55,21 @@ namespace AHDDManager.Controllers
 
         public ActionResult SearchCustomers(string SearchCriteria)
         {
-            AHDDManagerClass.Customers objCusts = new AHDDManagerClass.Customers(SearchCriteria);
+            Customers objCusts = new Customers(SearchCriteria);
 
             return Json(objCusts, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetCustomer(int CustomerID)
         {
-            AHDDManagerClass.Customer objC = new AHDDManagerClass.Customer(CustomerID);
+            Customer objC = new Customer(CustomerID);
 
             return Json(objC);
         }
 
         public ActionResult DeleteCustomer(int CustomerID)
         {
-            AHDDManagerClass.Customer objF = new AHDDManagerClass.Customer(CustomerID);
+            Customer objF = new Customer(CustomerID);
             if (!objF.CustomersExist)
             {
                 return Json("The specified customer does not exist.");
@@ -93,7 +94,7 @@ namespace AHDDManager.Controllers
         }
         public ActionResult DeleteCustomerNote(int CustomerNoteID)
         {
-            AHDDManagerClass.CustomerNote objF = new AHDDManagerClass.CustomerNote();
+            CustomerNote objF = new CustomerNote();
 
                 if (objF.Delete(CustomerNoteID))
                 {
@@ -108,7 +109,7 @@ namespace AHDDManager.Controllers
         
 
 
-        public ActionResult UpdateCustomer(AHDDManagerClass.Customer customer)
+        public ActionResult UpdateCustomer(Customer customer)
         {
             try
             {
@@ -133,12 +134,12 @@ namespace AHDDManager.Controllers
 
         public ActionResult GetCustomerNotes(int CustomerID)
         {
-            AHDDManagerClass.CustomerNotes objCNs = new AHDDManagerClass.CustomerNotes(CustomerID);
+            CustomerNotes objCNs = new CustomerNotes(CustomerID);
 
             return Json(objCNs);
         }
 
-        public ActionResult AddCustomerNote(AHDDManagerClass.CustomerNote CustomerNote)
+        public ActionResult AddCustomerNote(CustomerNote CustomerNote)
         {
 
             CustomerNote.DateAdded = DateTime.Now;
@@ -152,8 +153,8 @@ namespace AHDDManager.Controllers
 
         public ActionResult Payments(int ID)
         {
-            AHDDManagerClass.Payments objPs = new AHDDManagerClass.Payments();
-            AHDDManagerClass.Customer objC = new AHDDManagerClass.Customer(ID);
+            Payments objPs = new Payments();
+            Customer objC = new Customer(ID);
 
             //objC.LoadByTransactionID(ID);
 
@@ -167,7 +168,7 @@ namespace AHDDManager.Controllers
         {
             try
             {
-                AHDDManagerClass.Associates objAs = new AHDDManagerClass.Associates(base.Business.BusinessID);
+                Associates objAs = new Associates(base.Business.BusinessID);
 
                 return Json(objAs);
             }

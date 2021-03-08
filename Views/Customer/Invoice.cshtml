@@ -26,7 +26,7 @@
     <div class="row">
         <div class="main">
             <div class="col-md-12">
-                <div><a href="#" id="print" onclick="sendToPrint()"><img src="/images/print.png" width="25" height="25" /></a></div>
+                <div class="hidden-print"><a href="#" id="print" onclick="sendToPrint()"><img src="/images/print.png" width="25" height="25" /></a></div>
                 <div class="row">
                     <div class="=row col-md-12">
                         <h3><strong>Agencia Hispana De Dallas on Bishop Ave.</strong></h3>
@@ -58,7 +58,7 @@
                     </table>
                 </div>
 
-                <table class="table" ">
+                <table class="table">
                     <tr>
                         <td>
                             <div class="text-center">
@@ -82,7 +82,7 @@
                         <td>
                             <div class="text-center">
                                 <h4 id="lblInvoiceDate"><strong>Receipt Date:</strong></h4>
-                                <h4>@Model.Transaction.TransactionDate.ToShortDateString()</h4>
+                                <h4>@Model.Transaction.TransactionDate.ToString("MM/dd/yyyy hh:mm tt")</h4>
                             </div>
                         </td>
                     </tr>
@@ -91,9 +91,9 @@
                     <tr>
                         @*<th><h5>Item #</h5></th>*@
                         <th>Description</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Subtotal</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Subtotal</th>
                     </tr>
                     <tbody>
 
@@ -103,11 +103,11 @@
                                 <tr>
                                     @*<td class="col-md-2">@item.TransactionDetailID</td>*@
                                     <td class="col-md-7">@item.FormTitle</td>
-                                    <td class="col-md-1 text-right">@item.Quantity</td>
+                                    <td class="col-md-1 text-center">@item.Quantity</td>
                                     <td class="col-md-2 text-right">@item.PriceCharged.ToString("C") </td>
                                     <td class="col-md-2 text-right"> @item.Total.ToString("C") </td>
                                 </tr>
-                                if (!string.IsNullOrEmpty(item.Notes))
+                                if (!string.IsNullOrWhiteSpace(item.Notes))
                                 {
                                     <tr class="tr-note" style="font-size:15px">
                                         @*<td class="col-md-2"></td>*@
@@ -142,7 +142,7 @@
                         <th class="col-md-4">Rep</th>
                         <th class="col-md-3">Date</th>
                         <th class="col-md-3">Method</th>
-                        <th class="col-md-2">Amount</th>
+                        <th class="col-md-2 text-center">Amount</th>
                     </tr>
 
                     @{ foreach (AHDDManagerClass.Payment item in Model.Payments)

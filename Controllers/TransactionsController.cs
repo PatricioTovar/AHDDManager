@@ -19,8 +19,8 @@ namespace AHDDManager.Controllers
 
         public ActionResult CustomerTransactions(int id)
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions(id);
-            AHDDManagerClass.Customer objC = new AHDDManagerClass.Customer(id);
+            Transactions objTs = new Transactions(id);
+            Customer objC = new Customer(id);
 
             ViewBag.CustomerName = objC.FirstName + " " + objC.LastName;
 
@@ -32,7 +32,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult SearchForms(string SearchCriteria)
         {
-            AHDDManagerClass.Forms objFs = new AHDDManagerClass.Forms(SearchCriteria);
+            Forms objFs = new Forms(SearchCriteria);
 
             return Json(objFs, JsonRequestBehavior.AllowGet);
         }
@@ -43,7 +43,7 @@ namespace AHDDManager.Controllers
             return View();
         }
 
-        public ActionResult AddRefund(AHDDManagerClass.Refund Refund)
+        public ActionResult AddRefund(Refund Refund)
         {
             //Refund.RefundDate = DateTime.Now.AddHours(2); //PT - add time in the client side
             Refund.RefundedBy = base.Associate.AssociateID;
@@ -54,7 +54,7 @@ namespace AHDDManager.Controllers
             { return Json("0"); }
         }
 
-        public ActionResult AddNewTransaction(AHDDManagerClass.Transaction transaction, List<AHDDManagerClass.TransactionDetail> transactiondetails)
+        public ActionResult AddNewTransaction(Transaction transaction, List<TransactionDetail> transactiondetails)
         {
             //transaction.TransactionDate = DateTime.Now; //PT - add time in the client side
             transaction.BusinessID = base.Business.BusinessID;
@@ -72,7 +72,7 @@ namespace AHDDManager.Controllers
 
             if (transaction.Update())
             {
-                foreach (AHDDManagerClass.TransactionDetail item in transactiondetails)
+                foreach (TransactionDetail item in transactiondetails)
                 {
                     item.TransactionID = transaction.TransactionID;
 
@@ -90,7 +90,7 @@ namespace AHDDManager.Controllers
         }
 
 
-        public ActionResult AddTransactionDetail(AHDDManagerClass.TransactionDetail transactionDetail)
+        public ActionResult AddTransactionDetail(TransactionDetail transactionDetail)
         {
 
             if (!transactionDetail.Update())
@@ -103,18 +103,18 @@ namespace AHDDManager.Controllers
 
         public ActionResult TransactionDetails(int id)
         {
-            AHDDManagerClass.TransactionDetails objTDs = new AHDDManagerClass.TransactionDetails(id);
-            AHDDManagerClass.Payments objPs = new AHDDManagerClass.Payments(id);
-            AHDDManagerClass.Transaction objT = new AHDDManagerClass.Transaction(id);
-            AHDDManagerClass.Refunds objRs = new AHDDManagerClass.Refunds(id);
+            TransactionDetails objTDs = new TransactionDetails(id);
+            Payments objPs = new Payments(id);
+            Transaction objT = new Transaction(id);
+            Refunds objRs = new Refunds(id);
 
-            var tuple = new Tuple<AHDDManagerClass.TransactionDetails, AHDDManagerClass.Payments, AHDDManagerClass.Transaction, AHDDManagerClass.Refunds>(objTDs, objPs, objT, objRs);
+            var tuple = new Tuple<TransactionDetails, Payments, Transaction, Refunds>(objTDs, objPs, objT, objRs);
             return View(tuple);
         }
 
         public ActionResult SearchTransaction(int TransactionID)
         {
-            AHDDManagerClass.Transaction objT = new AHDDManagerClass.Transaction(TransactionID);
+            Transaction objT = new Transaction(TransactionID);
 
             if (objT.TransactionsExists)
             {
@@ -130,7 +130,7 @@ namespace AHDDManager.Controllers
         public ActionResult SearchTransactionByDates(DateTime StartDate, DateTime EndDate)
         {
 
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
+            Transactions objTs = new Transactions();
 
             var listTrans = objTs.GetTransactionsReport(StartDate, EndDate, false);
 
@@ -138,9 +138,9 @@ namespace AHDDManager.Controllers
         }
 
 
-        public ActionResult MakePayment(AHDDManagerClass.Payment payment)
+        public ActionResult MakePayment(Payment payment)
         {
-            payment.PaymentDate = DateTime.Now;
+            //payment.PaymentDate = DateTime.Now;
             payment.AssociateID = base.Associate.AssociateID;
             payment.DeletedBy = base.Associate.AssociateID;
 
@@ -152,7 +152,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult GetForms()
         {
-            AHDDManagerClass.Forms objFs = new AHDDManagerClass.Forms();
+            Forms objFs = new Forms();
 
             return Json(objFs, JsonRequestBehavior.AllowGet);
         }
@@ -160,7 +160,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult DeleteTransactionDetail(int TransactionDetailID)
         {
-            AHDDManagerClass.TransactionDetail objTD = new AHDDManagerClass.TransactionDetail();
+            TransactionDetail objTD = new TransactionDetail();
 
             if (objTD.Delete(TransactionDetailID, base.Associate.AssociateID))
             {
@@ -174,7 +174,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult DeletePayment(int PaymentID)
         {
-            AHDDManagerClass.Payment objTD = new AHDDManagerClass.Payment();
+            Payment objTD = new Payment();
 
             if (objTD.Delete(PaymentID, base.Associate.AssociateID))
             {
@@ -188,7 +188,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult CancelTransaction(int TransactionID, DateTime ModifiedDate)
         {
-            AHDDManagerClass.Transaction objT = new AHDDManagerClass.Transaction(TransactionID);
+            Transaction objT = new Transaction(TransactionID);
 
             if (objT.TransactionsExists)
             {
@@ -215,7 +215,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult CompleteTransaction(int TransactionID, DateTime ModifiedDate)
         {
-            AHDDManagerClass.Transaction objT = new AHDDManagerClass.Transaction(TransactionID);
+            Transaction objT = new Transaction(TransactionID);
 
             if (objT.TotalOwed > 0)
             {
@@ -252,7 +252,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult ReOpenTransaction(int TransactionID, DateTime ModifiedDate)
         {
-            AHDDManagerClass.Transaction objT = new AHDDManagerClass.Transaction(TransactionID);
+            Transaction objT = new Transaction(TransactionID);
 
             if (objT.TransactionsExists)
             {

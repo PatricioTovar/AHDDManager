@@ -162,7 +162,7 @@
                     TransactionID: @ViewContext.RouteData.Values["id"],
                     RefundAmount: $("#txtRefundAmount").val(),
                     Note: $("#txtRefundNote").val(),
-                    RefundDate: new Date() //PT - add time in the client side
+                    RefundDate: (new Date()).toLocaleString() //PT - add time in the client side
                 };
 
                 $.ajax({
@@ -247,7 +247,8 @@
                     AssociateID: 0,
                     PaymentAmount: $("#txtPaymentAmount").val(),
                     PaymentMethod: $("#payMethodButtons").find(".selected").data('value'),
-                    CheckNumber: $("#txtCheckNumber").val()
+                    CheckNumber: $("#txtCheckNumber").val(),
+                    PaymentDate: (new Date()).toLocaleString()
                 };
 
                 $.ajax({
@@ -283,7 +284,7 @@
             $.ajax({
                 url: '/transactions/CancelTransaction/',
                 type: 'POST',
-                data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: new Date() }),
+                data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toLocaleString() }),
                 dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
@@ -318,7 +319,7 @@
                 $.ajax({
                     url: '/transactions/CompleteTransaction/',
                     type: 'POST',
-                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: new Date() }),
+                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toLocaleString() }),
                     dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
@@ -344,7 +345,7 @@
                 $.ajax({
                     url: '/transactions/ReOpenTransaction/',
                     type: 'POST',
-                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: new Date() }),
+                    data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toLocaleString() }),
                     dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
@@ -555,7 +556,7 @@
             return;
         }
 
-        if ($('#txtNewDetailDiscount').val() != '' && $('#txtNewDetailNote').val() == '') {
+        if ($('#txtNewDetailDiscount').val() != '' && $('#txtNewDetailNote').val().trim() == '') {
             //alert('You must include a note if you are discounting the price.');
             $.AlertDialog('You must include a note if you are discounting the price.', 'Error Message', function (event) { }, 'lightcoral');
             $('#txtNewDetailDiscount').focus();
@@ -583,7 +584,7 @@
             UnitPrice: $('#txtNewDetailPrice').val(),
             DiscountPrice: parseFloat($('#txtNewDetailDiscount').val()),
             Quantity: $('#txtNewDetailQuantity').val(),
-            Notes: $('#txtNewDetailNote').val(),
+            Notes: $('#txtNewDetailNote').val().trim(),
             Total: subtotal
         }
 
@@ -661,7 +662,7 @@
         @{
             if (Model.Item3.TransactionStatusID == 1)
             {
-                <a href="#" id="lnkAddPaymentTop" class="cancel">
+                <a href="#" class="cancel">
                     @*<img src="~/images/CancelTransaction.png" data-toggle="tooltip" data-placement="left" title="Cancel Receipt" />*@
                     <i class="fa fa-ban fa-3x fa-shadow" aria-hidden="true" style="color: red;" data-toggle="tooltip" title="Cancel"></i>
                 </a>
@@ -712,14 +713,14 @@
         </div>
         <div class="col-lg-2"><strong>Receipt No:</strong> <div>@Url.RequestContext.RouteData.Values["id"]</div></div>
         <div class="col-lg-2"><strong>Rep:</strong> <div>@Model.Item3.TakenBy</div></div>
-        <div class="col-lg-3"><strong>Receipt Date:</strong> <div>@Model.Item3.TransactionDate</div></div>
+        <div class="col-lg-3"><strong>Receipt Date:</strong> <div>@Model.Item3.TransactionDate.ToString("MM/dd/yyyy hh:mm tt")</div></div>
     </div>
     <div class="row">
         <div class="col-lg-3"><strong>Receipt Total:</strong> <div id="lblTotalTrans" class="currencyLabel">@Model.Item3.TotalAmount</div></div>
         <div class="col-lg-2"><strong>Paid:</strong> <div id="lblTotalPaid" class="currencyLabel">@Model.Item3.TotalCollected</div></div>
         <div class="col-lg-2"><strong>Refunded:</strong> <div id="lblTotalRefunded" class="currencyLabel">@Model.Item3.RefundedAmount</div></div>
         <div class="col-lg-2"><strong>Remaining Owed:</strong> <div id="lblOwed" class="currencyLabel">@Model.Item3.TotalOwed</div></div>
-        <div class="col-lg-3"><strong>Last update:</strong> <div>@Model.Item3.ModifiedDate</div></div>
+        <div class="col-lg-3"><strong>Last update:</strong> <div>@Model.Item3.ModifiedDate.ToString("MM/dd/yyyy hh:mm tt")</div></div>
     </div>
 </div>
 
@@ -759,11 +760,11 @@
 <table id="tblTransDetails" class="table table-striped table-condensed">
     <tr>
         <th class="col-sm-5">Description</th>
-        <th class="col-sm-1">Notes</th>
-        <th class="col-sm-1">Quantity</th>
-        <th class="col-sm-1">Unit Price</th>
-        <th class="col-sm-2">Discount Price</th>
-        <th class="col-sm-1">SubTotal</th>
+        <th class="col-sm-1 text-center">Notes</th>
+        <th class="col-sm-1 text-center">Quantity</th>
+        <th class="col-sm-1 text-center">Unit Price</th>
+        <th class="col-sm-2 text-center">Discount Price</th>
+        <th class="col-sm-1 text-center">SubTotal</th>
         @if (ViewBag.IsAdmin)
         {
             <th class="col-sm-1"></th>
@@ -790,22 +791,23 @@
 
             <tr id="@item.TransactionDetailID">
                 <td>@item.FormTitle</td>
-                <td>
+                <td class="text-center">
                     @if (!string.IsNullOrWhiteSpace(@item.Notes))
                     {
                         <a data-toggle="popover" title="Note" data-content="@item.Notes" data-trigger="hover"><i class="fa fa-commenting-o fa-2x" aria-hidden="true"></i></a>
                     }
                 </td>
-                <td>@item.Quantity</td>
+                <td class="text-center">@item.Quantity</td>
                 <td class="text-right currencyLabel">@item.UnitPrice</td>
                 <td class="text-right currencyLabel">@item.DiscountPrice</td>
                 <td class="text-right currencyLabel">@decSubTotal</td>
-                @if (ViewBag.IsAdmin)
-                {
-                    <td class="text-center">
+                <td class="text-center">
+                    @if (ViewBag.IsAdmin && Model.Item3.TransactionStatusID == 1)
+                    {
                         <a><i id="@item.TransactionDetailID" class='delete fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete'></i></a>
-                    </td>
-                }
+
+                    }
+                </td>
             </tr>
         }
         <tr>
@@ -831,7 +833,7 @@
     </div>
     <div class="col-lg-6 pull-text-right">
         @{
-            if (Model.Item3.TransactionStatusID == 1)
+            if (Model.Item3.TransactionStatusID == 1 && Model.Item3.TotalOwed != 0)
             {
                 @*<a href="#" id="lnkAddPaymentBottom" class="payment">
                         <img src="~/images/wallet.png" data-toggle="tooltip" data-placement="left" title="Add Payment" />
@@ -851,10 +853,10 @@
         <th class="col-sm-2">Pay Date</th>
         <th class="col-sm-2">Pay Method</th>
         <th class="col-sm-1">Check #</th>
-        <th class="col-sm-1">Amount</th>
+        <th class="col-sm-1 text-center">Amount</th>
         @if (ViewBag.IsAdmin)
         {
-            <th class=""></th>
+            <th></th>
         }
     </tr>
     @{
@@ -871,12 +873,13 @@
                 <td>@item.PaymentMethodDescription</td>
                 <td>@item.CheckNumber</td>
                 <td class="text-right currencyLabel">@item.PaymentAmount</td>
-                @if (ViewBag.IsAdmin)
-                {
-                    <td class="text-center">
+                <td class="text-center">
+                    @if (ViewBag.IsAdmin && Model.Item3.TransactionStatusID == 1)
+                    {
                         <a><i id="@item.PaymentID" class='deletepayment fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete payment'></i></a>
-                    </td>
-                }
+
+                    }
+                </td>
             </tr>
         }
 

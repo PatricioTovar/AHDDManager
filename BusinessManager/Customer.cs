@@ -32,6 +32,7 @@ namespace AHDDManagerClass
         private string strAssociate;
         private Boolean blnDeleteable;
         private decimal decTotalOwed;
+        private int iNotesAmount;
 
         private Boolean blnCustomersExist;
 
@@ -61,6 +62,7 @@ namespace AHDDManagerClass
             strAssociate = string.Empty;
             blnDeleteable = false;
             decTotalOwed = 0.00M;
+            iNotesAmount = 0;
 
             blnCustomersExist = false;
 
@@ -141,15 +143,19 @@ namespace AHDDManagerClass
                 strBackgroundColor = Convert.ToString(dr["BackgroundColor"] == Convert.DBNull ? string.Empty : dr["BackgroundColor"]);
                 strAssociate = Convert.ToString(dr["Associate"] == Convert.DBNull ? string.Empty : dr["Associate"]);
 
-                try
-                { blnDeleteable = Convert.ToBoolean(dr["Deleteable"] == Convert.DBNull ? false : dr["Deleteable"]); }
-                catch
-                { blnDeleteable = false; }
+                //try
+                //{ blnDeleteable = Convert.ToBoolean(dr["Deleteable"] == Convert.DBNull ? false : dr["Deleteable"]); }
+                //catch
+                //{ blnDeleteable = false; }
 
-                try
-                { decTotalOwed = Convert.ToDecimal(dr["TotalOwed"] == Convert.DBNull ? false : dr["TotalOwed"]); }
-                catch
-                { decTotalOwed = 0.00M; }
+                //try
+                //{ decTotalOwed = Convert.ToDecimal(dr["TotalOwed"] == Convert.DBNull ? false : dr["TotalOwed"]); }
+                //catch
+                //{ decTotalOwed = 0.00M; }
+
+                blnDeleteable = (dr.Table.Columns.Contains("Deleteable") && dr["Deleteable"] != Convert.DBNull) ? Convert.ToBoolean(dr["Deleteable"]) : false;
+                decTotalOwed = (dr.Table.Columns.Contains("TotalOwed") && dr["TotalOwed"] != Convert.DBNull) ? Convert.ToDecimal(dr["TotalOwed"]) : 0;
+                iNotesAmount = (dr.Table.Columns.Contains("NotesAmount") && dr["NotesAmount"] != Convert.DBNull) ? Convert.ToInt32(dr["NotesAmount"]) : 0;
 
 
             }
@@ -319,6 +325,12 @@ namespace AHDDManagerClass
         {
             get { return decTotalOwed; }
             set { decTotalOwed = value; }
+        }
+
+        public int NotesAmount
+        {
+            get { return iNotesAmount; }
+            set { iNotesAmount = value; }
         }
 
         public Boolean CustomersExist

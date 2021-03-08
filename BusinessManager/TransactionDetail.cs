@@ -159,10 +159,7 @@ namespace AHDDManagerClass
                 }
                 else
                 {
-                    if (DiscountPrice < UnitPrice)
-                    { return DiscountPrice; }
-                    else
-                    { return UnitPrice; }
+                    return DiscountPrice;
                 }
 
             }

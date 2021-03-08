@@ -160,7 +160,7 @@
                     "className": "text-center",
                     "render": function (data, type, row) {
 
-                        return "<a class='EditLinks imgBtn' id='edit_" + row.CustomerID + "' ><i class='fa fa-pencil fa-shadow fa-2x' style='color: lightskyblue;' data-toggle='tooltip' data-placement='top' title='Edit'></i></a>";
+                        return "<a class='EditLinks' id='edit_" + row.CustomerID + "' ><i class='fa fa-pencil fa-shadow fa-2x' style='color: lightskyblue;' data-toggle='tooltip' data-placement='top' title='Edit'></i></a>";
                     }
                 },
                 {
@@ -168,8 +168,28 @@
                     "orderable": false,
                     "className": "text-center",
                     "render": function (data, type, row) {
+                        var notesLink;
+                        notesLink = $("<a></a>")
+                            .attr("id", "customerNotes_" + row.CustomerID + "")
+                            .addClass("CustomersNotesLinks");
 
-                        return "<a class='CustomersNotesLinks imgBtn' id='customerNotes_" + row.CustomerID + "' ><i class='fa fa-sticky-note fa-shadow fa-2x' style='color: gold;' data-toggle='tooltip' data-placement='top' title='Notes'></i></a>";
+                        var notesAmount = "";
+                        if (row.NotesAmount > 0) {
+                            notesAmount = row.NotesAmount;
+                            if (notesAmount > 99 ) {
+                                notesAmount = "+99"
+                            }
+                        }
+
+                        var notesIcon = $("<span class='fa-stack' data-toggle='tooltip' data-placement='top' title='Notes'></span>")
+                            .append("<i class='fa fa-sticky-note fa-shadow fa-stack-2x' style='color: gold;'></i>")
+                            .append("<span class='fa fa-stack-1x fa-text'>" + notesAmount +"</span>");
+
+                        $(notesLink).append(notesIcon);
+                        return notesLink.prop('outerHTML');
+                        //return "<a class='CustomersNotesLinks' id='customerNotes_" + row.CustomerID + "' ><i class='fa fa-sticky-note fa-shadow fa-2x' style='color: gold;' data-toggle='tooltip' data-placement='top' title='Notes'></i></a>";
+
+
                     }
                 },
                 {
@@ -182,7 +202,7 @@
                             var i = 0;
                         }
 
-                        return data == 1 ? "<a class='deletecustomer text-danger imgBtn' id='" + full.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;'></i></a>" : ''
+                        return data == 1 ? "<a class='deletecustomer text-danger' id='" + full.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;'></i></a>" : ''
                     }
                 }
             ],
@@ -354,7 +374,7 @@
                         $("#ddlStates").val(result.State);
                         $("#txtZip").val(result.Zip);
                         //$("#txtPhone").val(result.Phone);
-                        $('#txtPhone').val($('#txtPhone').masked(result.Phone));
+                        $('#txtPhone').val($('#txtPhone').masked(result.Mobile));
                         //$("#txtMobile").val(result.Mobile);
                         $('#txtMobile').val($('#txtMobile').masked(result.Phone));
                         $("#txtFax").val(result.Fax);
@@ -493,6 +513,7 @@
         }
 
         function LoadCustomerNotes() {
+            $("#tblNotes tr:gt(0)").remove();
             $.ajax({
                 url: '/customer/GetCustomerNotes/',
                 type: 'POST',
@@ -501,7 +522,6 @@
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
-                    $("#tblNotes tr:gt(0)").remove();
                     if (result.length == 0) {
                         //THIS NEEDS TO GO
                         //StoreFlavor = "<tr><td>No Results</td></tr>";
@@ -518,13 +538,16 @@
                                 "<tr>" +
                                 "<td>" + _date + "</td>" +
                                 "<td>" + value.AddedByName + "</td>" +
-                                "<td>" + value.Note + "</td>";
+                                "<td>" + value.Note + "</td>" +
+                                "<td>" +
+                                (value.CustomerNoteID > 0 ?
+                                    "<a class='deleteNote' id=cNote_'" + value.CustomerNoteID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;'></i></a>" : ""
+                                )
+                                + "</td>";
 
-                            if (value.CustomerNoteID > 0){
-                                row = row +"<td><img id='cNote_" + value.CustomerNoteID + "' src='/images/delete.png' class='imgBtn deleteNote' /></td>"
-                            }
+                            
 
-                            row = row +"<tr>";
+                            row = row +"</tr>";
                             $("#tblNotes").append(row);
                         });
                     }
@@ -615,7 +638,7 @@
             }).done(function (result) {
                 Table.search(''); //Clear filter
                 Table.clear().draw();
-                Table.rows.add(result).draw();
+                Table.rows.add(result).columns.adjust().draw();
                 $('[data-toggle="tooltip"]').tooltip();
 
 
@@ -626,7 +649,7 @@
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 // needs to implement if it fails
               //  alert('Error searching customers.');
-                $.AlertDialog('Error searching customers.', 'Error Message', null, 'lightcoral');
+                $.AlertDialog(textStatus, 'Error Message', null, 'lightcoral');
             });
     }
 </script>
@@ -780,14 +803,14 @@
             <div class="col-sm-2 text-right" >
                 <a href="#" id="lnkAddNote">
                     @*<img src="~/images/sticky note.png" data-toggle="tooltip" data-placement="right" title="Add Customer Note" />*@
-                    <i class="fa fa-plus fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add Note"></i>
+                    <i class="fa fa-plus fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add Note" data-placement="left"></i>
                 </a>
             </div>
         </div>
     </div>
     <p></p>
     <div class="container">
-        <table id="tblNotes" class="table table-hover">
+        <table id="tblNotes" class="table table-striped table-condensed">
             <tr>
                 <th width="15%">Date</th>
                 <th width="15%">Added By</th>

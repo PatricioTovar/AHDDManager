@@ -8,8 +8,25 @@
 <script src='../scripts/calendar/lib/moment.min.js'></script>
 
 <script src='../scripts/calendar/fullcalendar.js'></script>
-<script src='../scripts/calendar/locale-all.js'></script>
+<script src='../scripts/calendar/locale-all.js'></script><style>
+
+    .body-content .container { /*PatricioTovar - Bigger calendar view, fix height whit aspectRatio option */
+        max-width: 100%;
+        padding: 0px 40px;
+    }
+
+    #calendar {
+        margin-top: 20px;
+    }
+
+        #calendar a {
+            color: inherit;
+        }
+
+</style>
 <script>
+    var selectedStartDate = null;
+    var selectedEndDate = null;
     $(function () {
         var _associateID = '@(ViewBag.AssociateID)';
         var today = new Date();
@@ -97,6 +114,40 @@
             //    $(".ui-dialog").find(".ui-widget-header").css("background", 'beige');
             //},
             buttons: {
+                Delete: {
+                    id: "btnDeleteAppoiment",
+                    class: "ui-state-error pull-left",
+                    text: "Delete",
+                    icon: "ui-icon-trash",
+                    click: function () {
+                        $.ConfirmDialog('Are you sure about delete this appoinment?', 'Confirm', function () {
+                            //ajax call to delete using appt id
+                            $.ajax({
+                                url: '/appointments/DeleteAppointment/',
+                                type: 'POST',
+                                data: JSON.stringify({ AppointmentID: $('#hdnApptID').val() }),
+                                dataType: 'json',
+                                traditional: true,
+                                contentType: 'application/json;',
+                                success: function (result) { //result is returned as an arry of base flavors
+                                    if (result == '1') {
+                                        createapptdialog.dialog("close");
+                                        $('#calendar').fullCalendar('removeEvents', $('#hdnApptID').val());
+                                        $.AlertDialog('Appointment was deleted successfully', 'Success', function (event) { }, 'lightgreen');
+                                    } else {
+                                        $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
+                                        $("#calendar").fullCalendar('refetchEvents')
+                                    }
+                                },
+                                error: function (jqXHR, error, errorThrown) {
+                                    $.AlertDialog(errorThrown, 'Error Message', function (error) { }, 'red');
+                                    $("#calendar").fullCalendar('refetchEvents')
+                                }
+                            });
+
+                        }, function () { }, null, 'lightcoral');
+                    }
+                },
                 Update: function () {
 
                     var LIdateTime;
@@ -297,7 +348,7 @@
 
 
 
-        $("body").on("click", ".addAppoiment", function () {
+        $("body").on("click", ".fc-AddAppt-button", function () {
             // this is a create therefore set the appointment id to 0 signifying a new appointment
             resetDialog();
 
@@ -307,23 +358,36 @@
             }
 
             $('#hdnApptID').val('0');
+            $("#btnDeleteAppoiment").hide();
             createapptdialog.dialog("open");
         });
 
 
 
 
-        var selectedStartDate = null;
-        var selectedEndDate = null;
         $('#calendar').fullCalendar({
             themeSystem: 'bootstrap3',
             header: {
-                left: 'prev,next today',
+                left: 'AddAppt  prev,next today',
                 center: 'title',
-                right: 'month,agendaWeek,agendaDay,listMonth'
+                right: 'month,agendaWeek,agendaDay,listMonth Reload'
+            },
+            customButtons: {
+                AddAppt: { //PT - create class .fc-AddAppt-button in button
+                    text: 'Add appoinment',
+                    //click: function () {
+                    //    openCreateApptDialog();
+                    //}
+                },
+                Reload: { //PT - create class .fc-Reload-button in button
+                    text: 'Reload',
+                    click: function () {
+                        $("#calendar").fullCalendar('refetchEvents');
+                    }
+                }
             },
             aspectRatio: 2.6, //PatricioTovar
-            defaultDate: today.getMonth() + 1 + '/' + today.getDate() + '/' + today.getFullYear(),
+            //defaultDate: today.getMonth() + 1 + '/' + today.getDate() + '/' + today.getFullYear(),
             locale: initialLocaleCode,
             buttonIcons: true, // show the prev/next text
             weekNumbers: true,
@@ -341,12 +405,10 @@
             loading: function (bool) {
 
             },
-
             eventAfterAllRender: function () {
-                if (!$('#calendarTrash').length) {
-
-                    $('.fc-header-toolbar').find('.fc-left').prepend('<div id="calendarTrash" class="calendar-trash" style="padding-right: 10px;"><img style="height: 40px;" src="/images/trashcan.png" /> <img class="imgBtn addAppoiment" style="height: 40px;" src="/images/calendar.png" id="addAppoiment" /> </div>');
-                }
+                //if (!$('#calendarTrash').length) {
+                //    $('.fc-header-toolbar').find('.fc-left').prepend('<div id="calendarTrash" class="calendar-trash" style="padding-right: 10px;"><img style="height: 40px;" src="/images/trashcan.png" /> <img class="imgBtn addAppoiment" style="height: 40px;" src="/images/calendar.png" id="addAppoiment" /> </div>');
+                //}
             },
 
             select: function (start, end) {  //event for creating
@@ -474,6 +536,7 @@
                     $('#dpEnd').val(moment(calEvent.end, 'MM/DD/YYYY').format('MM/DD/YYYY'));
                 }
 
+                $("#btnDeleteAppoiment").show();
                 createapptdialog.dialog("open");
 
 
@@ -618,9 +681,12 @@
                         $(doc).each(function (index, value) {
 
                             events.push({
+                                id: value.AppointmentID,
                                 title: value.AppointmentName,
                                 start: value.StartDateString,
                                 end: value.EndDateString,
+                                //start: value.StartDate,
+                                //end: value.EndDate,
                                 description: value.Description,
                                 textColor: value.TextColor,
                                 backgroundColor: value.BackGroundColor,// will be parsed
@@ -644,6 +710,12 @@
             }
         });
 
+        //PT - Add Appoinment buttom custom
+        $('.fc-AddAppt-button').addClass('btn-info');
+        $('.fc-AddAppt-button').prepend('<i class="fa fa-calendar-plus-o fa-fw" aria-hidden="true"></i>')
+        //PT - Reload calendar buttom custom
+        $('.fc-Reload-button').prepend('<i class="fa fa-refresh fa-fw" aria-hidden="true"></i>')
+
         // build the locale selector's options
         $.each($.fullCalendar.locales, function (localeCode) {
             $('#locale-selector').append(
@@ -661,6 +733,20 @@
             }
         });
     });
+
+    function openCreateApptDialog() {
+        // this is a create therefore set the appointment id to 0 signifying a new appointment
+        resetDialog();
+
+        if (selectedStartDate != null && selectedStartDate != null) { //Patricio Tovar - use the current dates selection in calendar
+            $('#dpStart').val(moment(selectedStartDate).format('MM/DD/YYYY'));
+            $('#dpEnd').val(moment(selectedStartDate).format('MM/DD/YYYY'));
+        }
+
+        $('#hdnApptID').val('0');
+        $("#btnDeleteAppoiment").hide();
+        $("#create-appt-dialog").dialog("open");
+    }
 
     function updateEndHour() {
         var startHour = $("#ddlLIHours").val();
@@ -704,22 +790,7 @@
     }
 
 </script>
-<style>
 
-    .body-content .container { /*PatricioTovar - Bigger calendar view, fix height whit aspectRatio option */
-        max-width: 100%;
-        padding: 0px 40px;
-    }
-
-    #calendar {
-        margin-top:20px;
-    }
-
-    #calendar a{
-        color: inherit;
-    }
-
-</style>
 
 <div id='calendar'></div>
 

@@ -29,8 +29,8 @@
                     CustomerID: @Url.RequestContext.RouteData.Values["id"],
                     AssociateID: $('#ddlAtendedBy').val(),
                     TotalAmount: $('#tblTrans').find('tr:last td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', ''),
-                    TransactionDate: (new Date()).toUTCString(), //PT - add time in the client side
-                    ModifiedDate: (new Date()).toUTCString() //PT - add time in the client side
+                    TransactionDate: (new Date()).toLocaleString(), //PT - add time in the client side
+                    ModifiedDate: (new Date()).toLocaleString() //PT - add time in the client side
                 };
 
                 var transactiondetails = new Array();
@@ -178,7 +178,7 @@
                 return;
             }
 
-            if ($('#txtDiscount').val() != '' && $('#txtNote').val() == '') {
+            if ($('#txtDiscount').val() != '' && $('#txtNote').val().trim() == '') {
                 //alert('You must include a note if you are discounting the price.');
                 $.AlertDialog('You must include a note if you are discounting the price.', 'Error Message', function (event) { }, 'lightcoral');
                 $('#txtDiscount').focus();
@@ -228,10 +228,6 @@
             TotalUp();
         });
 
-
-        function btnSearchItemClick() {
-            $("#list-dialog").dialog("open");
-        };
 
         function TotalUp() {
             var total = 0;
@@ -326,6 +322,11 @@
             }
         });
     });
+
+
+    function btnSearchItemClick() {
+        $("#list-dialog").dialog("open");
+    };
 
     function updateSubtotal() {
         if ($('#txtQuantity').val() == '' || $('#txtPrice').val() == '') {

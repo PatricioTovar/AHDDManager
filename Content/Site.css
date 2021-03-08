@@ -162,14 +162,27 @@ a i.fa {
     text-shadow: 1px 0px 1px #333333;
 }
 
-a > i.fa:hover {
-    cursor: pointer
-}
-
-a > i.fa:hover {
+a > i.fa:hover,
+a > span > i.fa:hover {
+    cursor: pointer;
     opacity: 0.85;
 }
+
+.fa-text {
+    color: initial;
+    font-family: sans-serif;
+    font-size: 0.85em;
+    top: -.1em;
+}
+}
+
+
 /*---------*/
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+    width: 100%;
+    text-align: right;
+}
 
 @media print {
     @page {

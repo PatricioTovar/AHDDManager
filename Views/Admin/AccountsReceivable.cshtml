@@ -106,8 +106,7 @@
 
         }).fail(function (jqXHR, textStatus, errorThrown) {
             // needs to implement if it fails
-            //alert('Error searching customers.');
-            $.AlertDialog('Error searching customers.', 'Error Message', function (event) { }, 'lightcoral');
+            $.AlertDialog(textStatus, 'Error Message', function (event) { }, 'lightcoral');
         });
 
 
