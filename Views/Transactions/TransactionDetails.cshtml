@@ -679,7 +679,7 @@
 
     <div class="col-lg-3 text-center">
         @{
-            if (Model.Item3.TransactionStatusID == 1)
+            if (Model.Item3.TransactionStatusID == 1 && Model.Item3.TotalOwed == 0)
             {
                 <a href="#" id="lnkRefundTop" class="complete">
                     @*<img src="~/images/TransactionComplete.png" data-toggle="tooltip" data-placement="left" title="Complete Receipt" />*@
