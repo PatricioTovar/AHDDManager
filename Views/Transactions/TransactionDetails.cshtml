@@ -76,7 +76,7 @@
                 url: '/transactions/DeleteTransactionDetail/',
                 type: 'POST',
                 data: JSON.stringify({ TransactionDetailID: tdid }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) { //result is returned as an arry of base flavors
@@ -103,7 +103,7 @@
                 url: '/transactions/DeletePayment/',
                 type: 'POST',
                 data: JSON.stringify({ PaymentID: payid }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) { //result is returned as an arry of base flavors
@@ -169,7 +169,7 @@
                     url: '/transactions/AddRefund/',
                     type: 'POST',
                     data: JSON.stringify({ Refund: _refund }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) { //result is returned as an arry of base flavors
@@ -255,7 +255,7 @@
                     url: '/transactions/MakePayment/',
                     type: 'POST',
                     data: JSON.stringify({ payment: _payment }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) { //result is returned as an arry of base flavors
@@ -285,7 +285,7 @@
                 url: '/transactions/CancelTransaction/',
                 type: 'POST',
                 data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toLocaleString() }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) { //result is returned as an arry of base flavors
@@ -320,7 +320,7 @@
                     url: '/transactions/CompleteTransaction/',
                     type: 'POST',
                     data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toLocaleString() }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) { //result is returned as an arry of base flavors
@@ -346,7 +346,7 @@
                     url: '/transactions/ReOpenTransaction/',
                     type: 'POST',
                     data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], ModifiedDate: (new Date()).toLocaleString() }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) { //result is returned as an arry of base flavors
@@ -393,7 +393,7 @@
             open: function () {
                 $.ajax({
                     url: '/transactions/GetForms/',
-                    dataType: "json",
+                    //dataType: "json",
                     success: function (data) {
 
 
@@ -438,7 +438,7 @@
                 $.ajax({
                     beforeSend: function () {},
                     url: '/transactions/SearchForms/',
-                    dataType: "json",
+                    //dataType: "json",
                     data: {
                         SearchCriteria: request.term
                     },
@@ -502,7 +502,7 @@
                     url: '/transactions/UpdateTransactionCustomer/',
                     type: 'POST',
                     data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"], CustomerID: CustomerID }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {
@@ -592,7 +592,7 @@
             url: '/transactions/AddTransactionDetail/',
             type: 'POST',
             data: JSON.stringify({ transactionDetail: transactionDetail }),
-            dataType: 'json',
+            //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {

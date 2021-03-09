@@ -189,7 +189,7 @@
             url: "/admin/GetTransactionPaymentsReport/",
             type: "post",
             data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
-            dataType: 'json',
+            //dataType: 'json',
             contentType: 'application/json;',
         }).done(function (result) {
             if (result != null) {

@@ -9,7 +9,7 @@
                 $.ajax({
                     url: '/admin/ChangeClockedInStatus/',
                     type: 'POST',
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {
@@ -40,22 +40,35 @@
     <li><a href="/account/ResumeAssociate/">My Day</a></li>
     <li><a href="/account/MyHours/">My Hours</a></li>
 
-    @{
-        if (Context.Session["Associate"] != null)
+    <li>
+        @if (Context.Session["Associate"] != null)
         {
             var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
             if (assoc.ClockedIn)
             {
-                <li><a href="#" id="lnkClockIn" style="padding:8px 5px;"><img src="~/images/ClockedIn.png" alt="Clocked In" data-toggle='tooltip' data-placement='bottom' title='Currently Clocked In' /></a></li>
+                @*<a href="#" id="lnkClockIn" style="padding:8px 5px;"><img src="~/images/ClockedIn.png" alt="Clocked In" data-toggle='tooltip' data-placement='bottom' title='Currently Clocked In' /></a>*@
+                <a id="lnkClockIn" style="padding: 11px 11px;">
+                    <span class="fa-stack fa-badge-stack fa-2x" data-toggle="tooltip" data-placement="right" data-container="body" title="Currently Clocked In">
+                        <i class="fa fa-clock-o fa-stack-1x"></i>
+                        <i class="fa-badge fa-badge-bottom-circle-surround fa-stack-1x fa-inverse"></i>
+                        <i class="fa-badge fa-badge-bottom-check-circle fa-stack-1x text-success"></i>
+                    </span>
+                </a>
             }
             else
             {
-                <li><a href="#" id="lnkClockIn" style="padding:8px 5px;"><img src="~/images/ClockedOut.png" alt="Clocked Out" data-toggle='tooltip' data-placement='bottom' title='Currently Clocked Out' /></a></li>
+                @*<a href="#" id="lnkClockIn" style="padding:8px 5px;"><img src="~/images/ClockedOut.png" alt="Clocked Out" data-toggle='tooltip' data-placement='bottom' title='Currently Clocked Out' /></a>*@
+                <a id="lnkClockIn" style="padding: 11px 11px;">
+                    <span class="fa-stack fa-badge-stack fa-2x" data-toggle="tooltip" data-placement="right" data-container="body" title="Currently Clocked Out">
+                        <i class="fa fa-clock-o fa-stack-1x"></i>
+                        <i class="fa-badge fa-badge-bottom-circle-surround fa-stack-1x fa-inverse"></i>
+                        <i class="fa-badge fa-badge-bottom-times fa-stack-1x text-danger"></i>
+                    </span>
+                </a>
 
             }
         }
-    }
-
+    </li>
 </ul>
 <ul class="nav navbar-nav nav-pills pull-right ">
 

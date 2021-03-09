@@ -31,8 +31,8 @@ $.ConfirmDialog = function (message, title, callbackYes, callbackNo, callbackArg
         .html(message)
         .dialog({
             autoOpen: false, // set this to false so we can manually open it
-            dialogClass: "confirmScreenWindow",
-            closeOnEscape: true,
+            dialogClass: "confirmScreenWindow no-close",
+            closeOnEscape: false,
             draggable: false,
             width: 600,
             minHeight: 50,

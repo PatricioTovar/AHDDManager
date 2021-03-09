@@ -227,6 +227,7 @@
     <Content Include="Content\Ajax.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome-badge.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -336,6 +337,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-badge.woff" />
     <None Include="Properties\PublishProfiles\AHDD Publish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\buttons.html5.min.js" />
@@ -505,6 +507,7 @@
     <Content Include="Views\Admin\TransactionsInfo.cshtml" />
     <Content Include="Views\Admin\ResumeReport.cshtml" />
     <Content Include="Views\Account\ResumeAssociate.cshtml" />
+    <Content Include="Views\Appointments\Test.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

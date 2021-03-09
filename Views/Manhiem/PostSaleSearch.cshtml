@@ -16,7 +16,7 @@
                 url: '/Manhiem/GetSubseries/',
                 type: 'POST',
                 data: JSON.stringify({ Make: $('#ddlMake option:selected').val(), Model: $('#txtModel').val() }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -69,7 +69,7 @@
                 url: '/Manhiem/SearchPostsales/',
                 type: 'POST',
                 data: JSON.stringify({ PostSale: postsale }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {

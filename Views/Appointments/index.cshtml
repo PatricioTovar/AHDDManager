@@ -63,7 +63,7 @@
                             url: '/appointments/UpdateAppointmentInfo/',
                             type: 'POST',
                             data: JSON.stringify({ ApptID: $('#hdnApptID').val(), Title: $('#txtTitledlg').val(), Description: $('#txtDescdlg').val() }),
-                            dataType: 'json',
+                            //dataType: 'json',
                             traditional: true,
                             contentType: 'application/json;',
                             success: function (result) {
@@ -126,7 +126,7 @@
                                 url: '/appointments/DeleteAppointment/',
                                 type: 'POST',
                                 data: JSON.stringify({ AppointmentID: $('#hdnApptID').val() }),
-                                dataType: 'json',
+                                //dataType: 'json',
                                 traditional: true,
                                 contentType: 'application/json;',
                                 success: function (result) { //result is returned as an arry of base flavors
@@ -225,7 +225,7 @@
                         url: '/appointments/AddAppointment/',
                         type: 'POST',
                         data: JSON.stringify({ appointment: appt }),
-                        dataType: 'json',
+                        //dataType: 'json',
                         traditional: true,
                         contentType: 'application/json;',
                         success: function (result) { //result is returned as an arry of base flavors
@@ -281,7 +281,7 @@
         $.ajax({
             url: '/customer/GetAssociates/',
             type: 'POST',
-            dataType: 'json',
+            //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {
@@ -445,7 +445,7 @@
                                         url: '/appointments/AddAppointment/',
                                         type: 'POST',
                                         data: JSON.stringify({ appointment: appt }),
-                                        dataType: 'json',
+                                        //dataType: 'json',
                                         traditional: true,
                                         contentType: 'application/json;',
                                         success: function (result) { //result is returned as an arry of base flavors
@@ -547,7 +547,7 @@
                         url: '/appointments/UpdateAppointment/',
                         type: 'POST',
                         data: JSON.stringify({ AppointmentID: event.apptid, StartDate: event.start.format().toString(), EndDate: event.end.format().toString() }),
-                        dataType: 'json',
+                        //dataType: 'json',
                         traditional: true,
                         contentType: 'application/json;',
                         success: function (result) { //result is returned as an arry of base flavors
@@ -568,46 +568,46 @@
                 }, null, 'yellow');
             },
 
-            eventDragStop: function (calEvent, jsEvent, ui, view) {
-                var trashEl = $('#calendarTrash');
-                var ofs = trashEl.offset();
+            //eventDragStop: function (calEvent, jsEvent, ui, view) {
+            //    var trashEl = $('#calendarTrash');
+            //    var ofs = trashEl.offset();
 
-                var x1 = ofs.left;
-                var x2 = ofs.left + trashEl.outerWidth(true);
-                var y1 = ofs.top;
-                var y2 = ofs.top + trashEl.outerHeight(true);
+            //    var x1 = ofs.left;
+            //    var x2 = ofs.left + trashEl.outerWidth(true);
+            //    var y1 = ofs.top;
+            //    var y2 = ofs.top + trashEl.outerHeight(true);
 
-                if (jsEvent.pageX >= x1 && jsEvent.pageX <= x2 &&
-                    jsEvent.pageY >= y1 && jsEvent.pageY <= y2) {
+            //    if (jsEvent.pageX >= x1 && jsEvent.pageX <= x2 &&
+            //        jsEvent.pageY >= y1 && jsEvent.pageY <= y2) {
 
-                    $.ConfirmDialog('Delete Appointment:  "' + calEvent.title + '"?', 'Delete Appointment', function () {
-                        //ajax call to delete using appt id
-                        $.ajax({
-                            url: '/appointments/DeleteAppointment/',
-                            type: 'POST',
-                            data: JSON.stringify({ AppointmentID: calEvent.apptid }),
-                            dataType: 'json',
-                            traditional: true,
-                            contentType: 'application/json;',
-                            success: function (result) { //result is returned as an arry of base flavors
+            //        $.ConfirmDialog('Delete Appointment:  "' + calEvent.title + '"?', 'Delete Appointment', function () {
+            //            //ajax call to delete using appt id
+            //            $.ajax({
+            //                url: '/appointments/DeleteAppointment/',
+            //                type: 'POST',
+            //                data: JSON.stringify({ AppointmentID: calEvent.apptid }),
+            //                //dataType: 'json',
+            //                traditional: true,
+            //                contentType: 'application/json;',
+            //                success: function (result) { //result is returned as an arry of base flavors
 
-                                if (result == '1') {
-                                    $.AlertDialog('Appointment was deleted successfully', 'Success', function (event) { }, 'lightgreen');
-                                } else {
-                                    $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
-                                    $("#calendar").fullCalendar('refetchEvents')
-                                }
-                            },
-                            error: function (jqXHR, error, errorThrown) {
-                                $.AlertDialog(errorThrown, 'Error Message', function (error) { }, 'red');
-                                $("#calendar").fullCalendar('refetchEvents')
-                            }
-                        });
+            //                    if (result == '1') {
+            //                        $.AlertDialog('Appointment was deleted successfully', 'Success', function (event) { }, 'lightgreen');
+            //                    } else {
+            //                        $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
+            //                        $("#calendar").fullCalendar('refetchEvents')
+            //                    }
+            //                },
+            //                error: function (jqXHR, error, errorThrown) {
+            //                    $.AlertDialog(errorThrown, 'Error Message', function (error) { }, 'red');
+            //                    $("#calendar").fullCalendar('refetchEvents')
+            //                }
+            //            });
 
-                        $('#calendar').fullCalendar('removeEvents', calEvent._id);
-                    }, function () { }, null, 'lightcoral');
-                }
-            },
+            //            $('#calendar').fullCalendar('removeEvents', calEvent._id);
+            //        }, function () { }, null, 'lightcoral');
+            //    }
+            //},
             eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
                 if (event.allDay) {
                     //set start date and date date to full day
@@ -623,12 +623,12 @@
                     }
                 }
                 //debugger
-                $.ConfirmDialog('Change event times? Continue?', 'Change Event Time', function () {
+                $.ConfirmDialog('Change event times? Continue?', 'Confirm', function () {
                     $.ajax({
                         url: '/appointments/UpdateAppointment/',
                         type: 'POST',
                         data: JSON.stringify({ AppointmentID: event.apptid, StartDate: moment.utc(event.start).format().toString(), EndDate: moment.utc(event.end).format().toString() }),
-                        dataType: 'json',
+                        //dataType: 'json',
                         traditional: true,
                         contentType: 'application/json;',
                         success: function (result) {
@@ -639,7 +639,7 @@
                                     $.AlertDialog('Appointment was rescheduled successfully to ' + moment(event.start, 'MM/DD/YYYY').format('MM/DD/YYYY'), 'Success', function (event) { }, 'lightgreen');
                                 }
                                 $('#calendar').fullCalendar('refetchEvents');
-                                $('#calendar').fullCalendar('gotoDate', moment(event.start, 'MM/DD/YYYY').format('MM/DD/YYYY'));
+                                //$('#calendar').fullCalendar('gotoDate', moment(event.start, 'MM/DD/YYYY').format('MM/DD/YYYY'));
 
                             } else {
                                 //debugger
@@ -670,7 +670,7 @@
             events: function (start, end, timezone, callback) {
                 $.ajax({
                     url: '/appointments/GetAppointments/',
-                    dataType: 'json',
+                    //dataType: 'json',
                     data: {
                         // our hypothetical feed requires UNIX timestamps
                         Month: today.getMonth() + 1,

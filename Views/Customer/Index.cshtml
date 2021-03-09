@@ -222,7 +222,7 @@
                 beforeSend: function () {}, //Prevent loading dialog
                 url: '/account/GetStates/',
                 type: 'POST',
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -239,7 +239,7 @@
             beforeSend: function () { }, //Prevent loading dialog
             url: '/customer/GetAssociates/',
             type: 'POST',
-            dataType: 'json',
+            //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {
@@ -352,7 +352,7 @@
                 url: '/customer/GetCustomer/',
                 type: 'POST',
                 data: JSON.stringify({ CustomerID: customerid }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -465,7 +465,7 @@
                 url: '/customer/UpdateCustomer/',
                 type: 'POST',
                 data: JSON.stringify({ customer: _customer }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -490,7 +490,7 @@
                 url: '/customer/DeleteCustomer/',
                 type: 'POST',
                 data: JSON.stringify({ CustomerID: CustomerID }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) { //result is returned as an arry of base flavors
@@ -518,7 +518,7 @@
                 url: '/customer/GetCustomerNotes/',
                 type: 'POST',
                 data: JSON.stringify({ CustomerID: CustomerID }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -580,7 +580,7 @@
                 url: '/customer/AddCustomerNote/',
                 type: 'POST',
                 data: JSON.stringify({ CustomerNote: _customernote }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -605,7 +605,7 @@
                 url: '/customer/DeleteCustomerNote/',
                 type: 'POST',
                 data: JSON.stringify({ CustomerNoteID: CustomerNoteID }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -669,7 +669,11 @@
         </div>
         <div class="col-sm-6 text-right">
             <a id="lnkNewCustomer">
-                <i class="fa fa-user-plus fa-2x" data-toggle="tooltip" title="Add New Customer"></i>
+                <span class="fa-stack fa-badge-stack fa-2x" data-toggle="tooltip" title="" data-original-title="Add New Customer">
+                    <i class="fa fa-user-circle fa-stack-1x"></i>
+                    <i class="fa-badge fa-badge-bottom-circle-surround fa-stack-1x fa-inverse"></i>
+                    <i class="fa-badge fa-badge-bottom-plus fa-stack-1x text-success"></i>
+                </span>
             </a>
         </div>
     </form>

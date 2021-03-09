@@ -79,7 +79,7 @@
                 url: '/expenses/UpdateExpense/',
                 type: 'POST',
                 data: JSON.stringify({ expense: expense }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -120,7 +120,7 @@
                     url: '/Expenses/RefundExpense/',
                     type: 'POST',
                     data: JSON.stringify({ ExpenseID: id }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {
@@ -147,7 +147,7 @@
                     url: '/Expenses/DeleteExpense/',
                     type: 'POST',
                     data: JSON.stringify({ ExpenseID: id }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {
@@ -176,7 +176,7 @@
                     url: '/Expenses/SearchExpenses/',
                     type: 'POST',
                     data: JSON.stringify({ StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {

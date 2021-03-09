@@ -73,7 +73,7 @@
                 url: '/admin/GetCustomerByPaymentID/',
                 data: JSON.stringify({ PaymentID: paymentID }),
                 type: 'POST',
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -97,7 +97,7 @@
                 url: '/admin/GetTransactionByPaymentID/',
                 data: JSON.stringify({ PaymentID: paymentID }),
                 type: 'POST',
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -120,7 +120,7 @@
                 url: '/admin/GetTransactionDetailsByPaymentID/',
                 data: JSON.stringify({ PaymentID: paymentID }),
                 type: 'POST',
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -144,7 +144,7 @@
                 url: '/admin/GetPaymentsCollectedByAssociate/',
                 data: JSON.stringify({ AssociateID: associateID, StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
                 type: 'POST',
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -176,7 +176,7 @@
                         url: '/admin/GetPayMethodCountsByDateRangeAssocID/',
                         type: 'POST',
                         data: JSON.stringify({ AssociateID: associateID, StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
-                        dataType: 'json',
+                        //dataType: 'json',
                         traditional: true,
                         contentType: 'application/json;',
                         success: function (result) {
@@ -230,7 +230,7 @@
                     url: '/admin/GetPaymentsCollectedByDateRange/',
                     data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
                     type: 'POST',
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {
@@ -252,7 +252,7 @@
                             url: '/admin/GetPayMethodCountsByDateRange/',
                             type: 'POST',
                             data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
-                            dataType: 'json',
+                            //dataType: 'json',
                             traditional: true,
                             contentType: 'application/json;',
                             success: function (result) {

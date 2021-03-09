@@ -57,12 +57,15 @@ html, body {
     font-family: serif;
 }
 
-.navbar-nav > li > a {
+.navbar-nav > li > a,
+.navbar-nav > li > a i.fa {
     color: #ffffff;
 }
 
     .navbar-nav > li > a:hover,
-    .navbar-nav > li > a:focus {
+    .navbar-nav > li > a:focus,
+    .navbar-nav > li > a:hover i.fa,
+    .navbar-nav > li > a:focus i.fa {
         color: #000000;
     }
 
@@ -71,11 +74,11 @@ html, body {
     border-bottom-color: #ffffff;
 }
 
-    .navbar-nav > .dropdown > a .caret:hover,
-    .navbar-nav > .dropdown > a .caret:active {
-        border-top-color: #000000;
-        border-bottom-color: #000000;
-    }
+.navbar-nav > .dropdown > a:hover .caret,
+.navbar-nav > .dropdown > a:focus .caret {
+    border-top-color: #000000;
+    border-bottom-color: #000000;
+}
 
 .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
     background-color: #8da71b;
@@ -162,8 +165,8 @@ a i.fa {
     text-shadow: 1px 0px 1px #333333;
 }
 
-a > i.fa:hover,
-a > span > i.fa:hover {
+a:hover > i.fa,
+a:hover > span.fa-stack {
     cursor: pointer;
     opacity: 0.85;
 }
@@ -174,15 +177,26 @@ a > span > i.fa:hover {
     font-size: 0.85em;
     top: -.1em;
 }
-}
 
+i.fa-badge {
+    font-size: 0.95em;
+    padding-left: 0.1em;
+    padding-top: 0.1em;
+}
 
 /*---------*/
 
+/*DIALOGS*/
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
     width: 100%;
     text-align: right;
 }
+
+.no-close .ui-dialog-titlebar-close {
+    display: none;
+}
+
+/*---------*/
 
 @media print {
     @page {

@@ -37,7 +37,7 @@
             url: '/transactions/SearchTransactionByDates/',
             type: 'POST',
             data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val() }),
-            dataType: 'json',
+            //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {
@@ -66,7 +66,7 @@
             url: '/transactions/SearchTransaction/',
             type: 'POST',
             data: JSON.stringify({ TransactionID: $('#txtTransactionID').val() }),
-            dataType: 'json',
+            //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {

@@ -32,6 +32,7 @@ namespace AHDDManager
                         "~/Content/themes/Greentheme/jquery-ui-1.10.4.custom.css",
                         "~/Content/bootstrap.css",
                         "~/Content/font-awesome.css",
+                        "~/Content/font-awesome-bandages.css", //http://alaind-.github.io/font-awesome-badge/index.html
                         "~/Content/site.css",
                          "~/Content/Ajax.css"));
 

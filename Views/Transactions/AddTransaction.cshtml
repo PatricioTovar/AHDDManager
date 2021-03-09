@@ -58,7 +58,7 @@
                     url: '/transactions/AddNewTransaction/',
                     type: 'POST',
                     data: JSON.stringify({ transaction: transaction, transactiondetails: transactiondetails }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {
@@ -104,7 +104,7 @@
             open: function() {
                 $.ajax({
                     url: '/transactions/GetForms/',
-                    dataType: "json",
+                    //dataType: "json",
                     success: function (data) {
 
 
@@ -259,7 +259,7 @@
                 $.ajax({
                     beforeSend: function () { },
                     url: '/transactions/SearchForms/',
-                    dataType: "json",
+                    //dataType: "json",
                     data: {
                         SearchCriteria: request.term
                     },
@@ -304,7 +304,7 @@
         $.ajax({
             url: '/customer/GetAssociates/',
             type: 'POST',
-            dataType: 'json',
+            //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {

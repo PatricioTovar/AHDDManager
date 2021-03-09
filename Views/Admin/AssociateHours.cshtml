@@ -132,7 +132,7 @@
                 url: '/admin/UpdateHours/',
                 type: 'POST',
                 data: JSON.stringify({ AssociateClockInHistoryID: id, LogInDate: LIdateTime.toString(), LogOutDate: LOdateTime.toString() }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -218,7 +218,7 @@
                     url: '/admin/GetAssociateHours/',
                     type: 'POST',
                     data: JSON.stringify({ StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {

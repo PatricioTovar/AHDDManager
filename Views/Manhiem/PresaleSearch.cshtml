@@ -32,7 +32,7 @@
                 url: '/Manhiem/SearchPresales/',
                 type: 'POST',
                 data: JSON.stringify({ PreSale: presale }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -91,7 +91,7 @@
                     url: '/Manhiem/InsertSelected/',
                     type: 'POST',
                     data: JSON.stringify({ PreSaleID: $(this).attr('id'), Vin: x.text().trim(), Miles: odo.text().trim() }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {
@@ -106,7 +106,7 @@
                     url: '/Manhiem/DeleteSelected/',
                     type: 'POST',
                     data: JSON.stringify({ PreSaleID: $(this).attr('id') }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {
@@ -131,7 +131,7 @@
                 url: '/Manhiem/SearchPostsalesByOdometer/',
                 type: 'POST',
                 data: JSON.stringify({ Odometer: odo }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {

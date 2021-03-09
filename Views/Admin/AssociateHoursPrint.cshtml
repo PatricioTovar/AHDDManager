@@ -48,7 +48,7 @@
             url: '/admin/GetAssociateName/',
             type: 'POST',
             data: JSON.stringify({ AssociateID: assoc }),
-            dataType: 'json',
+            //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {
@@ -61,7 +61,7 @@
             url: '/account/SearchClockInsByID/',
             type: 'POST',
             data: JSON.stringify({ StartDate: startDate, EndDate: endDate, AssociateID: assoc }),
-            dataType: 'json',
+            //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {

@@ -21,7 +21,7 @@
                         url: '/Manhiem/InsertSelected/',
                         type: 'POST',
                         data: JSON.stringify({ PreSaleID: $(this).attr('id') }),
-                        dataType: 'json',
+                        //dataType: 'json',
                         traditional: true,
                         contentType: 'application/json;',
                         success: function (result) {
@@ -36,7 +36,7 @@
                         url: '/Manhiem/DeleteSelected/',
                         type: 'POST',
                         data: JSON.stringify({ PreSaleID: $(this).attr('id') }),
-                        dataType: 'json',
+                        //dataType: 'json',
                         traditional: true,
                         contentType: 'application/json;',
                         success: function (result) {
@@ -55,7 +55,7 @@
                 $.ajax({
                     url: '/Manhiem/DeleteSelectedALL/',
                     type: 'POST',
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {
@@ -76,7 +76,7 @@
                     url: '/Manhiem/SearchPostsalesByOdometer/',
                     type: 'POST',
                     data: JSON.stringify({ Odometer: odo }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) {

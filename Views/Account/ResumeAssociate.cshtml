@@ -116,7 +116,7 @@
             url: "/account/GetAssociateTransactionPayments/",
             type: "post",
             data: JSON.stringify({ StartDate: $("#dpDate").val(), EndDate: $("#dpDate").val() }),
-            dataType: 'json',
+            //dataType: 'json',
             contentType: 'application/json;',
         }).done(function (result) {
             if (result != null) {

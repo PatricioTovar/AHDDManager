@@ -18,7 +18,7 @@
                 url: '/admin/GetPaymentsCollectedByAssociate/',
                 data: JSON.stringify({ AssociateID: 0, StartDate: start, EndDate: end }),
                 type: 'POST',
-                dataType: 'json',
+                
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) { //result is returned as an arry of base flavors
@@ -53,7 +53,7 @@
                         url: '/admin/GetPayMethodCountsByDateRangeAssocID/',
                         type: 'POST',
                         data: JSON.stringify({AssociateID: 0, StartDate: start, EndDate: end }),
-                        dataType: 'json',
+                        
                         traditional: true,
                         contentType: 'application/json;',
                         success: function (result) {

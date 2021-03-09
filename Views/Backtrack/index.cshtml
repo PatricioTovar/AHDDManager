@@ -195,7 +195,7 @@
             $.ajax({
                 url: '/account/GetStates/',
                 type: 'POST',
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -211,7 +211,7 @@
         $.ajax({
             url: '/customer/GetAssociates/',
             type: 'POST',
-            dataType: 'json',
+            //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {
@@ -318,7 +318,7 @@
                 url: '/customer/GetCustomer/',
                 type: 'POST',
                 data: JSON.stringify({ CustomerID: customerid }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -357,7 +357,7 @@
                 url: '/customer/GetCustomerNotes/',
                 type: 'POST',
                 data: JSON.stringify({ CustomerID: CustomerID }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -460,7 +460,7 @@
                 url: '/customer/UpdateCustomer/',
                 type: 'POST',
                 data: JSON.stringify({ customer: _customer }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
@@ -484,7 +484,7 @@
                 url: '/customer/DeleteCustomer/',
                 type: 'POST',
                 data: JSON.stringify({ CustomerID: CustomerID }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) { //result is returned as an arry of base flavors
@@ -522,7 +522,7 @@
                 url: '/customer/AddCustomerNote/',
                 type: 'POST',
                 data: JSON.stringify({ CustomerNote: _customernote }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {

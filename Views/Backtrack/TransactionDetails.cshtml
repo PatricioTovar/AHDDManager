@@ -96,7 +96,7 @@
                 url: '/transactions/DeleteTransactionDetail/',
                 type: 'POST',
                 data: JSON.stringify({ TransactionDetailID: tdid }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) { //result is returned as an arry of base flavors
@@ -123,7 +123,7 @@
                 url: '/transactions/DeletePayment/',
                 type: 'POST',
                 data: JSON.stringify({ PaymentID: payid }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) { //result is returned as an arry of base flavors
@@ -195,7 +195,7 @@
                     url: '/transactions/AddRefund/',
                     type: 'POST',
                     data: JSON.stringify({ Refund: _refund }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) { //result is returned as an arry of base flavors
@@ -270,7 +270,7 @@
                     url: '/transactions/MakePayment/',
                     type: 'POST',
                     data: JSON.stringify({ payment: _payment }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) { //result is returned as an arry of base flavors
@@ -300,7 +300,7 @@
                 url: '/transactions/CancelTransaction/',
                 type: 'POST',
                 data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"] }),
-                dataType: 'json',
+                //dataType: 'json',
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) { //result is returned as an arry of base flavors
@@ -334,7 +334,7 @@
                     url: '/transactions/CompleteTransaction/',
                     type: 'POST',
                     data: JSON.stringify({ TransactionID: @ViewContext.RouteData.Values["id"] }),
-                    dataType: 'json',
+                    //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
                     success: function (result) { //result is returned as an arry of base flavors
