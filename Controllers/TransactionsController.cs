@@ -40,6 +40,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult AddTransaction()
         {
+            ViewBag.CustomerID = Url.RequestContext.RouteData.Values["id"];
             return View();
         }
 

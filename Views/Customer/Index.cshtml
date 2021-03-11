@@ -539,7 +539,7 @@
                                 "<td>" + _date + "</td>" +
                                 "<td>" + value.AddedByName + "</td>" +
                                 "<td>" + value.Note + "</td>" +
-                                "<td>" +
+                                "<td class='text-center'>" +
                                 (value.CustomerNoteID > 0 ?
                                     "<a class='deleteNote' id=cNote_'" + value.CustomerNoteID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;'></i></a>" : ""
                                 )
@@ -638,7 +638,8 @@
             }).done(function (result) {
                 Table.search(''); //Clear filter
                 Table.clear().draw();
-                Table.rows.add(result).columns.adjust().draw();
+                //Table.rows.add(result).columns.adjust().draw();
+                Table.rows.add(result).draw();
                 $('[data-toggle="tooltip"]').tooltip();
 
 
@@ -649,7 +650,7 @@
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 // needs to implement if it fails
               //  alert('Error searching customers.');
-                $.AlertDialog(textStatus, 'Error Message', null, 'lightcoral');
+                $.AlertDialog(textStatus + ": " + errorThrown, 'Error Message', null, 'lightcoral');
             });
     }
 </script>

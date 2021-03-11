@@ -17,15 +17,15 @@
                 //$(".modal").delay(2000).hide();
                 $("#loadingModal").fadeOut(200) //BETTER DESING
             },
-            error: function (x, status, error) {
-                if (x.status == 901) {
+            error: function (response, status, error) {
+                if (response.status == 901) {
                     //alert("Sorry, your session has expired. Please login again to continue");
                     $.AlertDialog("Sorry, your session has expired. Please login again to continue", 'Session expired', null, 'lightcoral');
                     document.location.href = "/Home/";
                 }
                 else {
                     //alert("An error occurred: " + status + "nError: " + error);
-                    $.AlertDialog("An error occurred: " + status + "nError: " + error, 'System error', null, 'lightcoral');
+                    $.AlertDialog(status + ": " + error, 'System error', null, 'lightcoral');
                 }
             }
         });

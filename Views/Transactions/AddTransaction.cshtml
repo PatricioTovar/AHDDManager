@@ -10,7 +10,9 @@
 <script>
     $(function () {
         var _assosiateID = '@ViewBag.AssociateID'
-        var CustomerID;
+        var _customerID = '@ViewBag.CustomerID'
+
+        var transactionDetails = [];
 
         $('[data-toggle="tooltip"]').tooltip();
         $('[data-toggle="popover"]').popover();
@@ -21,43 +23,51 @@
         });
 
         $("#btnSubmit").on('click', function (event) {
-            if ($('#tblTrans tr').length < 3) {
-                alert('There are no transactions details.');
-            } else {
-                transaction = {
-                    BusinessID: 0,
-                    CustomerID: @Url.RequestContext.RouteData.Values["id"],
-                    AssociateID: $('#ddlAtendedBy').val(),
-                    TotalAmount: $('#tblTrans').find('tr:last td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', ''),
-                    TransactionDate: (new Date()).toLocaleString(), //PT - add time in the client side
-                    ModifiedDate: (new Date()).toLocaleString() //PT - add time in the client side
-                };
+            //if ($('#tblTrans tr').length < 3) {
+            //    alert('There are no transactions details.');
+            //} else {
+            //    transaction = {
+            //        BusinessID: 0,
+            //        CustomerID: _customerID,
+            //        AssociateID: $('#ddlAtendedBy').val(),
+            //        TotalAmount: $('#tblTrans').find('tr:last td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', ''),
+            //        TransactionDate: (new Date()).toLocaleString(), //PT - add time in the client side
+            //        ModifiedDate: (new Date()).toLocaleString() //PT - add time in the client side
+            //    };
 
-                var transactiondetails = new Array();
+            //    var transactiondetails = new Array();
 
 
-                $('#tblTrans tr:not(:first-child)').each(function () {
+            //    $('#tblTrans tr:not(:first-child)').each(function () {
 
-                    if (!$(this).is(":last-child")) {
+            //        if (!$(this).is(":last-child")) {
 
-                        transdet = {
-                            FormID: $(this).attr('id'),
-                            FormTitle: $(this).find('td:nth-child(1)').text(),
-                            UnitPrice: $(this).find('td:nth-child(3)').text().replace('$', '').replace(',', '').replace('.00', ''),
-                            DiscountPrice: $(this).find('td:nth-child(4)').text().replace('$','').replace(',','').replace('.00',''),
-                            Quantity: $(this).find('td:nth-child(2)').text(),
-                            Notes: $(this).find('td:nth-child(6)').text(),
-                            Total: $(this).find('td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', '')
-                        }
+            //            transdet = {
+            //                FormID: $(this).attr('id'),
+            //                FormTitle: $(this).find('td:nth-child(1)').text(),
+            //                UnitPrice: $(this).find('td:nth-child(3)').text().replace('$', '').replace(',', '').replace('.00', ''),
+            //                DiscountPrice: $(this).find('td:nth-child(4)').text().replace('$','').replace(',','').replace('.00',''),
+            //                Quantity: $(this).find('td:nth-child(2)').text(),
+            //                Notes: $(this).find('td:nth-child(6)').text(),
+            //                Total: $(this).find('td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', '')
+            //            }
 
-                        transactiondetails.push(transdet);
-                    }
-                });
+            //            transactiondetails.push(transdet);
+            //        }
+            //    });
 
-                $.ajax({
+            //    
+            //}
+
+            if (transactionDetails.length == 0) {
+                $.AlertDialog('There is no product or service added.', 'Error Message', function (event) { }, 'lightcoral');
+                return;
+            }
+
+            $.ajax({
                     url: '/transactions/AddNewTransaction/',
                     type: 'POST',
-                    data: JSON.stringify({ transaction: transaction, transactiondetails: transactiondetails }),
+                    data: JSON.stringify({ transaction: transaction, transactiondetails: transactionDetails }),
                     //dataType: 'json',
                     traditional: true,
                     contentType: 'application/json;',
@@ -72,7 +82,6 @@
                         }
                     }
                 });
-            }
         });
 
         var newtransactiondialog = $("#new-transaction-dialog").dialog({
@@ -92,7 +101,6 @@
                 newtransactiondialog.dialog("close");
             }
         });
-
 
         var listdialog = $("#list-dialog").dialog({
             autoOpen: false,
@@ -145,7 +153,44 @@
             }
         });
 
+        function LoadTable() {
 
+            $("#tblTrans tbody").empty();
+            var total = 0;
+            if (transactionDetails.length > 0) {
+                $.each(transactionDetails, function (index, value) {
+                    var subtotal = 0;
+                    if (value.DiscountPrice == '') {
+                        subtotal = value.Quantity * value.UnitPrice;
+                    }
+                    else {
+                        subtotal = value.Quantity * value.DiscountPrice;
+                    }
+
+                    TransactionDetailRow =
+                        "<tr id=\"" + value.FormID + "\">" +
+                        "<td>" + value.FormTitle + "</td>" +
+                        "<td class='text-center'>" + value.Quantity + "</td>" +
+                        "<td class='text-right currencyLabel'>" + value.UnitPrice + "</td>" +
+                        "<td class='text-right currencyLabel'>" + value.DiscountPrice + "</td>" +
+                        "<td class='text-right currencyLabel'>" + subtotal + "</td>" +
+                        "<td>" + (value.Notes != '' ? " <a  data-toggle='popover' data-title='Note' data-content='" + value.Notes + "' data-trigger='hover'><i class='fa fa-commenting-o fa-2x' aria-hidden='true'></i></a>" : '') + "</td>" +
+                        "<td> <a class='delete' data-index='" + index + "'><i class='fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' data-placement='right' title='Delete' ></i></a> </td>" +
+                        "</tr>";
+
+                    $("#tblTrans tbody").append(TransactionDetailRow);
+
+                    total += subtotal;
+                });
+            } else {
+                $("#tblTrans tbody").append("<tr><td colspan='8' class='text-center'>No product or service added</td></tr>");
+            }
+            $("#lblTotal").text(total);
+
+
+            $('.currencyLabel').formatCurrency();
+            $('[data-toggle="popover"]').popover();
+        }
 
         function AddTransactionDetail() {
             var elements = document.querySelectorAll('[data-required="true"]');
@@ -185,7 +230,7 @@
                 return false;
             }
 
-            $('#tblTrans tr:last').remove();
+            //$('#tblTrans tr:last').remove();
 
             var subtotal;
 
@@ -196,18 +241,30 @@
                 subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtDiscount').val());
             }
 
-            TransactionDetail =
-                "<tr id=\"" + $('#hdnFormID').val() + "\">" +
-                    "<td>" + $('#forms').val() + "</td>" +
-                    "<td>" + $('#txtQuantity').val() + "</td>" +
-                    "<td class='text-right currencyLabel'>" + $('#txtPrice').val() + "</td>" +
-                    "<td class='text-right currencyLabel'>" + $('#txtDiscount').val() + "</td>" +
-                    "<td class='text-right currencyLabel'>" + subtotal + "</td>" +
-                    "<td>" + ($('#txtNote').val().trim() != '' ? " <a  data-toggle='popover' data-title='Note' data-content='" + $('#txtNote').val().trim() + "' data-trigger='hover'><i class='fa fa-commenting-o fa-2x' aria-hidden='true'></i></a>" : '') + "</td>" +
-                    "<td> <a><i class='delete fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' data-placement='right' title='Delete'></i></a> </td>" +
-                "</tr>";
+            //TransactionDetail =
+            //    "<tr id=\"" + $('#hdnFormID').val() + "\">" +
+            //        "<td>" + $('#forms').val() + "</td>" +
+            //        "<td>" + $('#txtQuantity').val() + "</td>" +
+            //        "<td class='text-right currencyLabel'>" + $('#txtPrice').val() + "</td>" +
+            //        "<td class='text-right currencyLabel'>" + $('#txtDiscount').val() + "</td>" +
+            //        "<td class='text-right currencyLabel'>" + subtotal + "</td>" +
+            //        "<td>" + ($('#txtNote').val().trim() != '' ? " <a  data-toggle='popover' data-title='Note' data-content='" + $('#txtNote').val().trim() + "' data-trigger='hover'><i class='fa fa-commenting-o fa-2x' aria-hidden='true'></i></a>" : '') + "</td>" +
+            //        "<td> <a><i class='delete fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' data-placement='right' title='Delete'></i></a> </td>" +
+            //    "</tr>";
 
-            $("#tblTrans").append(TransactionDetail);
+            //$("#tblTrans").append(TransactionDetail);
+
+            newDetail = {
+                FormID: $('#hdnFormID').val(),
+                FormTitle: $('#forms').val(),
+                UnitPrice: $('#txtPrice').val(),
+                DiscountPrice: $('#txtDiscount').val(),
+                Quantity: $('#txtQuantity').val(),
+                Notes: $('#txtNote').val().trim(),
+                Total: subtotal
+            }
+
+            transactionDetails.push(newDetail);
 
             $('#hdnFormID').val('');
             $('#forms').val('');
@@ -216,18 +273,23 @@
             $('#txtQuantity').val('');
             $('#txtNote').val('');
 
-            TotalUp();
+            //TotalUp();
 
             newtransactiondialog.dialog("close");
-            $('[data-toggle="popover"]').popover();
+
+
+            LoadTable();
         }
 
         $(document).on('click', '.delete', function () {
-            $(this).closest('tr').remove();
-            $('#tblTrans tr:last').remove();
-            TotalUp();
-        });
+            //$(this).closest('tr').remove();
+            //$('#tblTrans tr:last').remove();
+            //TotalUp();
+            var index = $(this).data("index");
+            transactionDetails.splice(index, 1);
+            LoadTable();
 
+        });
 
         function TotalUp() {
             var total = 0;
@@ -380,30 +442,35 @@
     <div class="col-lg-12 text-right">
         <a href="#" id="lnkAdd">
             @*<img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add Item" />*@
-            <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add product" style="color:royalblue"></i>
+            <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add Service" style="color:royalblue"></i>
         </a>
     </div>
 </div>
 
 <table id="tblTrans" class="table table-striped">
-    <tr>
-        <th class="col-sm-5">Description</th>
-        <th class="col-sm-1">Quantity</th>
-        <th class="col-sm-1">Unit Price</th>
-        <th class="col-sm-2">Discount Price</th>
-        <th class="col-sm-1">SubTotal</th>
-        <th class="col-sm-1">Note</th>
-        <th></th>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>Total:</td>
-        <td>$0.00</td>
-        <td></td>
-        <td></td>
-    </tr>
+    <thead>
+        <tr>
+            <th class="col-sm-5">Description</th>
+            <th class="col-sm-1">Quantity</th>
+            <th class="col-sm-1">Unit Price</th>
+            <th class="col-sm-2">Discount Price</th>
+            <th class="col-sm-1">SubTotal</th>
+            <th class="col-sm-1">Note</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody><tr><td colspan='8' class='text-center'>No product or service added</td></tr></tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="text-right">Total:</td>
+            <td class="text-right"><span id="lblTotal" class="currencyLabel" >$0.00</span></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tfoot>
 </table>
 <div class="row">
     <div class="col-sm-6">
@@ -414,16 +481,14 @@
     </div>
 </div>
 
-<div id="new-transaction-dialog" title="Add Item">
+<div id="new-transaction-dialog" title="Add Service">
     <input type="hidden" id="hdnFormID" />
 
     <div class="container">
-
-
         <table id="tblTransDetails" class="table">
             <tr>
                 <td colspan="2">
-                    <label for="code">Item:</label><br />
+                    <label for="code">Service:</label><br />
                     <input type="text" id="forms" data-required="true" data-name="Item" class="form-control" placeholder="Type here to search">
                 </td>
                 <td colspan="2" class="text-right">
