@@ -64,6 +64,15 @@
                 return;
             }
 
+            var transaction = {
+                BusinessID: 0,
+                CustomerID: _customerID,
+                AssociateID: $('#ddlAtendedBy').val(),
+                TotalAmount: $('#tblTrans').find('tr:last td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', ''),
+                TransactionDate: (new Date()).toLocaleString(), //PT - add time in the client side
+                ModifiedDate: (new Date()).toLocaleString() //PT - add time in the client side
+            };
+
             $.ajax({
                     url: '/transactions/AddNewTransaction/',
                     type: 'POST',
@@ -189,6 +198,7 @@
 
 
             $('.currencyLabel').formatCurrency();
+            $('[data-toggle="tooltip"]').tooltip();
             $('[data-toggle="popover"]').popover();
         }
 

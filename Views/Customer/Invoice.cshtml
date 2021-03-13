@@ -8,6 +8,33 @@
     ViewBag.Title = "Receipt";
 }
 
+<style>
+    .main {
+        background: #ffffff;
+        border-bottom: 15px solid #F81D2D;
+        border-top: 15px solid #1E1F23;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding: 20px 30px !important;
+        position: relative;
+        box-shadow: 0 1px 21px #808080;
+        font-size: 19px;
+        max-width: 100%;
+        width: 1170px;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+    .tr-note {
+        font-size: 0.7em;
+    }
+
+    #divTotalDue {
+        color: #F81D2D !important
+    }
+
+</style>
 <script>
     $(function () {
         //Auto print when open
@@ -15,10 +42,7 @@
     });
 
     function sendToPrint() {
-        $('#print').hide();
-
         window.print();
-        $('#print').show();
     }
 </script>
 
@@ -28,7 +52,7 @@
             <div class="col-md-12">
                 <div class="hidden-print"><a href="#" id="print" onclick="sendToPrint()"><img src="/images/print.png" width="25" height="25" /></a></div>
                 <div class="row">
-                    <div class="=row col-md-12">
+                    <div class="=row col-sm-12">
                         <h3><strong>Agencia Hispana De Dallas on Bishop Ave.</strong></h3>
                     </div>
 
@@ -88,13 +112,15 @@
                     </tr>
                 </table>
                 <table class="table" id="tblTrans">
-                    <tr>
-                        @*<th><h5>Item #</h5></th>*@
-                        <th>Description</th>
-                        <th class="text-center">Quantity</th>
-                        <th class="text-center">Price</th>
-                        <th class="text-center">Subtotal</th>
-                    </tr>
+                    <thead>
+                        <tr>
+                            @*<th><h5>Item #</h5></th>*@
+                            <th>Description</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Subtotal</th>
+                        </tr>
+                    </thead>
                     <tbody>
 
                         @{ foreach (AHDDManagerClass.TransactionDetail item in Model.TransactionDetails)
@@ -102,16 +128,16 @@
 
                                 <tr>
                                     @*<td class="col-md-2">@item.TransactionDetailID</td>*@
-                                    <td class="col-md-7">@item.FormTitle</td>
-                                    <td class="col-md-1 text-center">@item.Quantity</td>
-                                    <td class="col-md-2 text-right">@item.PriceCharged.ToString("C") </td>
-                                    <td class="col-md-2 text-right"> @item.Total.ToString("C") </td>
+                                    <td class="col-sm-7">@item.FormTitle</td>
+                                    <td class="col-sm-1 text-center">@item.Quantity</td>
+                                    <td class="col-sm-2 text-right">@item.PriceCharged.ToString("C") </td>
+                                    <td class="col-sm-2 text-right"> @item.Total.ToString("C") </td>
                                 </tr>
                                 if (!string.IsNullOrWhiteSpace(item.Notes))
                                 {
-                                    <tr class="tr-note" style="font-size:15px">
+                                    <tr class="tr-note">
                                         @*<td class="col-md-2"></td>*@
-                                        <td class="col-md-12" colspan="4">*Note: @item.Notes</td>
+                                        <td class="col-sm-12" colspan="4">*Note: @item.Notes</td>
                                     </tr>
                                 }
                             }
@@ -120,15 +146,15 @@
 
                         <tr>
                             @*<td class="col-md-2"></td>*@
-                            <td class="col-md-7"></td>
-                            <td class="col-md-1"></td>
-                            <td class="col-md-2 text-right">
+                            <td class="col-sm-7"></td>
+                            <td class="col-sm-1"></td>
+                            <td class="col-sm-2 text-right">
                                 <p>
                                     <strong>Total: </strong>
                                 </p>
                             </td>
 
-                            <td class="col-md-2 text-right">
+                            <td class="col-sm-2 text-right">
                                 <p id="lblSubTotal">
                                     <strong> @Model.Transaction.TotalAmount.ToString("C")  </strong>
                                 </p>
@@ -139,10 +165,10 @@
                 <h3><strong>Payments</strong></h3>
                 <table class="table" id="tblPayments">
                     <tr>
-                        <th class="col-md-4">Rep</th>
-                        <th class="col-md-3">Date</th>
-                        <th class="col-md-3">Method</th>
-                        <th class="col-md-2 text-center">Amount</th>
+                        <th class="col-sm-4">Rep</th>
+                        <th class="col-sm-3">Date</th>
+                        <th class="col-sm-3">Method</th>
+                        <th class="col-sm-2 text-center">Amount</th>
                     </tr>
 
                     @{ foreach (AHDDManagerClass.Payment item in Model.Payments)
@@ -175,10 +201,10 @@
                     <h3><strong>Refunds</strong></h3>
                     <table class="table" id="tblRefounds">
                         <tr>
-                            <th class="col-md-4">Rep</th>
-                            <th class="col-md-3">Date</th>
-                            <th class="col-md-3">Note</th>
-                            <th class="col-md-2">Refund Amount</th>
+                            <th class="col-sm-4">Rep</th>
+                            <th class="col-sm-3">Date</th>
+                            <th class="col-sm-3">Note</th>
+                            <th class="col-sm-2">Refund Amount</th>
                         </tr>
 
                         @{ foreach (AHDDManagerClass.Refund item in Model.Refunds)
@@ -196,8 +222,8 @@
                         <tr>
                             <td></td>
                             <td></td>
-                            <td class="col-md-3 text-right"><strong>Total Refunded: </strong></td>
-                            <td class="col-md-2 text-right">
+                            <td class="col-sm-3 text-right"><strong>Total Refunded:</strong></td>
+                            <td class="col-sm-2 text-right">
                                 <p id="lblBalance">
                                     <strong> @Model.Transaction.RefundedAmount.ToString("C")  </strong>
                                 </p>
@@ -206,9 +232,9 @@
                     </table>
                 }
 
-                <div style="color: #F81D2D;">
-                    <div class="col-md-10 text-right"><h4><strong>Total Due:</strong></h4></div>
-                    <div class=" col-md-2 text-right" id="lblTotal"><h4><strong>@Model.Transaction.TotalOwed.ToString("C") </strong></h4></div>
+                <div id="divTotalDue">
+                    <div class="col-sm-10 text-right"><strong>Total Due:</strong></div>
+                    <div class=" col-sm-2 text-right" id="lblTotal"><strong>@Model.Transaction.TotalOwed.ToString("C") </strong></div>
                 </div>
             </div>
             <div class="col-md-12 text-center">
@@ -217,29 +243,6 @@
         </div>
     </div>
 </div>
-
-<style>
-
-
-
-    .main {
-        background: #ffffff;
-        border-bottom: 15px solid #F81D2D;
-        border-top: 15px solid #1E1F23;
-        margin-top: 30px;
-        margin-bottom: 30px;
-        padding: 20px 30px !important;
-        position: relative;
-        box-shadow: 0 1px 21px #808080;
-        font-size: 19px;
-        max-width: 100%;
-    }
-
-        .main thead {
-            background: #1E1F23;
-            color: #fff;
-        }
-</style>
 
 
 

@@ -125,17 +125,29 @@ html, body {
     background-color: #ffffff;
 }
 
-.table thead > tr > th, 
-.table tbody > tr > th, 
-.table tfoot > tr > th, 
-.table thead > tr > td, 
-.table tbody > tr > td, 
+.table thead > tr > th,
+.table tbody > tr > th,
+.table tfoot > tr > th,
+.table thead > tr > td,
+.table tbody > tr > td,
 .table tfoot > tr > td {
     vertical-align: middle;
 }
 
 .table-hover > tbody > tr:hover > td {
     cursor: pointer
+}
+
+select:required:invalid {
+    color: #cccccc;
+}
+
+option[value=""][disabled] {
+    display: none;
+}
+
+select:required:invalid > option {
+    color: #555555;
 }
 
 /*MODALS*/
@@ -187,7 +199,7 @@ i.fa-badge {
 /*---------*/
 
 /*DIALOGS*/
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { /*Allow to aling buttons to te rigth*/
     width: 100%;
     text-align: right;
 }
@@ -196,15 +208,16 @@ i.fa-badge {
     display: none;
 }
 
+.ui-dialog .ui-dialog-content { /*Allow to use "row" class inside of dialogs*/
+    padding-left: 15px;
+    padding-right: 15px;
+}
 /*---------*/
 
 @media print {
     @page {
         size: 330mm 427mm;
-        margin: 14mm;
-    }
-
-    .container {
-        width: 1170px;
+        margin-left: 40mm;
+        margin-right: 40mm;
     }
 }

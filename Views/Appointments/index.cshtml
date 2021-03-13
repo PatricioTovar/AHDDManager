@@ -8,7 +8,8 @@
 <script src='../scripts/calendar/lib/moment.min.js'></script>
 
 <script src='../scripts/calendar/fullcalendar.js'></script>
-<script src='../scripts/calendar/locale-all.js'></script><style>
+<script src='../scripts/calendar/locale-all.js'></script>
+<style>
 
     .body-content .container { /*PatricioTovar - Bigger calendar view, fix height whit aspectRatio option */
         max-width: 100%;
@@ -22,13 +23,13 @@
         #calendar a {
             color: inherit;
         }
-
 </style>
 <script>
     var selectedStartDate = null;
     var selectedEndDate = null;
     $(function () {
         var _associateID = '@(ViewBag.AssociateID)';
+        var _associateName = '@(ViewBag.AssosiateName)';
         var today = new Date();
         var initialLocaleCode = 'en';
 
@@ -45,68 +46,33 @@
         $("#dpStart").datepicker().datepicker("setDate", new Date());
         $("#dpEnd").datepicker().datepicker("setDate", new Date());
 
-        var apptdialog = $("#appt-dialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            height: 700,
-            width: 700,
-            modal: true,
-            //position: ['center', 130],
-            //open: function (event, ui) {
-            //    $(".ui-dialog").find(".ui-widget-header").css("background", 'beige');
-            //},
-            buttons: {
-                Update: function () {
-                    $.ConfirmDialog('Update appointment Info? Continue?', 'Change Appointment Info', function () {
+        //load associates
+        $.ajax({
+            url: '/customer/GetAssociates/',
+            type: 'POST',
+            //dataType: 'json',
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
 
-                        $.ajax({
-                            url: '/appointments/UpdateAppointmentInfo/',
-                            type: 'POST',
-                            data: JSON.stringify({ ApptID: $('#hdnApptID').val(), Title: $('#txtTitledlg').val(), Description: $('#txtDescdlg').val() }),
-                            //dataType: 'json',
-                            traditional: true,
-                            contentType: 'application/json;',
-                            success: function (result) {
-                                if (result == '1') {
-                                    $.AlertDialog('The event information has been updated.', 'Event Updated', function (event) { }, 'lightgreen');
-
-                                    var events = $('#calendar').fullCalendar('clientEvents', function (evt) {
-                                        return evt.apptid == $('#hdnApptID').val();
-                                    });
-                                    var target = events[0];
-                                    target.title = $('#txtTitledlg').val();
-                                    target.description = $('#txtDescdlg').val();
-
-                                    $('#calendar').fullCalendar('refetchEvents', event);
-                                    apptdialog.dialog('close');
-                                } else {
-                                    $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
-                                }
-                            },
-                            error: function (jqXHR, error, errorThrown) {
-                                $.AlertDialog(errorThrown, 'Error Message', function (error) { }, 'lightcoral');
-                            }
-                        });
-                    }, function () {
-                    }, null, 'yellow');
-
-
-                },
-                Close: function () {
-                    resetDialog();
-
-                    apptdialog.dialog("close");
+                if (result != '0') {
+                    $.each(result, function (i, item) {
+                        $('#ddlAssignedTo').append($('<option>', {
+                            value: item.AssociateID,
+                            text: item.FirstName + ' ' + item.LastName
+                        }));
+                    });
+                } else {
+                    $.AlertDialog('There was an error loading the page.', 'Error Message', function (event) { }, 'lightcoral');
                 }
             }
         });
 
 
-
-
         var createapptdialog = $("#create-appt-dialog").dialog({
             autoOpen: false,
             draggable: false,
-            height: 675,
+            //height: 675,
             width: 700,
             modal: true,
             //position: ['center', 130],
@@ -275,32 +241,6 @@
             }
         });
 
-
-
-        //load associates
-        $.ajax({
-            url: '/customer/GetAssociates/',
-            type: 'POST',
-            //dataType: 'json',
-            traditional: true,
-            contentType: 'application/json;',
-            success: function (result) {
-
-                if (result != '0') {
-                    $.each(result, function (i, item) {
-                        $('#ddlAssignedTo').append($('<option>', {
-                            value: item.AssociateID,
-                            text: item.FirstName + ' ' + item.LastName
-                        }));
-                    });
-                } else {
-                    $.AlertDialog('There was an error loading the page.', 'Error Message', function (event) { }, 'lightcoral');
-                }
-            }
-        });
-
-
-
         function resetDialog() {
 
             $('#txtCreateTitledlg').val('');
@@ -308,7 +248,7 @@
 
             //$("#ddlAssignTo").val($("#ddlAssignTo option:first").val());
             $("#ddlAssignedTo").val(_associateID);
-            $('#divCreatedBy').hide();
+            $('#lblCreatedByName').text(_associateName);
 
 
             $('#hdnApptID').val('0');
@@ -322,15 +262,15 @@
             $('#ddlLOMinutes').val('');
             $('#ddlLOAMPM').val('');
 
-            $('#tblDateTime .start').show();
-            $('#tblDateTime .end').show();
+            $('#create-appt-dialog .start').show();
+            $('#create-appt-dialog .end').show();
         }
 
         $('#chkAllDay').on('click', function () {
 
             if ($(this).is(':checked')) {
-                $('#tblDateTime .start').hide();
-                $('#tblDateTime .end').hide();
+                $('#create-appt-dialog .start').hide();
+                $('#create-appt-dialog .end').hide();
             } else {
                 $('#ddlLIHours').val('');
                 $('#ddlLIMinutes').val('');
@@ -339,14 +279,11 @@
                 $('#ddlLOMinutes').val('');
                 $('#ddlLOAMPM').val('');
 
-                $('#tblDateTime .start').show();
-                $('#tblDateTime .end').show();
+                $('#create-appt-dialog .start').show();
+                $('#create-appt-dialog .end').show();
             }
 
         });
-
-
-
 
         $("body").on("click", ".fc-AddAppt-button", function () {
             // this is a create therefore set the appointment id to 0 signifying a new appointment
@@ -361,9 +298,6 @@
             $("#btnDeleteAppoiment").hide();
             createapptdialog.dialog("open");
         });
-
-
-
 
         $('#calendar').fullCalendar({
             themeSystem: 'bootstrap3',
@@ -504,12 +438,11 @@
                 $('#dpStart').val(moment(calEvent.start, 'MM/DD/YYYY').format('MM/DD/YYYY'));
 
                 $('#ddlAssignedTo').val(calEvent.assignedto);
-                $('#divCreatedBy').show();
                 $('#lblCreatedByName').text(calEvent.createdbyname);
 
                 if (calEvent.allDay) {
-                    $('#tblDateTime .start').hide();
-                    $('#tblDateTime .end').hide();
+                    $('#create-appt-dialog .start').hide();
+                    $('#create-appt-dialog .end').hide();
 
                     $('#ddlLIHours').val('');
                     $('#ddlLIMinutes').val('');
@@ -521,8 +454,8 @@
                     $('#chkAllDay').prop("checked", true);
                     $('#dpEnd').val(moment(calEvent.end, 'MM/DD/YYYY').add(-1, 'days').format('MM/DD/YYYY'));
                 } else {
-                    $('#tblDateTime .start').show();
-                    $('#tblDateTime .end').show();
+                    $('#create-appt-dialog .start').show();
+                    $('#create-appt-dialog .end').show();
 
                     $('#ddlLIHours').val(moment(calEvent.start, 'MM/DD/YYYY HH:mm A').format('h'));
                     $('#ddlLIMinutes').val(moment(calEvent.start, 'MM/DD/YYYY HH:mm A').format('mm'));
@@ -716,22 +649,6 @@
         //PT - Reload calendar buttom custom
         $('.fc-Reload-button').prepend('<i class="fa fa-refresh fa-fw" aria-hidden="true"></i>')
 
-        // build the locale selector's options
-        $.each($.fullCalendar.locales, function (localeCode) {
-            $('#locale-selector').append(
-                $('<option/>')
-                    .attr('value', localeCode)
-                    .prop('selected', localeCode == initialLocaleCode)
-                    .text(localeCode)
-            );
-        });
-
-        // when the selected option changes, dynamically change the calendar option
-        $('#locale-selector').on('change', function () {
-            if (this.value) {
-                $('#calendar').fullCalendar('option', 'locale', this.value);
-            }
-        });
     });
 
     function openCreateApptDialog() {
@@ -798,179 +715,119 @@
 
 <div id="create-appt-dialog" title="Create Appointment">
     <input type="hidden" id="hdnApptID" />
-    <div class="container">
-        <table id="tblInfo" class="table">
-            <tr>
-                <td colspan="2">
-                    <div class="ui-widget">
-                        <label for="txtCreateTitledlg">Title: </label><br />
-                        <input type="text" class="form-control" id="txtCreateTitledlg" data-required="true" data-name="Paid To" style="max-width:100%;">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <label for="txtCreateDescdlg">Description</label><br />
-                    <textarea class="form-control" rows="4" style="min-width: 100%" id="txtCreateDescdlg" data-required="true" maxlength="100"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>Assigned To:</strong>
-                    <select id="ddlAssignedTo" class="form-control">
-                    </select>
-                </td>
-                <td>
-                    <div id="divCreatedBy">
-                        <label>Created by:</label><br />
-                        <span id="lblCreatedByName"></span>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <table id="tblDateTime" class="table table-responsive">
-                        <tr>
-
-                            <th>
-                                Start Date
-                            </th>
-                            <th>
-                                Start Time
-                            </th>
-                            <th colspan="3" style="text-align:right;"><input type="checkbox" id="chkAllDay" /> All Day Event</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="text" id="dpStart" class="form-control" readonly="readonly">
-                            </td>
-                            <td class="start">
-                                <select id="ddlLIHours" class="form-control" style="max-width:125px;" onchange="updateEndHour()">
-                                    <option value="1">01</option>
-                                    <option value="2">02</option>
-                                    <option value="3">03</option>
-                                    <option value="4">04</option>
-                                    <option value="5">05</option>
-                                    <option value="6">06</option>
-                                    <option value="7">07</option>
-                                    <option value="8">08</option>
-                                    <option value="9">09</option>
-                                    <option value="10">10</option>
-                                    <option value="11">11</option>
-                                    <option value="12">12</option>
-                                </select>
-                            </td>
-                            <td class="start">:</td>
-                            <td class="start">
-                                <select id="ddlLIMinutes" class="form-control" style="max-width:125px;" onchange="updateEndMinutes()">
-                                    <option value="00">00</option>
-                                    <option value="15">15</option>
-                                    <option value="30">30</option>
-                                    <option value="45">45</option>
-                                </select>
-                            </td>
-                            <td class="start">
-                                <select id="ddlLIAMPM" class="form-control" style="max-width:125px;" onchange="updateEndAMPM()">
-                                    <option value="AM">AM</option>
-                                    <option value="PM">PM</option>
-                                </select>
-                            </td>
-
-                        </tr>
-                        <tr>
-                            <th>
-                                End Date
-                            </th>
-                            <th colspan="4">
-                                End Time
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="text" id="dpEnd" class="form-control" readonly="readonly">
-                            </td>
-                            <td class="end">
-                                <select id="ddlLOHours" class="form-control" style="max-width:125px;">
-                                    <option value="1">01</option>
-                                    <option value="2">02</option>
-                                    <option value="3">03</option>
-                                    <option value="4">04</option>
-                                    <option value="5">05</option>
-                                    <option value="6">06</option>
-                                    <option value="7">07</option>
-                                    <option value="8">08</option>
-                                    <option value="9">09</option>
-                                    <option value="10">10</option>
-                                    <option value="11">11</option>
-                                    <option value="12">12</option>
-                                </select>
-                            </td>
-                            <td class="end">:</td>
-                            <td class="end">
-                                <select id="ddlLOMinutes" class="form-control" style="max-width:125px;">
-                                    <option value="00">00</option>
-                                    <option value="15">15</option>
-                                    <option value="30">30</option>
-                                    <option value="45">45</option>
-                                </select>
-                            </td>
-                            <td class="end">
-                                <select id="ddlLOAMPM" class="form-control" style="max-width:125px;">
-                                    <option value="AM">AM</option>
-                                    <option value="PM">PM</option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <label for="txtCreateTitledlg">Title:</label>
+            <input type="text" class="form-control" id="txtCreateTitledlg" data-required="true" data-name="Title" maxlength="100">
+        </div>
+        <div class="form-group col-sm-12">
+            <label for="txtCreateDescdlg">Description:</label>
+            <textarea class="form-control" rows="3" id="txtCreateDescdlg" data-required="true" data-name="Description" maxlength="500"></textarea>
+        </div>
+        <div class="form-group col-sm-6">
+            <label for="txtCreateDescdlg">Assigned:</label>
+            <select id="ddlAssignedTo" class="form-control"></select>
+        </div>
+        <div class="form-group col-sm-6">
+            <label>Created by:</label>
+            <p id="lblCreatedByName" class="form-control-static"></p>
+        </div>
     </div>
-
-</div>
-
-<div id="appt-dialog" title="Appointment Info">
-
-    <div class="container">
-        <table id="tblInfo" class="table table-hover">
-            <tr>
-                <td>
-                    <div class="ui-widget">
-                        <label for="txtPaidTo">Title: </label><br />
-                        <input type="text" class="form-control" id="txtTitledlg" data-required="true" data-name="Paid To" style="max-width:100%;">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <label for="txtNote">Description</label><br />
-                    <textarea class="form-control" rows="4" style="min-width: 100%" id="txtDescdlg" data-required="true" maxlength="200"></textarea>
-                </td>
-
-            </tr>
-            <tr>
-                <th>
-                    Created By:
-                </th>
-                <td>XXXXXXX </td>
-            </tr>
-            <tr>
-                <td>
-                    <table border="1" width="100%">
-                        <tr>
-                            <th>Start Date/Time:</th>
-                            <th>End Date/Time:</th>
-                        </tr>
-                        <tr>
-                            <td>[Start Date]</td>
-                            <td>[End Date]</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+    <div class="row">
+        <div class="form-group col-sm-5">
+            <div style="width:100%">
+                <label for="dpStart">Start Date:</label>
+                <div class="checkbox" style="display:inline-block; float:right; margin-bottom:0px; margin-top:0px">
+                    <label>
+                        <input id="chkAllDay" type="checkbox">All day
+                    </label>
+                </div>
+            </div>
+            <div class="input-group margin-bottom-sm">
+                <input type="text" id="dpStart" class="form-control" readonly="readonly">
+                <span class="input-group-addon btn btn-default" onclick="$('#dpStart').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+            </div>
+        </div>
+        <div class="form-group col-sm-4 start">
+            <label for="ddlLIHours">Start Time:</label>
+            <div class="input-group">
+                <select id="ddlLIHours" class="form-control" dir="rtl" onchange="updateEndHour()" required>
+                    <option value="" disabled hidden>Hour</option>
+                    <option value="1">01</option>
+                    <option value="2">02</option>
+                    <option value="3">03</option>
+                    <option value="4">04</option>
+                    <option value="5">05</option>
+                    <option value="6">06</option>
+                    <option value="7">07</option>
+                    <option value="8">08</option>
+                    <option value="9">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+                <span class="input-group-addon"><strong>:</strong></span>
+                <select id="ddlLIMinutes" class="form-control" onchange="updateEndMinutes()" required>
+                    <option value="" disabled hidden>Min</option>
+                    <option value="00">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-3 start">
+            <label class="empty-label">&nbsp;</label>
+            <select id="ddlLIAMPM" class="form-control" onchange="updateEndAMPM()" required>
+                <option value="" disabled hidden>AM/PM</option>
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-sm-5">
+            <label for="dpStart">End Date:</label>
+            <div class="input-group margin-bottom-sm">
+                <input type="text" id="dpEnd" class="form-control" readonly="readonly">
+                <span class="input-group-addon btn btn-default" onclick="$('#dpEnd').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+            </div>
+        </div>
+        <div class="form-group col-sm-4 end">
+            <label for="ddlLOHours">End Time:</label>
+            <div class="input-group">
+                <select id="ddlLOHours" class="form-control" dir="rtl" onchange="updateEndHour()" required>
+                    <option value="" disabled hidden>Hour</option>
+                    <option value="1">01</option>
+                    <option value="2">02</option>
+                    <option value="3">03</option>
+                    <option value="4">04</option>
+                    <option value="5">05</option>
+                    <option value="6">06</option>
+                    <option value="7">07</option>
+                    <option value="8">08</option>
+                    <option value="9">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+                <span class="input-group-addon"><strong>:</strong></span>
+                <select id="ddlLOMinutes" class="form-control" onchange="updateEndMinutes()" required>
+                    <option value="" disabled hidden>Min</option>
+                    <option value="00">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-3 end">
+            <label class="empty-label">&nbsp;</label>
+            <select id="ddlLOAMPM" class="form-control" onchange="updateEndAMPM()" required>
+                <option value="" disabled hidden>AM/PM</option>
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </div>
     </div>
 </div>
-
-
-

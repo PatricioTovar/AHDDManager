@@ -510,3 +510,7 @@
 3/8/2021 11:03:26 AM|Event: Appt id - 2303
 3/8/2021 11:05:05 AM|Event to Add by 29 - TITLE: Jackie* Jose Hernandez Busca Patrocinador | Start Date: 3/26/2021 1:00:00 PM (3/26/2021 1:00:00 PM)
 3/8/2021 11:05:05 AM|Event: Appt id - 2393
+3/12/2021 10:37:13 AM|Event to Add by 48 - TITLE: OPEN* Adolfo Gomez Medina, I-90 | Start Date: 2/18/2021 11:30:00 AM (2/18/2021 11:30:00 AM)
+3/12/2021 10:37:15 AM|Event: Appt id - 2256
+3/12/2021 10:37:26 AM|Event to Add by 48 - TITLE: OPEN* Adolfo Gomez Medina, I-90 | Start Date: 2/18/2021 11:30:00 AM (2/18/2021 11:30:00 AM)
+3/12/2021 10:37:26 AM|Event: Appt id - 2256

@@ -16,6 +16,11 @@
         color: #ffffff;
         background-color: #5cb85c;
     }
+
+    #printFrame {
+        width: 100%;
+        height: 0px;
+    }
 </style>
 
 <script>
@@ -644,6 +649,18 @@
         $(btn).addClass("selected");
     }
 
+    function PrintRecipe() {
+        if ($("#printFrame").length) {
+            $("#printFrame").remove();
+        }
+            var url = "/customer/Invoice/" + @Url.RequestContext.RouteData.Values["id"] ;
+            $("<iframe id='printFrame'>") // create a new iframe element
+                .hide()// make it invisible
+                .attr("src", url) // point the iframe to the page you want to print
+                .appendTo("body");
+
+    }
+
 </script>
 
 
@@ -651,9 +668,10 @@
 
 <div class="row">
     <div class="col-lg-3 pull-bottom">
-        <a href="/customer/Invoice/@Url.RequestContext.RouteData.Values["id"]" target="_blank">
+        <a onclick="PrintRecipe()">
+            @*href="/customer/Invoice/@Url.RequestContext.RouteData.Values["id"]" target="_blank"*@
             @*<img src="~/images/Invoice.png" alt="View Receipt" data-toggle="tooltip" data-placement="right" title="View Receipt" />*@
-            <i class="fa fa-file-text-o fa-3x fa-shadow" aria-hidden="true" style="color:steelblue" data-toggle="tooltip" title="View receipt"></i>
+            <i class="fa fa-print  fa-3x fa-shadow" aria-hidden="true" style="color:steelblue" data-toggle="tooltip" title="Print Receipt"></i>
         </a>
     </div>
 
@@ -692,7 +710,7 @@
     <div class="col-lg-3 pull-text-right">
         <a href="/Transactions/CustomerTransactions/@Model.Item3.CustomerID">
             @*<img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Receipts" />*@
-            <i class="fa fa-arrow-circle-o-left fa-shadow fa-3x" aria-hidden="true" style="color:yellowgreen" data-toggle="tooltip" title="Go back"></i>
+            <i class="fa fa-arrow-circle-o-left fa-shadow fa-3x" aria-hidden="true" style="color:yellowgreen" data-toggle="tooltip" title="Customer Receipts"></i>
         </a>
     </div>
 </div>

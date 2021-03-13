@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using AHDDManagerClass;
 
 namespace AHDDManager.Controllers
 {
@@ -13,17 +14,13 @@ namespace AHDDManager.Controllers
         // GET: Appointments
         public ActionResult Index()
         {
-            return View();
-        }
-
-        public ActionResult Test()
-        {
+            ViewBag.AssosiateName = base.Associate.FirstName + " " + base.Associate.LastName;
             return View();
         }
 
         public ActionResult GetAppointments(int Month, int Year)
         {
-            AHDDManagerClass.Appointments objAppts = new AHDDManagerClass.Appointments(Month, Year);
+            Appointments objAppts = new Appointments(Month, Year);
 
             return Json(objAppts, JsonRequestBehavior.AllowGet);
         }
@@ -31,7 +28,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult DeleteAppointment(int AppointmentID)
         {
-            AHDDManagerClass.Appointment objA = new AHDDManagerClass.Appointment();
+            Appointment objA = new Appointment();
 
             if (objA.Delete(AppointmentID))
             {
@@ -44,7 +41,7 @@ namespace AHDDManager.Controllers
             }
         }
 
-        public ActionResult AddAppointment(AHDDManagerClass.Appointment appointment)
+        public ActionResult AddAppointment(Appointment appointment)
         {
             appointment.CreatedBy = base.Associate.AssociateID;
             appointment.BusinessID = base.Business.BusinessID;
@@ -53,7 +50,7 @@ namespace AHDDManager.Controllers
 
             if (appointment.Update())
             {
-                appointment = new AHDDManagerClass.Appointment(appointment.AppointmentID);
+                appointment = new Appointment(appointment.AppointmentID);
 
                 AHDDManager.Models.Logging.LogEvent("Event: Appt id - " + appointment.AppointmentID);
 
@@ -68,7 +65,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult UpdateAppointment(int AppointmentID, string StartDate, string EndDate)
         {
-            AHDDManagerClass.Appointment objA = new AHDDManagerClass.Appointment();
+            Appointment objA = new Appointment();
 
             TimeZoneInfo cstZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
 
@@ -91,7 +88,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult UpdateAppointmentInfo(int ApptID, string Title, string Description)
         {
-            AHDDManagerClass.Appointment objA = new AHDDManagerClass.Appointment(ApptID);
+            Appointment objA = new Appointment(ApptID);
 
             objA.AppointmentName = Title;
             objA.Description = Description;
