@@ -2521,6 +2521,48 @@ namespace AHDDManagerClass
         }
 
 
+        public DataTable GetTransactionDetailsReport(DateTime StartDate, DateTime EndDate, int AssociateID, int CustomerID, string FormSearch)
+        {
+            SqlConnection Conn = new SqlConnection(this.ConnString);
+
+            try
+            {
+                SqlCommand selectCMD = new SqlCommand("GetTransactionDetailsReport", Conn);
+                selectCMD.CommandType = CommandType.StoredProcedure;
+
+                SqlDataAdapter da = new SqlDataAdapter();
+                da.SelectCommand = selectCMD;
+
+                selectCMD.Parameters.Add(new SqlParameter("@StartDate", StartDate));
+                selectCMD.Parameters.Add(new SqlParameter("@EndDate", EndDate));
+                selectCMD.Parameters.Add(new SqlParameter("@AssociateID", AssociateID));
+                selectCMD.Parameters.Add(new SqlParameter("@CustomerID", CustomerID));
+                selectCMD.Parameters.Add(new SqlParameter("@FormSearch", FormSearch));
+
+                Conn.Open();
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                Conn.Close();
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Data.GetTransactionDetailsReport error :" + ex.Message);
+
+                //return new DataTable();
+            }
+
+            finally
+            {
+                if (Conn.State != ConnectionState.Closed)
+                {
+                    Conn.Close();
+                }
+            }
+        }
 
         public DataTable GetPaymentByID(int PaymentID)
         {

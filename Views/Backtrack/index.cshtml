@@ -199,10 +199,12 @@
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
-                    if (result.length > 0) {
-                        $.each(result, function (key, value) {
+                    if (result.Res) {
+                        $.each(result.Object, function (key, value) {
                             $("#ddlStates").append(new Option(value.Abbreviations, value.Abbreviations));
                         });
+                    } else {
+                        $.AlertDialog(result.Message, 'Error Message', null, 'lightcoral');
                     }
                 }
             });

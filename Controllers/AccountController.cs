@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using AHDDManager.Models;
+using AHDDManagerClass;
 
 namespace AHDDManager.Controllers
 {
@@ -17,7 +18,7 @@ namespace AHDDManager.Controllers
     {
         public ActionResult AssociateProfile()
         {
-            ViewBag.AssociateID = base.Associate.AssociateID;
+            ViewBag.AssociateID = Associate.AssociateID;
 
             return View();
         }
@@ -29,7 +30,18 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetStates()
         {
-            return Json(AHDDManager.Models.States.GetStates());
+            var result = new Result();
+            try
+            {
+                result.Object = States.GetStates();
+            }
+            catch (Exception ex)
+            {
+                result.Res = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(result);
         }
 
         public ActionResult MyHours()
@@ -46,7 +58,7 @@ namespace AHDDManager.Controllers
         {
             try
             {
-                AHDDManagerClass.AssociateHoursWorked objACH = new AHDDManagerClass.AssociateHoursWorked(StartDate, EndDate, base.Associate.AssociateID);
+                AssociateHoursWorked objACH = new AssociateHoursWorked(StartDate, EndDate, Associate.AssociateID);
 
                 return Json(objACH);
             }
@@ -63,7 +75,7 @@ namespace AHDDManager.Controllers
         {
             try
             {
-                AHDDManagerClass.AssociateClockInHistories objACH = new AHDDManagerClass.AssociateClockInHistories(StartDate, EndDate, base.Associate.AssociateID);
+                AssociateClockInHistories objACH = new AssociateClockInHistories(StartDate, EndDate, Associate.AssociateID);
 
                 return Json(objACH);
             }
@@ -78,9 +90,9 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetAssociateTransactionPayments(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
+            Transactions objTs = new Transactions();
 
-            int AssociateID = base.Associate.AssociateID;
+            int AssociateID = Associate.AssociateID;
 
             var ret = objTs.GetTransactionPaymentsReport(StartDate, EndDate, AssociateID);
 
@@ -93,15 +105,15 @@ namespace AHDDManager.Controllers
             try
             {
                 //get raw associate clockin data
-                AHDDManagerClass.AssociateClockInHistories objACH = new AHDDManagerClass.AssociateClockInHistories();
+                AssociateClockInHistories objACH = new AssociateClockInHistories();
 
-                var ret = objACH.GetAllClockinsUnfiltered(StartDate, StartDate, base.Associate.AssociateID);
+                var ret = objACH.GetAllClockinsUnfiltered(StartDate, StartDate, Associate.AssociateID);
 
-                AHDDManager.Models.Logging.LogEvent("My Hours: ");
+                Models.Logging.LogEvent("My Hours: ");
 
-                foreach  (AHDDManagerClass.AssociateClockInHistory item in ret)
+                foreach  (AssociateClockInHistory item in ret)
                 {
-                    AHDDManager.Models.Logging.LogEvent(item.LoginDatetime.ToString());
+                    Models.Logging.LogEvent(item.LoginDatetime.ToString());
                 }
 
 
@@ -119,7 +131,7 @@ namespace AHDDManager.Controllers
             try
             {
                 //AHDDManagerClass.AssociateClockInHistories objACH = new AHDDManagerClass.AssociateClockInHistories();
-                AHDDManagerClass.AssociateHoursWorked objACH = new AHDDManagerClass.AssociateHoursWorked(StartDate, EndDate, AssociateID);
+                AssociateHoursWorked objACH = new AssociateHoursWorked(StartDate, EndDate, AssociateID);
                 //var ret = objACH.GetAllClockinsUnfiltered(StartDate, EndDate, AssociateID);
                 
 

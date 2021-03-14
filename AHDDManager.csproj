@@ -504,9 +504,10 @@
     <Content Include="Views\Manhiem\HighMileage.cshtml" />
     <Content Include="Views\Manhiem\VinLookup.cshtml" />
     <Content Include="Views\Admin\PaymentsDetails.cshtml" />
-    <Content Include="Views\Admin\TransactionsInfo.cshtml" />
+    <Content Include="Views\Admin\TransactionsReport.cshtml" />
     <Content Include="Views\Admin\ResumeReport.cshtml" />
     <Content Include="Views\Account\ResumeAssociate.cshtml" />
+    <Content Include="Views\Admin\ServicesReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

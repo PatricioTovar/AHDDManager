@@ -117,8 +117,9 @@ html, body {
 }
 
 .empty-label {
-    width: 100%
+    height: 1em;
 }
+
 
 .form-control.hasDatepicker {
     cursor: pointer;
@@ -136,6 +137,11 @@ html, body {
 
 .table-hover > tbody > tr:hover > td {
     cursor: pointer
+}
+
+.min-col {
+    width: 1%;
+    white-space: nowrap;
 }
 
 select:required:invalid {

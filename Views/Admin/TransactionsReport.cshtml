@@ -128,7 +128,6 @@
             ],
             drawCallback: function (settings) {
                 $('[data-toggle="tooltip"]').tooltip();
-
             },
             createdRow: function (row, data, index) {
                 //
@@ -220,14 +219,12 @@
             //dataType: 'json',
             contentType: 'application/json;',
         }).done(function (result) {
-            if (result != null) {
-                tblTransactions.rows.add(result).columns.adjust().draw();
+            if (result.Res) {
+                tblTransactions.rows.add(result.Object).draw();
+            } else {
+                $.AlertDialog(result.Message, 'Error Message', null, 'lightcoral');
             }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            // needs to implement if it fails
-            //  alert('Error searching customers.');
-            $.AlertDialog(textStatus, 'Error Message', null, 'lightcoral');
-        });
+        })
     }
 </script>
 

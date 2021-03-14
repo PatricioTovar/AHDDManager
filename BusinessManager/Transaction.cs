@@ -192,20 +192,10 @@ namespace AHDDManagerClass
                 else
                 { decTotalOwed = (decTotalAmount - decTotalCollected); }
 
-                try
-                { strCustomerName = Convert.ToString(dr["CustomerName"] == Convert.DBNull ? string.Empty : dr["CustomerName"]); }
-                catch
-                { strCustomerName = string.Empty; }
 
-                try
-                { strTakenBy = Convert.ToString(dr["TakenBy"] == Convert.DBNull ? string.Empty : dr["TakenBy"]); }
-                catch
-                { strTakenBy = string.Empty; }
-
-                try
-                { strModifiedByName = Convert.ToString(dr["ModifiedByName"] == Convert.DBNull ? string.Empty : dr["ModifiedByName"]); }
-                catch
-                { strModifiedByName = string.Empty; }
+                strCustomerName = (dr.Table.Columns.Contains("CustomerName") && dr["CustomerName"] != Convert.DBNull) ? Convert.ToString(dr["CustomerName"]) : string.Empty;
+                strTakenBy = (dr.Table.Columns.Contains("TakenBy") && dr["TakenBy"] != Convert.DBNull) ? Convert.ToString(dr["TakenBy"]) : string.Empty;
+                strModifiedByName = (dr.Table.Columns.Contains("ModifiedByName") && dr["ModifiedByName"] != Convert.DBNull) ? Convert.ToString(dr["ModifiedByName"]) : string.Empty;
 
                 objPs = new Payments(iTransactionID);
                 objRs = new Refunds(iTransactionID);

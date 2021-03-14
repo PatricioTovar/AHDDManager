@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using AHDDManagerClass;
 
 namespace AHDDManager.Controllers
 {
@@ -31,12 +32,17 @@ namespace AHDDManager.Controllers
             return View();
         }
 
-        public ActionResult TransactionsInfo()
+        public ActionResult TransactionsReport()
         {
             return View();
         }
 
         public ActionResult ResumeReport()
+        {
+            return View();
+        }
+
+        public ActionResult ServicesReport()
         {
             return View();
         }
@@ -73,7 +79,7 @@ namespace AHDDManager.Controllers
         {
             try
             {
-                AHDDManagerClass.Associate objA = new AHDDManagerClass.Associate(AssociateID);
+                Associate objA = new Associate(AssociateID);
 
                 if (objA.AssociatesExist)
                 {
@@ -95,7 +101,7 @@ namespace AHDDManager.Controllers
 
         public ActionResult GetAccountsReceivables()
         {
-            AHDDManagerClass.Customers objCs = new AHDDManagerClass.Customers();
+            Customers objCs = new Customers();
 
             var AR = objCs.GetCustomerAccountReceivables();
 
@@ -104,33 +110,77 @@ namespace AHDDManager.Controllers
 
         public ActionResult GetTodaysTransactions()
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions(DateTime.Now.ToUniversalTime().AddHours(-6));
+            Transactions objTs = new Transactions(DateTime.Now.ToUniversalTime().AddHours(-6));
 
             return Json(objTs);
         }
 
         public JsonResult GetTransactionsReport(DateTime StartDate, DateTime EndDate, bool IncludeOpens)
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
+            var result = new Result();
+            try
+            {
+                Transactions objTs = new Transactions();
 
-            var ret = objTs.GetTransactionsReport(StartDate, EndDate, IncludeOpens);
+                var list = objTs.GetTransactionsReport(StartDate, EndDate, IncludeOpens);
 
-            return Json(ret);
+                result.Object = list;
+            }
+            catch (Exception ex)
+            {
+                result.Res = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(result);
+
         }
 
 
         public JsonResult GetTransactionPaymentsReport(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
+            var result = new Result();
+            try
+            {
+                Transactions objTs = new Transactions();
 
-            var ret = objTs.GetTransactionPaymentsReport(StartDate, EndDate);
+                var list = objTs.GetTransactionPaymentsReport(StartDate, EndDate);
 
-            return Json(ret);
+                result.Object = list;
+            }
+            catch (Exception ex)
+            {
+                result.Res = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(result);
+        }
+
+
+        public JsonResult GetTransactionDetailsReport(DateTime StartDate, DateTime EndDate, int AssociateID, int CustomerID, string FormSearch)
+        {
+            var result = new Result();
+            try
+            {
+                TransactionDetails objTs = new TransactionDetails();
+
+                var list = objTs.GetTransactionDetailsReport(StartDate, EndDate, AssociateID, CustomerID, FormSearch);
+
+                result.Object = list;
+            }
+            catch (Exception ex)
+            {
+                result.Res = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(result);
         }
 
         public JsonResult GetTransactionsWithPayments(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
+            Transactions objTs = new Transactions();
 
             var ret = objTs.GetTransactionsWithPaymentsByDate(StartDate, EndDate);
 
@@ -139,7 +189,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetTransCompletedWOPaymentByDate(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
+            Transactions objTs = new Transactions();
 
             var ret = objTs.GetTransCompletedWOPaymentByDate(StartDate, EndDate);
 
@@ -148,7 +198,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetTransCancelledWORefundByDate(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
+            Transactions objTs = new Transactions();
 
             var ret = objTs.GetTransCancelledWORefundByDate(StartDate, EndDate);
 
@@ -157,7 +207,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetTransCancelledWRefundByDate(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
+            Transactions objTs = new Transactions();
 
             var ret = objTs.GetTransCancelledWRefundByDate(StartDate, EndDate);
 
@@ -167,7 +217,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetTransOpenWOPaymentByDate(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.Transactions objTs = new AHDDManagerClass.Transactions();
+            Transactions objTs = new Transactions();
 
             var ret = objTs.GetTransOpenWOPaymentByDate(StartDate, EndDate);
 
@@ -177,7 +227,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetPaymentDetailsByDateRange(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.PaymentDetail objPs = new AHDDManagerClass.PaymentDetail();
+            PaymentDetail objPs = new PaymentDetail();
             var ret = objPs.GetPaymentDetailsByDateRange(StartDate, EndDate);
 
             return Json(ret);
@@ -185,7 +235,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetPaymentsCollectedByDateRange(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.Payments objPs = new AHDDManagerClass.Payments();
+            Payments objPs = new Payments();
             var ret = objPs.GetPaymentsCollectedByDateRange(StartDate, EndDate);
 
             return Json(ret);
@@ -194,7 +244,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetPaymentsCollectedNotToday()
         {
-            AHDDManagerClass.Payments objPs = new AHDDManagerClass.Payments();
+            Payments objPs = new Payments();
             var ret = objPs.GetPaymentsCollectedByDateRange(DateTime.Now, DateTime.Now);
 
             return Json(ret);
@@ -205,7 +255,7 @@ namespace AHDDManager.Controllers
         {
             try
             {
-                AHDDManagerClass.Payments objPs = new AHDDManagerClass.Payments(TransactionID);
+                Payments objPs = new Payments(TransactionID);
                 return Json(objPs);
             }
             catch
@@ -218,7 +268,7 @@ namespace AHDDManager.Controllers
             if (AssociateID == 0)
             { AssociateID = base.Associate.AssociateID; }
 
-            AHDDManagerClass.Payments objPs = new AHDDManagerClass.Payments();
+            Payments objPs = new Payments();
             var ret = objPs.GetPaymentsCollectedByAsscociateID(AssociateID, StartDate, EndDate);
 
             return Json(ret);
@@ -227,7 +277,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetPayMethodCountsByDateRange(DateTime StartDate, DateTime EndDate)
         {
-            AHDDManagerClass.Payments objPs = new AHDDManagerClass.Payments();
+            Payments objPs = new Payments();
             var ret = objPs.GetPayMethodCountsByDateRange(StartDate, EndDate);
 
             return Json(new { OverallTotal = ret.OverallTotal, ret = ret });
@@ -240,8 +290,8 @@ namespace AHDDManager.Controllers
             if (AssociateID == 0)
             { AssociateID = base.Associate.AssociateID; }
 
-            AHDDManagerClass.Payments objPs = new AHDDManagerClass.Payments();
-            AHDDManagerClass.PaymentMethodCounts ret = objPs.GetPayMethodCountsByDateRangeAssocID(StartDate, EndDate, AssociateID);
+            Payments objPs = new Payments();
+            PaymentMethodCounts ret = objPs.GetPayMethodCountsByDateRangeAssocID(StartDate, EndDate, AssociateID);
 
             return Json(new { OverallTotal = ret.OverallTotal, ret = ret });
         }
@@ -251,7 +301,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetCustomerByPaymentID(int PaymentID)
         {
-            AHDDManagerClass.Payment objP = new AHDDManagerClass.Payment();
+            Payment objP = new Payment();
             var ret = objP.GetCustomerByPaymentID(PaymentID);
 
             return Json(ret);
@@ -260,7 +310,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetTransactionByPaymentID(int PaymentID)
         {
-            AHDDManagerClass.Payment objP = new AHDDManagerClass.Payment();
+            Payment objP = new Payment();
             var ret = objP.GetTransactionByPaymentID(PaymentID);
 
             return Json(ret);
@@ -268,7 +318,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetTransactionDetailsByPaymentID(int PaymentID)
         {
-            AHDDManagerClass.Payment objP = new AHDDManagerClass.Payment();
+            Payment objP = new Payment();
             var ret = objP.GetTransactionDetailsByPaymentID(PaymentID);
 
             return Json(ret);
@@ -277,13 +327,13 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetTransactionDetailsByTransactionID(int TransactionID)
         {
-            AHDDManagerClass.TransactionDetails objTDs = new AHDDManagerClass.TransactionDetails(TransactionID);
+            TransactionDetails objTDs = new TransactionDetails(TransactionID);
             return Json(objTDs);
         }
 
         public ContentResult GetAssociateHours(string StartDate, string EndDate)
         {
-            AHDDManagerClass.AssociatesHoursWorked objAHWs = new AHDDManagerClass.AssociatesHoursWorked(StartDate, EndDate);
+            AssociatesHoursWorked objAHWs = new AssociatesHoursWorked(StartDate, EndDate);
 
             return Content(JsonConvert.SerializeObject(objAHWs), "application/json");
         }
@@ -298,12 +348,12 @@ namespace AHDDManager.Controllers
         {
             try
             {
-                AHDDManagerClass.Associate objA = new AHDDManagerClass.Associate(AssociateID);
+                Associate objA = new Associate(AssociateID);
 
                 objA.ChangeClockInStatus();
 
                 AHDDManager.Models.Logging.LogClockIn("User clock in status changed to " + objA.ClockedIn + ": " + objA.UserName + " (" + objA.FirstName + " " + objA.LastName + ")", objA.UserName);
-                
+
                 if (AssociateID == base.Associate.AssociateID)
                 {
                     Session["Associate"] = null;
@@ -336,7 +386,7 @@ namespace AHDDManager.Controllers
         {
             if (base.Associate.IsAdmin)
             {
-                AHDDManagerClass.Associates objAs = new AHDDManagerClass.Associates(base.Business.BusinessID);
+                Associates objAs = new Associates(base.Business.BusinessID);
 
                 return View(objAs);
             }
@@ -347,20 +397,20 @@ namespace AHDDManager.Controllers
 
         public ActionResult GetAssociate(int AssociateID)
         {
-            AHDDManagerClass.Associate objA = new AHDDManagerClass.Associate(AssociateID);
+            Associate objA = new Associate(AssociateID);
 
             return Json(objA);
         }
 
-        public ActionResult UpdateAssociate(AHDDManagerClass.Associate associate)
+        public ActionResult UpdateAssociate(Associate associate)
         {
-            AHDDManagerClass.Associate objA;
+            Associate objA;
             associate.BusinessID = base.Business.BusinessID;
 
 
             if (associate.AssociateID > 0)
             {
-                objA = new AHDDManagerClass.Associate(associate.AssociateID);
+                objA = new Associate(associate.AssociateID);
 
                 objA.FirstName = associate.FirstName;
                 objA.LastName = associate.LastName;
@@ -405,7 +455,7 @@ namespace AHDDManager.Controllers
         {
             try
             {
-                AHDDManagerClass.AssociateClockInHistory objACH = new AHDDManagerClass.AssociateClockInHistory(AssociateClockInHistoryID);
+                AssociateClockInHistory objACH = new AssociateClockInHistory(AssociateClockInHistoryID);
 
                 if (objACH.AssociateClockInHistoryExists)
                 {
@@ -460,7 +510,7 @@ namespace AHDDManager.Controllers
                 return Json("This form cannot be deleted because you are not an admin.");
             }
 
-            AHDDManagerClass.Form objF = new AHDDManagerClass.Form(FormID);
+            Form objF = new Form(FormID);
             if (!objF.FormsExists)
             {
                 return Json("The specified form does not exist.");
@@ -487,12 +537,12 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetForms()
         {
-            AHDDManagerClass.Forms objFs = new AHDDManagerClass.Forms();
+            Forms objFs = new Forms();
 
             return Json(objFs, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult UpdateForm(AHDDManagerClass.Form form)
+        public ActionResult UpdateForm(Form form)
         {
             if (form.Update())
             { return Json("1"); }
@@ -508,7 +558,7 @@ namespace AHDDManager.Controllers
 
         public JsonResult GetColors()
         {
-            AHDDManagerClass.Colors objCs = new AHDDManagerClass.Colors();
+            Colors objCs = new Colors();
 
 
             return Json(objCs.GetAvailableColors());

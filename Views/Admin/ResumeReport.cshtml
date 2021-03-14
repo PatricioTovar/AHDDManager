@@ -29,6 +29,11 @@
                 {
                     extend: 'excel',
                     className: 'btnExcelTbl btn btn-success',
+                    exportOptions: {
+                        modifier: {
+                            search: "applied"
+                        }
+                    },
                     filename: function () {
                         var title = "ResumeReport ";
 
@@ -49,7 +54,7 @@
             columns: [
                 {
                     data: "TransactionID",
-                    className: "exportExcel",
+                    className: "exportExcel text-center min-col",
                     render: function (data, type, row, meta) {
                         {
                             if (type == "exportxls") {
@@ -62,7 +67,7 @@
                 },
                 {
                     data: "TransactionDate",
-                    className: "exportExcel",
+                    className: "exportExcel text-center min-col",
                     render: function (data, type, row, meta) {
                         return moment(data).format('MM/DD/YYYY');
                     }
@@ -73,12 +78,12 @@
                 },
                 {
                     data: "TotalAmount",
-                    className: "exportExcel text-right",
+                    className: "exportExcel text-right min-col",
                     render: $.fn.dataTable.render.number(',', '.', 2)
                 },
                 {
                     data: "PaymentDate",
-                    className: "exportExcel",
+                    className: "exportExcel text-center min-col",
                     render: function (data, type, row, meta) {
                         if (row.PaymentMethod != 0) {
                             return moment(data).format('MM/DD/YYYY');
@@ -133,6 +138,7 @@
                 },
                 {
                     data: "MethodDescription",
+                    className: "text-center min-col",
                     render: function (data, type, row, meta) {
                         if (type == "exportxls") {
                             return data;
@@ -158,7 +164,7 @@
                 },
                 {
                     data: "PaymentAmount",
-                    className: "text-right",
+                    className: "text-right min-col",
                     render: $.fn.dataTable.render.number(',', '.', 2)
                 },
                 {
@@ -170,17 +176,7 @@
 
             }
         });
-
     }
-
-    var formatterCurrency = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-
-        // These options are needed to round to whole numbers if that's what you want.
-        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-    });
 
     function btnSearchClick() {
         tblPayments.clear().draw();
@@ -192,8 +188,9 @@
             //dataType: 'json',
             contentType: 'application/json;',
         }).done(function (result) {
-            if (result != null) {
-                tblPayments.rows.add(result).columns.adjust().draw();
+            if (result.Res) {
+
+                tblPayments.rows.add(result.Object).draw();
 
 
                 //TOTALS & COUNT
@@ -209,7 +206,7 @@
                 var totalDeposit = 0;
                 var countDeposit = 0;
 
-                $.each(result, function (index, item) {
+                $.each(result.Object, function (index, item) {
                     if (!isNaN(item.PaymentAmount)) {
                         if (item.PaymentMethod == 1) {
                             totalCash = totalCash + item.PaymentAmount;
@@ -243,10 +240,11 @@
                 var totalCount = countCash + countCheck + countCard + countDeposit;
                 $('#lblTotalAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalAmount));
                 $('#lblTotalCount').text('(' + totalCount + ')');
+
+            } else {
+                $.AlertDialog(result.Message, 'Error Message', null, 'lightcoral');
             }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            $.AlertDialog(textStatus + ': ' + errorThrown , 'Error Message', null, 'lightcoral');
-        });
+        })
     }
 </script>
 

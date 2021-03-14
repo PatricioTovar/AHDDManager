@@ -23,8 +23,12 @@ namespace AHDDManagerClass
         private int iDeletedBy;
         private Boolean blnTransactionDetailsExist;
 
-        //private ClassError objError;
 
+        private int iCustomerID;
+        private string strCustomerName;
+        private int iAssociateID;
+        private string strAssociateName;
+        private DateTime dtTransactionDate;
 
         public void initialize()
         {
@@ -40,8 +44,6 @@ namespace AHDDManagerClass
             iDeletedBy = 0;
 
             blnTransactionDetailsExist = false;
-
-            //objError = new ClassError();
         }
 
 
@@ -108,6 +110,12 @@ namespace AHDDManagerClass
                 strNotes = Convert.ToString(dr["Notes"] == Convert.DBNull ? string.Empty : dr["Notes"]);
                 iDeletedBy = Convert.ToInt16(dr["DeletedBy"] == Convert.DBNull ? 0 : dr["DeletedBy"]);
                 decTotal = Convert.ToDecimal(dr["Total"] == Convert.DBNull ? 0.0 : dr["Total"]);
+
+                iCustomerID = (dr.Table.Columns.Contains("CustomerID") && dr["CustomerID"] != Convert.DBNull) ? Convert.ToInt32(dr["CustomerID"]) : 0;
+                strCustomerName = (dr.Table.Columns.Contains("CustomerName") && dr["CustomerName"] != Convert.DBNull) ? Convert.ToString(dr["CustomerName"]) : null;
+                iAssociateID = (dr.Table.Columns.Contains("AssociateID") && dr["AssociateID"] != Convert.DBNull) ? Convert.ToInt32(dr["AssociateID"]) : 0;
+                strAssociateName = (dr.Table.Columns.Contains("AssociateName") && dr["AssociateName"] != Convert.DBNull) ? Convert.ToString(dr["AssociateName"]) : null;
+                dtTransactionDate = (dr.Table.Columns.Contains("TransactionDate") && dr["TransactionDate"] != Convert.DBNull) ? Convert.ToDateTime(dr["TransactionDate"]) : DateTime.MinValue;
             }
             catch (Exception ex)
             {
@@ -192,13 +200,32 @@ namespace AHDDManagerClass
             set { blnTransactionDetailsExist = value; }
         }
 
-        //public ClassError ErrorOccurred
-        //{
-        //    get { return objError; }
-        //}
 
-
-
+        public int CustomerID
+        {
+            get { return iCustomerID; }
+            set { iCustomerID = value; }
+        }
+        public string CustomerName
+        {
+            get { return strCustomerName; }
+            set { strCustomerName = value; }
+        }
+        public int AssociateID
+        {
+            get { return iAssociateID; }
+            set { iAssociateID = value; }
+        }
+        public string AssociateName
+        {
+            get { return strAssociateName; }
+            set { strAssociateName = value; }
+        }
+        public DateTime TransactionDate
+        {
+            get { return dtTransactionDate; }
+            set { dtTransactionDate = value; }
+        }
 
         public Boolean Update()
         {
@@ -254,8 +281,6 @@ namespace AHDDManagerClass
 
     }
 
-
-
     public class TransactionDetails : IEnumerable<TransactionDetail>
     {
         List<TransactionDetail> infoList = new List<TransactionDetail>();
@@ -284,6 +309,29 @@ namespace AHDDManagerClass
                     }
                 }
             }
+        }
+        public List<TransactionDetail> GetTransactionDetailsReport(DateTime StartDate, DateTime EndDate, int AssociateID, int CustomerID, string FormSearch)
+        {
+            Data objData = new Data();
+            DataTable dt;
+            TransactionDetail objInfo;
+
+            List<TransactionDetail> retList = new List<TransactionDetail>();
+            dt = objData.GetTransactionDetailsReport(StartDate, EndDate, AssociateID, CustomerID, FormSearch);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    objInfo = new TransactionDetail(dt.Rows[i]);
+                    if (objInfo.TransactionDetailsExist)
+                    {
+                        retList.Add(objInfo);
+                    }
+                }
+            }
+
+            return retList;
         }
 
         public void Add(TransactionDetail Info)

@@ -226,10 +226,12 @@
                 traditional: true,
                 contentType: 'application/json;',
                 success: function (result) {
-                    if (result.length > 0) {
-                        $.each(result, function (key, value) {
+                    if (result.Res) {
+                        $.each(result.Object, function (key, value) {
                             $("#ddlStates").append(new Option(value.Abbreviations, value.Abbreviations));
                         });
+                    } else {
+                        $.AlertDialog(result.Message, 'Error Message', null, 'lightcoral');
                     }
                 }
             });
@@ -374,9 +376,9 @@
                         $("#ddlStates").val(result.State);
                         $("#txtZip").val(result.Zip);
                         //$("#txtPhone").val(result.Phone);
-                        $('#txtPhone').val($('#txtPhone').masked(result.Mobile));
+                        $('#txtPhone').val($('#txtPhone').masked(result.Phone));
                         //$("#txtMobile").val(result.Mobile);
-                        $('#txtMobile').val($('#txtMobile').masked(result.Phone));
+                        $('#txtMobile').val($('#txtMobile').masked(result.Mobile));
                         $("#txtFax").val(result.Fax);
                         $("#txtEmail").val(result.Email);
                         $("#txtDateCreated").val(_date);

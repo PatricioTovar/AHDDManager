@@ -441,10 +441,6 @@
             <label>Name:</label>
             <div>@custname</div>
         </div>
-        <div class="col-md-4">
-            <label>Attended by:</label>
-            <select id="ddlAtendedBy" class="form-control"></select>
-        </div>
     </div>
 </div>
 
@@ -483,10 +479,16 @@
     </tfoot>
 </table>
 <div class="row">
-    <div class="col-sm-6">
+    <div class="form-group col-sm-9">
+        <label class="empty-label"></label>
         <a id="btnCancel" href="/transactions/customertransactions/@Url.RequestContext.RouteData.Values["id"]" class="btn btn-danger">Cancel</a>
     </div>
-    <div class="col-sm-6 text-right">
+    <div class="form-group col-sm-2">
+        <label>Attended by:</label>
+        <select id="ddlAtendedBy" class="form-control"></select>
+    </div>
+    <div class="form-group col-sm-1 text-right">
+        <label class="empty-label"></label>
         <button id="btnSubmit" class="btn btn-success">Submit</button>
     </div>
 </div>

@@ -176,7 +176,7 @@
 
                             <tr>
                                 <td>@item.TakenBy</td>
-                                <td>@item.PaymentDate</td>
+                                <td>@item.PaymentDate.ToString("MM/dd/yyyy hh:mm tt")</td>
                                 <td>@item.PaymentMethodDescription</td>
                                 <td class="col-md-2 text-right">@item.PaymentAmount.ToString("C") </td>
                             </tr>
