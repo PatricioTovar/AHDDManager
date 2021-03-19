@@ -140,17 +140,16 @@
 
 
         $("#tblAssociates").on('click', '.hours', function (event) {
-            event.preventDefault();
-            AssociateID = $(this).parent().parent().attr('id');
+            AssociateID = $(this).data("id");
 
-            $('#associate').text('Associate: ' + $(this).parent().parent().find("td:eq(1)").text() + ' (last 7 days)');
+            $('#associate').text('Associate: ' + $(this).data("name") + ' (last 7 days)');
             HoursDialog.dialog('open');
         });
 
 
         $("#tblAssociates").on('click', '.clock', function (event) {
             event.preventDefault();
-            AssociateID = $(this).parent().parent().attr('id');
+            AssociateID = $(this).data("id")
 
             $.ajax({
                 url: '/admin/ChangeAssociateClockedInStatus/',
@@ -186,7 +185,7 @@
             $('#divColor').css('background', 'silver')
             ClearForm();
             resetRequiredBoxes();
-            AssociateID = $(this).parent().parent().attr('id');
+            AssociateID = $(this).data("id");
             LoadAssociate(AssociateID);
             AssociateDialog.dialog("open");
         });
@@ -244,7 +243,7 @@
             <td class="text-center">
                 <i class="fa fa-circle fa-lg fa-fw" style="color: @item.BackgroundColor" data-toggle="tooltip" title="" data-original-title="@item.BackgroundColor"></i>
             </td>
-            <td><a href="#" class="name">@item.FirstName @item.LastName</a></td>
+            <td><a href="#" class="name" data-id="@item.AssociateID">@item.FirstName @item.LastName</a></td>
             <td>@item.Address</td>
             @*<td>@item.City</td>*@
             @*<td>@item.State</td>*@
@@ -268,14 +267,14 @@
             </td>
             <td class="text-center">
                 @*<img src="/images/hours.png" class="imgBtn hours" data-toggle="tooltip" data-placement="left" title="Check Associate Hours" />*@
-                <a><i class="fa fa-history fa-2x" aria-hidden="true" data-toggle="tooltip" title="Check Associate Hours"></i></a>
+                <a class="hours" data-id="@item.AssociateID" data-name="@item.FirstName @item.LastName"><i class="fa fa-history fa-2x" data aria-hidden="true" data-toggle="tooltip" title="Check Associate Hours"></i></a>
             </td>
             <td class="text-center">
                 @{
                     if (item.ClockedIn)
                     {
                         @*<img src="~/images/ClockedIn.png" class="imgBtn clock" data-toggle="tooltip" data-placement="left" title="Currently Clocked In" />*@
-                        <a class="clock">
+                        <a class="clock" data-id="@item.AssociateID" >
                             <span class="fa-stack fa-badge-stack fa-2x" data-toggle="tooltip" title="Currently Clocked In">
                                 <i class="fa fa-clock-o fa-stack-1x"></i>
                                 <i class="fa-badge fa-badge-bottom-circle-surround fa-stack-1x fa-inverse"></i>
@@ -286,7 +285,7 @@
                     else
                     {
                         @*<img src="~/images/ClockedOut.png" class="imgBtn clock" data-toggle="tooltip" data-placement="left" title="Currently Clocked Out" />*@
-                        <a class="clock">
+                        <a class="clock" data-id="@item.AssociateID" >
                             <span class="fa-stack fa-badge-stack fa-2x" data-toggle="tooltip" title="Currently Clocked Out">
                                 <i class="fa fa-clock-o fa-stack-1x"></i>
                                 <i class="fa-badge fa-badge-bottom-circle-surround fa-stack-1x fa-inverse"></i>
@@ -303,10 +302,6 @@
 
 
 @Html.Partial("~/Views/Shared/AssociateDialog.cshtml")
-
-
-
-
 
 
 <div id="hours-dialog" title="Associate Hours">

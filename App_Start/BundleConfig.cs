@@ -12,7 +12,6 @@ namespace AHDDManager
                       "~/Scripts/jquery-2.1.3.js",
                       "~/Scripts/jquery.formatCurrency-1.4.0.js",
                       "~/Scripts/jquery-ui-1.10.4.js",
-                      "~/Scripts/ConfirmDialog.js",
                       "~/Scripts/jquery.mask.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -32,7 +31,6 @@ namespace AHDDManager
                         "~/Content/themes/Greentheme/jquery-ui-1.10.4.custom.css",
                         "~/Content/bootstrap.css",
                         "~/Content/font-awesome.css",
-                        "~/Content/font-awesome-bandages.css", //http://alaind-.github.io/font-awesome-badge/index.html
                         "~/Content/site.css",
                          "~/Content/Ajax.css"));
 

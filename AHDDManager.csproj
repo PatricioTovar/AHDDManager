@@ -295,6 +295,7 @@
     <Content Include="Content\themes\Greentheme\jquery-ui-1.10.4.custom.css" />
     <Content Include="Content\themes\Greentheme\jquery-ui-1.10.4.custom.min.css" />
     <Content Include="favicon.ico" />
+    <Content Include="fonts\fontawesome-badge.svg" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -338,6 +339,8 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\fontawesome-badge.woff" />
+    <Content Include="fonts\fontawesome-badge.eot" />
+    <Content Include="fonts\fontawesome-badge.ttf" />
     <None Include="Properties\PublishProfiles\AHDD Publish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\buttons.html5.min.js" />
@@ -508,6 +511,7 @@
     <Content Include="Views\Admin\ResumeReport.cshtml" />
     <Content Include="Views\Account\ResumeAssociate.cshtml" />
     <Content Include="Views\Admin\ServicesReport.cshtml" />
+    <Content Include="Views\Shared\AddTransactionDetailDialog.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

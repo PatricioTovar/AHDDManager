@@ -14,18 +14,13 @@
 <script>
     $(function () {
 
-
         $.fn.bootstrapBtn = $.fn.button.noConflict();
         $('[data-toggle="tooltip"]').tooltip();
 
-        var _now = new Date;
 
         var startDate;
         var endDate;
         var assoc;
-
-        var _total = 0;
-
 
         var qsVars = getUrlVars();
 
@@ -104,6 +99,7 @@
 
                     $('[data-toggle="tooltip"]').tooltip();
 
+                    window.print();
                 }
             }
         });
@@ -121,7 +117,6 @@
             return vars;
         }
 
-
     });
 </script>
 
@@ -137,7 +132,7 @@
                 <div class="col-sm-3"><strong>Associate: </strong><div id="divAssociate"></div> </div>
                 <div class="col-sm-3"><strong>Start Date:</strong> <div id="divStart"></div></div>
                 <div class="col-sm-3"><strong>End Date:</strong> <div id="divEnd"></div></div>
-                <div class="col-sm-2"><div><a href="#" id="print"><img src="/images/print.png" width="25" height="25" /></a></div></div>
+                <div class="col-sm-3 hidden-print"><div><a href="#" id="print"><img src="/images/print.png" width="25" height="25" /></a></div></div>
             </div>
         </div>
 

@@ -100,3 +100,5 @@
 12/20/2020 5:59:22 PM|User Logged OUT: jackie
 12/20/2020 6:01:03 PM|User Logged in: jackie (Jackie Briseno)
 12/20/2020 6:02:15 PM|User Logged OUT: jackie
+3/16/2021 12:54:25 PM|User clock in status changed to True: jackie (Jackie Briseno)
+3/16/2021 12:54:31 PM|User clock in status changed to False: jackie (Jackie Briseno)

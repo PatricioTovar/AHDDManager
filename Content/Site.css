@@ -117,7 +117,8 @@ html, body {
 }
 
 .empty-label {
-    height: 1em;
+    width: 100%;
+    display: block;
 }
 
 
@@ -218,12 +219,14 @@ i.fa-badge {
     padding-left: 15px;
     padding-right: 15px;
 }
+
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    /* add padding to account for vertical scrollbar */
+    padding-right: 5px;
+} 
 /*---------*/
 
-@media print {
-    @page {
-        size: 330mm 427mm;
-        margin-left: 40mm;
-        margin-right: 40mm;
-    }
-}

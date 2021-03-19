@@ -8,18 +8,18 @@
 <script src="~/Scripts/Utilities.js"></script>
 
 <script>
+    var transactionDetails = [];
     $(function () {
         var _assosiateID = '@ViewBag.AssociateID'
         var _customerID = '@ViewBag.CustomerID'
 
-        var transactionDetails = [];
 
         $('[data-toggle="tooltip"]').tooltip();
         $('[data-toggle="popover"]').popover();
         $.fn.bootstrapBtn = $.fn.button.noConflict();
 
         $("#lnkAdd").on('click', function (event) {
-            newtransactiondialog.dialog("open");
+            _OpenNewDetailDialog();
         });
 
         $("#btnSubmit").on('click', function (event) {
@@ -56,7 +56,7 @@
             //        }
             //    });
 
-            //    
+            //
             //}
 
             if (transactionDetails.length == 0) {
@@ -93,203 +93,7 @@
                 });
         });
 
-        var newtransactiondialog = $("#new-transaction-dialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            height: 500,
-            width: $(window).width() * .6,
-            stack: true,
-            modal: true,
-            buttons: {
-                "Update": AddTransactionDetail,
-                Cancel: function () {
-                    newtransactiondialog.dialog("close");
-                }
-            },
-            close: function () {
-                newtransactiondialog.dialog("close");
-            }
-        });
 
-        var listdialog = $("#list-dialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            height: 500,
-            width: $(window).width() * .6,
-            stack: true,
-            modal: true,
-            open: function() {
-                $.ajax({
-                    url: '/transactions/GetForms/',
-                    //dataType: "json",
-                    success: function (data) {
-
-
-                        $('#lstForms').empty();
-                        var option='';
-
-                        $.each(data, function (index, item) {
-                            option = '<option value="' + item.FormID + '" data-price=' + item.Price + '>' + item.Title + '</option>';
-                            $('#lstForms').append(option);
-                        });
-
-
-                    }, error: function(xhr){
-                        //alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
-                        $.AlertDialog('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText, 'Error Message', function (event) { }, 'lightcoral');
-                    }
-                });
-
-            },
-            buttons: {
-                "OK": function(){
-                    $('#hdnFormID').val($('#lstForms').find(":selected").val());
-                    $('#forms').val(  $('#lstForms').find(":selected").text() );
-
-                    $('#txtPrice').val($('#lstForms').find(":selected").data('price'));
-                    $('#txtQuantity').val('1');
-
-
-                    updateSubtotal();
-                    listdialog.dialog("close");
-                },
-                Cancel: function () {
-                    listdialog.dialog("close");
-                }
-            },
-            close: function () {
-                listdialog.dialog("close");
-            }
-        });
-
-        function LoadTable() {
-
-            $("#tblTrans tbody").empty();
-            var total = 0;
-            if (transactionDetails.length > 0) {
-                $.each(transactionDetails, function (index, value) {
-                    var subtotal = 0;
-                    if (value.DiscountPrice == '') {
-                        subtotal = value.Quantity * value.UnitPrice;
-                    }
-                    else {
-                        subtotal = value.Quantity * value.DiscountPrice;
-                    }
-
-                    TransactionDetailRow =
-                        "<tr id=\"" + value.FormID + "\">" +
-                        "<td>" + value.FormTitle + "</td>" +
-                        "<td class='text-center'>" + value.Quantity + "</td>" +
-                        "<td class='text-right currencyLabel'>" + value.UnitPrice + "</td>" +
-                        "<td class='text-right currencyLabel'>" + value.DiscountPrice + "</td>" +
-                        "<td class='text-right currencyLabel'>" + subtotal + "</td>" +
-                        "<td>" + (value.Notes != '' ? " <a  data-toggle='popover' data-title='Note' data-content='" + value.Notes + "' data-trigger='hover'><i class='fa fa-commenting-o fa-2x' aria-hidden='true'></i></a>" : '') + "</td>" +
-                        "<td> <a class='delete' data-index='" + index + "'><i class='fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' data-placement='right' title='Delete' ></i></a> </td>" +
-                        "</tr>";
-
-                    $("#tblTrans tbody").append(TransactionDetailRow);
-
-                    total += subtotal;
-                });
-            } else {
-                $("#tblTrans tbody").append("<tr><td colspan='8' class='text-center'>No product or service added</td></tr>");
-            }
-            $("#lblTotal").text(total);
-
-
-            $('.currencyLabel').formatCurrency();
-            $('[data-toggle="tooltip"]').tooltip();
-            $('[data-toggle="popover"]').popover();
-        }
-
-        function AddTransactionDetail() {
-            var elements = document.querySelectorAll('[data-required="true"]');
-            var alertTriggered = false;
-
-            $.each(elements, function (index, item) {
-                if (item.value == '') {
-                    item.style.borderColor = 'red';
-
-                    if (!alertTriggered) {
-                        //alert(item.dataset.name + " is required.");
-                        $.AlertDialog(item.dataset.name + ' is required.', 'Error Message', function (event) { }, 'lightcoral');
-                        item.focus();
-                    }
-
-                    alertTriggered = true;
-                }
-                else {
-                    item.style.borderColor = '#cccccc';
-                }
-            });
-
-            if (alertTriggered) {
-                return;
-            }
-
-            if ($('#hdnFormID').val() == '') {
-                //alert('No transaction item has been selected.');
-                $.AlertDialog('No item has been selected.', 'Error Message', function (event) { }, 'lightcoral');
-                return;
-            }
-
-            if ($('#txtDiscount').val() != '' && $('#txtNote').val().trim() == '') {
-                //alert('You must include a note if you are discounting the price.');
-                $.AlertDialog('You must include a note if you are discounting the price.', 'Error Message', function (event) { }, 'lightcoral');
-                $('#txtDiscount').focus();
-                return false;
-            }
-
-            //$('#tblTrans tr:last').remove();
-
-            var subtotal;
-
-            if ($('#txtDiscount').val() == '') {
-                subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtPrice').val());
-            }
-            else {
-                subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtDiscount').val());
-            }
-
-            //TransactionDetail =
-            //    "<tr id=\"" + $('#hdnFormID').val() + "\">" +
-            //        "<td>" + $('#forms').val() + "</td>" +
-            //        "<td>" + $('#txtQuantity').val() + "</td>" +
-            //        "<td class='text-right currencyLabel'>" + $('#txtPrice').val() + "</td>" +
-            //        "<td class='text-right currencyLabel'>" + $('#txtDiscount').val() + "</td>" +
-            //        "<td class='text-right currencyLabel'>" + subtotal + "</td>" +
-            //        "<td>" + ($('#txtNote').val().trim() != '' ? " <a  data-toggle='popover' data-title='Note' data-content='" + $('#txtNote').val().trim() + "' data-trigger='hover'><i class='fa fa-commenting-o fa-2x' aria-hidden='true'></i></a>" : '') + "</td>" +
-            //        "<td> <a><i class='delete fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' data-placement='right' title='Delete'></i></a> </td>" +
-            //    "</tr>";
-
-            //$("#tblTrans").append(TransactionDetail);
-
-            newDetail = {
-                FormID: $('#hdnFormID').val(),
-                FormTitle: $('#forms').val(),
-                UnitPrice: $('#txtPrice').val(),
-                DiscountPrice: $('#txtDiscount').val(),
-                Quantity: $('#txtQuantity').val(),
-                Notes: $('#txtNote').val().trim(),
-                Total: subtotal
-            }
-
-            transactionDetails.push(newDetail);
-
-            $('#hdnFormID').val('');
-            $('#forms').val('');
-            $('#txtPrice').val('');
-            $('#txtDiscount').val('');
-            $('#txtQuantity').val('');
-            $('#txtNote').val('');
-
-            //TotalUp();
-
-            newtransactiondialog.dialog("close");
-
-
-            LoadTable();
-        }
 
         $(document).on('click', '.delete', function () {
             //$(this).closest('tr').remove();
@@ -301,76 +105,6 @@
 
         });
 
-        function TotalUp() {
-            var total = 0;
-
-            $('#tblTrans tr:not(:first-child)').each(function () {
-
-                total += parseFloat($(this).find('td:eq(4)').text().replace(',','').replace('$',''));
-
-            });
-
-            totalRow = "<tr id=\"" + $('#hdnFormID').val() + "\">" +
-
-                                            "<td></td>" +
-                                            "<td></td>" +
-                                            "<td></td>" +
-                                            "<td><label>Total:</label></td>" +
-                                            "<td class='text-right currencyLabel'>" + total + "</td>" +
-                                            "<td></td>" +
-                                            "<td></td>" +
-                                        "</tr>";
-
-            $("#tblTrans").append(totalRow);
-
-            $('.currencyLabel').formatCurrency();
-        }
-
-        $("#forms").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    beforeSend: function () { },
-                    url: '/transactions/SearchForms/',
-                    //dataType: "json",
-                    data: {
-                        SearchCriteria: request.term
-                    },
-                    success: function (data) {
-                        return response($.map(data, function (item) {
-                            return {
-                                label: item.Title,
-                                value: item.FormID,
-                                formprice: item.Price
-                            };
-                        }))
-                    },
-                    minLength: 2,
-                });
-            },
-            select: function (event, ui) {
-
-                $('#forms').val(ui.item.label);
-                $('#txtPrice').val(ui.item.formprice);
-                $('#hdnFormID').val(ui.item.value);
-                $('#txtQuantity').val('1');
-                updateSubtotal();
-                return false;
-            },
-            //focus: function (event, ui) {
-            //    event.preventDefault();
-            //    $(this).val(ui.item.label);
-            //},
-            change: function (event, ui) {
-                if (!ui.item) {
-                    $('#txtPrice').val('');
-                    $('#hdnFormID').val('');
-                    $('#txtQuantity').val('');
-
-                    updateSubtotal();
-                    return false;
-                }
-            }
-        });
 
         //load associates
         $.ajax({
@@ -396,28 +130,61 @@
     });
 
 
-    function btnSearchItemClick() {
-        $("#list-dialog").dialog("open");
-    };
+    function LoadTable() {
 
-    function updateSubtotal() {
-        if ($('#txtQuantity').val() == '' || $('#txtPrice').val() == '') {
-            $('#txtSubtotal').val(0);
+        $("#tblTrans tbody").empty();
+        var total = 0;
+        if (transactionDetails.length > 0) {
+            $.each(transactionDetails, function (index, value) {
+                var subtotal = 0;
+                if (value.DiscountPrice == '') {
+                    subtotal = value.Quantity * value.UnitPrice;
+                }
+                else {
+                    subtotal = value.Quantity * value.DiscountPrice;
+                }
+
+                var TransactionDetailRow =
+                    "<tr id=\"" + value.FormID + "\">" +
+                    "<td>" + value.FormTitle + "</td>" +
+                    "<td class='text-center'>" + value.Quantity + "</td>" +
+                    "<td class='text-right currencyLabel'>" + value.UnitPrice + "</td>" +
+                    "<td class='text-right currencyLabel'>" + value.DiscountPrice + "</td>" +
+                    "<td class='text-right currencyLabel'>" + subtotal + "</td>" +
+                    "<td>" + (value.Notes != '' ? " <a  data-toggle='popover' data-title='Note' data-content='" + value.Notes + "' data-trigger='hover'><i class='fa fa-commenting-o fa-2x' aria-hidden='true'></i></a>" : '') + "</td>" +
+                    "<td> <a class='delete' data-index='" + index + "'><i class='fa fa-trash fa-shadow fa-2x' style='color:crimson' data-toggle='tooltip' data-placement='right' title='Delete' ></i></a> </td>" +
+                    "</tr>";
+
+                $("#tblTrans tbody").append(TransactionDetailRow);
+
+                total += subtotal;
+            });
+        } else {
+            $("#tblTrans tbody").append("<tr><td colspan='8' class='text-center'>No product or service added</td></tr>");
+        }
+        $("#lblTotal").text(total);
+
+
+        $('.currencyLabel').formatCurrency();
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover();
+    }
+
+    function _AddTransactionDetail() {
+
+        if (!_ValidateNewDetail()) {
             return;
         }
 
+        var newDetail = _GetNewDetail();
 
-        var subtotal;
+        transactionDetails.push(newDetail);
 
-        if ($('#txtDiscount').val() == '') {
-            subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtPrice').val());
-        }
-        else {
-            subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtDiscount').val());
-        }
+        _CloseNewDetailDialog();
 
-        $('#txtSubtotal').val(subtotal)
+        LoadTable();
     }
+
 </script>
 
 @{
@@ -446,7 +213,7 @@
 
 <div class="row">
     <div class="col-lg-12 text-right">
-        <a href="#" id="lnkAdd">
+        <a id="lnkAdd">
             @*<img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add Item" />*@
             <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add Service" style="color:royalblue"></i>
         </a>
@@ -472,7 +239,7 @@
             <td></td>
             <td></td>
             <td class="text-right">Total:</td>
-            <td class="text-right"><span id="lblTotal" class="currencyLabel" >$0.00</span></td>
+            <td class="text-right"><span id="lblTotal" class="currencyLabel">$0.00</span></td>
             <td></td>
             <td></td>
         </tr>
@@ -480,7 +247,7 @@
 </table>
 <div class="row">
     <div class="form-group col-sm-9">
-        <label class="empty-label"></label>
+        <label class="empty-label">&nbsp;</label>
         <a id="btnCancel" href="/transactions/customertransactions/@Url.RequestContext.RouteData.Values["id"]" class="btn btn-danger">Cancel</a>
     </div>
     <div class="form-group col-sm-2">
@@ -488,57 +255,10 @@
         <select id="ddlAtendedBy" class="form-control"></select>
     </div>
     <div class="form-group col-sm-1 text-right">
-        <label class="empty-label"></label>
+        <label class="empty-label">&nbsp;</label>
         <button id="btnSubmit" class="btn btn-success">Submit</button>
     </div>
 </div>
 
-<div id="new-transaction-dialog" title="Add Service">
-    <input type="hidden" id="hdnFormID" />
+@Html.Partial("~/Views/Shared/AddTransactionDetailDialog.cshtml")
 
-    <div class="container">
-        <table id="tblTransDetails" class="table">
-            <tr>
-                <td colspan="2">
-                    <label for="code">Service:</label><br />
-                    <input type="text" id="forms" data-required="true" data-name="Item" class="form-control" placeholder="Type here to search">
-                </td>
-                <td colspan="2" class="text-right">
-                    <label class="empty-label"></label>
-                    @*<img src="~/images/search.png" id="search" style="padding-top:20px;" />*@
-                    <button id="btnItemSearch" class="btn btn-info" onclick="btnSearchItemClick()">
-                        <i class="fa fa-list-alt fa-fw" aria-hidden="true"></i>View list
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="txtQuantity">Quantity</label><input type="text" id="txtQuantity" class="form-control" data-required="true" onkeypress='numericValidate(event);' onkeyup="updateSubtotal();" data-name="Quantity" onchange="updateSubtotal()" />
-                </td>
-                <td>
-                    <label for="txtPrice">Unit Price</label> <input type="text" id="txtPrice" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" maxlength="5" data-required="true" data-name="Unit Price" onchange="updateSubtotal()" />
-                </td>
-                <td>
-                    <label for="txtDiscount">Discount Price</label><input type="text" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" id="txtDiscount" onchange="updateSubtotal()" />
-                </td>
-                <td>
-                    <label for="txtSubtotal">Sub-total</label><input type="text" class="form-control" id="txtSubtotal" value="0" readonly />
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="4">
-                    <div class="form-group">
-                        <label for="comment">Note:</label>
-                        <textarea class="form-control" rows="6" style="min-width: 100%" id="txtNote"></textarea>
-                    </div>
-                </td>
-
-            </tr>
-        </table>
-    </div>
-</div>
-
-<div id="list-dialog" title="Forms">
-    <select id="lstForms" size="18" class="form-control"></select>
-</div>

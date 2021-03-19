@@ -5,21 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - AHDD</title>
     @Styles.Render("~/Content/css")
-    <link href="~/Content/font-awesome-badge.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
 
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <link href="~/Content/font-awesome-badge.css" rel="stylesheet" /> @*http://alaind-.github.io/font-awesome-badge/index.html*@
     <script src="~/Scripts/SetupAjax.js"></script>
+    <script src="~/Scripts/ConfirmDialog.js"></script>
+    <script src="~/Scripts/Utilities.js"></script>
 </head>
 
 <body>
     <div class="content">
         <div class="content-inside">
             <div class="navbar main-navbar">
-                @*navbar-fixed-top  *TEMPORALY REMOVED FOR BETTER DESING* *@
+                @*navbar-fixed-top  *REMOVED FOR BETTER DESING* *@
                 <div class="container">
                     <div>
                         <a class="page-title" href="/Customer/">Agencia Hispana de Dallas on Bishop Ave.</a>

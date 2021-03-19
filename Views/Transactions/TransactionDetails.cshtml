@@ -16,11 +16,6 @@
         color: #ffffff;
         background-color: #5cb85c;
     }
-
-    #printFrame {
-        width: 100%;
-        height: 0px;
-    }
 </style>
 
 <script>
@@ -369,122 +364,6 @@
         });
 
 
-        var newtransactiondialog = $("#new-transaction-dialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            //height: 500,
-            width: $(window).width() * .6,
-            stack: true,
-            modal: true,
-            buttons: {
-                "Update": AddTransactionDetail,
-                Cancel: function () {
-                    newtransactiondialog.dialog("close");
-                }
-            },
-            close: function () {
-                newtransactiondialog.dialog("close");
-            }
-        });
-
-
-        var listdialog = $("#list-dialog").dialog({
-            autoOpen: false,
-            draggable: false,
-            height: 500,
-            width: $(window).width() * .6,
-            stack: true,
-            modal: true,
-            open: function () {
-                $.ajax({
-                    url: '/transactions/GetForms/',
-                    //dataType: "json",
-                    success: function (data) {
-
-
-                        $('#lstForms').empty();
-                        var option = '';
-
-                        $.each(data, function (index, item) {
-                            option = '<option value="' + item.FormID + '" data-price=' + item.Price + '>' + item.Title + '</option>';
-                            $('#lstForms').append(option);
-                        });
-
-
-                    }, error: function (xhr) {
-                        //alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
-                        $.AlertDialog('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText, 'Error Message', function (event) { }, 'lightcoral');
-                    }
-                });
-
-            },
-            buttons: {
-                "OK": function () {
-                    $('#hdnNewDetailFormID').val($('#lstForms').find(":selected").val());
-                    $('#newDetailForms').val($('#lstForms').find(":selected").text());
-
-                    $('#txtNewDetailPrice').val($('#lstForms').find(":selected").data('price'));
-                    $('#txtNewDetailQuantity').val('1');
-
-                    updateSubtotal();
-                    listdialog.dialog("close");
-                },
-                Cancel: function () {
-                    listdialog.dialog("close");
-                }
-            },
-            close: function () {
-                listdialog.dialog("close");
-            }
-        });
-
-        $("#newDetailForms").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    beforeSend: function () {},
-                    url: '/transactions/SearchForms/',
-                    //dataType: "json",
-                    data: {
-                        SearchCriteria: request.term
-                    },
-                    success: function (data) {
-                        return response($.map(data, function (item) {
-                            return {
-                                label: item.Title,
-                                value: item.FormID,
-                                formprice: item.Price
-                            };
-                        }))
-                    },
-                    minLength: 2,
-                });
-            },
-            select: function (event, ui) {
-
-                $('#newDetailForms').val(ui.item.label);
-                $('#txtNewDetailPrice').val(ui.item.formprice);
-                $('#hdnNewDetailFormID').val(ui.item.value);
-                $('#txtNewDetailQuantity').val('1');
-                updateSubtotal();
-
-                return false;
-            },
-            //focus: function (event, ui) {
-            //    event.preventDefault();
-            //    $(this).val(ui.item.label);
-            //},
-            change: function (event, ui) {
-                if (!ui.item) {
-                    $('#hdnNewDetailFormID').val('');
-                    $('#txtNewDetailPrice').val('');
-                    $('#txtNewDetailQuantity').val('');
-                    updateSubtotal();
-
-                    return false;
-                }
-            }
-        });
-
 
     var changeCustomerDialog = $("#change-customer-dialog").dialog({
         autoOpen: false,
@@ -528,81 +407,33 @@
     });
     });
 
+    function btnAddTransaccionClick() {
+        _OpenNewDetailDialog();
+    }
 
-    function AddTransactionDetail() {
-        var elements = document.querySelectorAll('[data-required="true"]');
-        var alertTriggered = false;
-
-        $.each(elements, function (index, item) {
-            if (item.value == '') {
-                item.style.borderColor = 'red';
-
-                if (!alertTriggered) {
-                    //alert(item.dataset.name + " is required.");
-                    $.AlertDialog(item.dataset.name + ' is required.', 'Error Message', function (event) { }, 'lightcoral');
-                    item.focus();
-                }
-
-                alertTriggered = true;
-            }
-            else {
-                item.style.borderColor = '#cccccc';
-            }
-        });
-
-        if (alertTriggered) {
+    function _AddTransactionDetail() {
+        if (!_ValidateNewDetail()) {
             return;
         }
 
+        var newDetail = _GetNewDetail();
 
-        if ($('#hdnNewDetailFormID').val() == '') {
-            //alert('No transaction item has been selected.');
-            $.AlertDialog('No item has been selected.', 'Error Message', function (event) { }, 'lightcoral');
-            return;
-        }
+        newDetail.TransactionID= @ViewContext.RouteData.Values["id"];
 
-        if ($('#txtNewDetailDiscount').val() != '' && $('#txtNewDetailNote').val().trim() == '') {
-            //alert('You must include a note if you are discounting the price.');
-            $.AlertDialog('You must include a note if you are discounting the price.', 'Error Message', function (event) { }, 'lightcoral');
-            $('#txtNewDetailDiscount').focus();
-            return false;
-        }
+        _CloseNewDetailDialog();
 
-        var subtotal;
-
-        if ($('#txtNewDetailDiscount').val() == '') {
-            subtotal = parseFloat($('#txtNewDetailQuantity').val()) * parseFloat($('#txtNewDetailPrice').val());
-        }
-        else {
-            subtotal = parseFloat($('#txtNewDetailQuantity').val()) * parseFloat($('#txtNewDetailDiscount').val());
-        }
-
-        if ($('#txtNewDetailDiscount').val() != '') {
-            subtotal = subtotal - parseFloat($('#txtNewDetailDiscount').val());
-        }
-
-        var transactionDetail = {
-            TransactionID: @ViewContext.RouteData.Values["id"] ,
-            TransactionDetailID: 0,
-            FormID: $('#hdnNewDetailFormID').val(),
-            FormTitle: $('#newDetailForms').val(),
-            UnitPrice: $('#txtNewDetailPrice').val(),
-            DiscountPrice: parseFloat($('#txtNewDetailDiscount').val()),
-            Quantity: $('#txtNewDetailQuantity').val(),
-            Notes: $('#txtNewDetailNote').val().trim(),
-            Total: subtotal
-        }
-
+        return;
         $.ajax({
             url: '/transactions/AddTransactionDetail/',
             type: 'POST',
-            data: JSON.stringify({ transactionDetail: transactionDetail }),
+            data: JSON.stringify({ transactionDetail: newDetail }),
             //dataType: 'json',
             traditional: true,
             contentType: 'application/json;',
             success: function (result) {
                 if (result != '0') {
-                    $.AlertDialog('Record saves succesfully', 'Succes', function (event) { location.reload(); }, 'lightgreen');
+                    $.AlertDialog('Record saves succesfully', 'Succes', function (event) { }, 'lightgreen');
+                    location.reload();
                     //window.location();
                     //return false;
                 } else {
@@ -617,32 +448,6 @@
         newtransactiondialog.dialog("close");
     }
 
-    function btnAddTransaccionClick() {
-        $("#new-transaction-dialog").dialog("open");
-    }
-
-    function btnSearchItemClick() {
-        $("#list-dialog").dialog("open");
-    };
-
-    function updateSubtotal() {
-        if ($('#txtNewDetailQuantity').val() == '' || $('#txtNewDetailPrice').val() == '') {
-            $('#txtNewDetailSubtotal').val(0);
-            return;
-        }
-
-
-        var subtotal;
-
-        if ($('#txtNewDetailDiscount').val() == '') {
-            subtotal = parseFloat($('#txtNewDetailQuantity').val()) * parseFloat($('#txtNewDetailPrice').val());
-        }
-        else {
-            subtotal = parseFloat($('#txtNewDetailQuantity').val()) * parseFloat($('#txtNewDetailDiscount').val());
-        }
-
-        $('#txtNewDetailSubtotal').val(subtotal)
-    }
 
     function ChosePaymentMethod(btn) {
         $("#payMethodButtons").find(".selected").removeClass("selected");
@@ -819,13 +624,14 @@
                 <td class="text-right currencyLabel">@item.UnitPrice</td>
                 <td class="text-right currencyLabel">@item.DiscountPrice</td>
                 <td class="text-right currencyLabel">@decSubTotal</td>
-                <td class="text-center">
-                    @if (ViewBag.IsAdmin && Model.Item3.TransactionStatusID == 1)
-                    {
-                        <a><i id="@item.TransactionDetailID" class='delete fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete'></i></a>
 
-                    }
-                </td>
+                @if (ViewBag.IsAdmin && Model.Item3.TransactionStatusID == 1)
+                {
+                    <td class="text-center">
+                        <a><i id="@item.TransactionDetailID" class='delete fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete'></i></a>
+                    </td>
+
+                }
             </tr>
         }
         <tr>
@@ -891,13 +697,14 @@
                 <td>@item.PaymentMethodDescription</td>
                 <td>@item.CheckNumber</td>
                 <td class="text-right currencyLabel">@item.PaymentAmount</td>
-                <td class="text-center">
-                    @if (ViewBag.IsAdmin && Model.Item3.TransactionStatusID == 1)
-                    {
+
+                @if (ViewBag.IsAdmin && Model.Item3.TransactionStatusID == 1)
+                {
+                    <td class="text-center">
                         <a><i id="@item.PaymentID" class='deletepayment fa fa-trash fa-shadow fa-2x' style="color:crimson" data-toggle='tooltip' data-placement='right' title='Delete payment'></i></a>
 
-                    }
-                </td>
+                    </td>
+                }
             </tr>
         }
 
@@ -1091,53 +898,8 @@
     </div>
 </div>
 
-<div id="new-transaction-dialog" title="Add New Item">
-    <input type="hidden" id="hdnNewDetailFormID" />
 
-    <div class="container">
-        <table id="tblTransDetails" class="table">
-            <tr>
-                <td colspan="2">
-                    <label for="code">Item:</label><br />
-                    <input type="text" id="newDetailForms" data-required="true" data-name="Item" class="form-control" placeholder="Type here to search">
-                </td>
-                <td colspan="2" class="text-right">
-                    <label class="empty-label"></label>
-                    @*<img src="~/images/search.png" id="search" style="padding-top:20px;" />*@
-                    <button id="btnItemSearch" class="btn btn-info" onclick="btnSearchItemClick()">
-                        <i class="fa fa-list-alt fa-fw" aria-hidden="true"></i>View list
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="txtNewDetailQuantity">Quantity</label><input type="text" id="txtNewDetailQuantity" class="form-control" data-required="true" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" onchange="updateSubtotal()" data-name="Quantity" />
-                </td>
-                <td>
-                    <label for="txtNewDetailPrice">Unit Price</label> <input type="text" id="txtNewDetailPrice" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" onchange="updateSubtotal()" maxlength="5" data-required="true" data-name="Unit Price" />
-                </td>
-                <td>
-                    <label for="txtNewDetailDiscount">Discount Price</label><input id="txtNewDetailDiscount" type="text" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" onchange="updateSubtotal()" />
-                </td>
-                <td>
-                    <label for="txtNewDetailSubtotal">Sub-total</label><input type="text" class="form-control" id="txtNewDetailSubtotal" value="0" readonly />
-                </td>
-            </tr>
-            <tr>
-                <td colspan="6">
-                    <div class="form-group">
-                        <label for="txtNewDetailNote">Note:</label>
-                        <textarea id="txtNewDetailNote" class="form-control" rows="6" style="min-width: 100%"></textarea>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
-
-<div id="list-dialog" title="Forms">
-    <select id="lstForms" size="18" class="form-control"></select>
-</div>
+@Html.Partial("~/Views/Shared/AddTransactionDetailDialog.cshtml")
 
 
 <div id="change-customer-dialog" title="Change customer">

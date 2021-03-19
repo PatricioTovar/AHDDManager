@@ -12,28 +12,36 @@
     $(function () {
         $("#dpStart").datepicker();
         $("#dpEnd").datepicker();
-        $("#dpExpense").datepicker();
 
         var AssociateID;
         var HoursWorked;
+        var HoursWorkedList = [];
 
         $.fn.bootstrapBtn = $.fn.button.noConflict();
         $('[data-toggle="tooltip"]').tooltip();
 
-        var _now = new Date;
-
         $("#dpStart").datepicker().datepicker("setDate", new Date());
         $("#dpEnd").datepicker().datepicker("setDate", new Date());
 
-        var _total = 0;
+        //$('#tblClockIns tbody').on('click', 'tr:not(:first-child, :last-child)', function () {
+        //    AssociateID = $(this).attr('id');
 
-        $('#tblClockIns tbody').on('click', 'tr:not(:first-child, :last-child)', function () {
-            AssociateID = $(this).attr('id');
+        //    $('#associate').text($(this).find("td").eq(1).text() + ' ' + $(this).find("td").eq(2).text());
 
-            $('#associate').text($(this).find("td").eq(1).text() + ' ' + $(this).find("td").eq(2).text());
+        //    HoursDialog.dialog("open");
+        //})
 
+        $(document).on('click', '.associateDetail', function () {
+            var index = $(this).data("index");
+            var AssociateHW = HoursWorkedList[index]
+            AssociateID = AssociateHW.AssociateID;
+            var AssociateName = AssociateHW.AssociateName;
+            var AssosiateTotalTime = AssociateHW.TotalHoursWorked + ":" + AssociateHW.TotalMinutesWorked;
+
+            $("#associateName").text(AssociateName);
+            $("#assosiateTotalTime").text(AssosiateTotalTime);
             HoursDialog.dialog("open");
-        })
+        });
 
         var HoursDialog = $("#hours-dialog").dialog({
             autoOpen: false,
@@ -75,15 +83,17 @@
                             }
 
                             entry += "<td>" + _LoginDatetime + "</td>" +
-                                        "<td>" + _LogoutDatetime + "</td>" +
-                                         "<td>" + cih.HoursWorked + "</td>" +
-                                          "<td>" + cih.MinutesWorked + "</td>" +
-                                          "<td><img id=\"edit\"src=\"/images/edit.png\" /></td>" +
-                                 "</tr>";
+                                "<td>" + _LogoutDatetime + "</td>" +
+                                "<td>" + cih.HoursWorked + "</td>" +
+                                "<td>" + cih.MinutesWorked + "</td>" +
+                                "<td><a class='editTime'><i class='fa fa-pencil fa-shadow fa-2x' style='color:cornflowerblue' data-toggle='tooltip' data-placement='right' title='Edit' ></i></a> </td>" +
+                                "</tr>";
 
                             $("#tblClockInsDetails").append(entry);
 
                         });
+
+                        $('[data-toggle="tooltip"]').tooltip();
                     }
                 });
 
@@ -139,20 +149,20 @@
                     if (result == '0') {
                         $.AlertDialog('There was an error updating the times.', 'Error Message', function (event) { }, 'lightcoral');
                     } else {
-                        $.AlertDialog('Clock in times update successfully.', 'Success Message', function (event) { }, 'lightgreen');                        
+                        $.AlertDialog('Clock in times update successfully.', 'Success Message', function (event) { }, 'lightgreen');
                         HoursEditDialog.dialog("close");
                         HoursDialog.dialog("close");
                         $('#btnSearch').trigger('click');
-                    } 
+                    }
                 }
             });
         }
 
-        $('#tblClockInsDetails tbody').on('click', '#edit', function () {            
+        $('#tblClockInsDetails tbody').on('click', '.editTime', function () {
             //set the ach id for updating
             $('#hdnACHID').val($(this).parent().parent().closest('tr').attr('id'));
 
-            
+
             $('#tdLITime').text($(this).parent().parent().find('td:eq(0)').text());
             $('#tdLOTime').text($(this).parent().parent().find('td:eq(1)').text());
 
@@ -161,9 +171,9 @@
             var lo = new Date($(this).parent().parent().find('td:eq(1)').text());
             var hour;
             var ampm;
- 
+
             $('#hdnDate').val(moment($(this).parent().parent().find('td:eq(0)').text()).format('L'));
-//debugger
+            //debugger
             //set hours
             if (li.getHours() > 12) {
                 hour = li.getHours() - 12;
@@ -188,7 +198,7 @@
                 hour = lo.getHours();
                 ampm = 'AM';
             }
-            
+
             var minutes = lo.getMinutes();
             minutes = minutes > 9 ? minutes : '0' + minutes.toString();
 
@@ -202,60 +212,66 @@
 
 
         $('#lnkPrint').on('click', function (e) {
-            e.stopPropagation();
-            window.open('AssociateHoursPrint/?startdate=' + $('#dpStart').val() + '&enddate=' + $('#dpEnd').val() + '&assoc=' + AssociateID, '', 'scrollbars=1,toolbar=1,resizable=1,width=1000,height=580,left=0,top=0')
+            if ($("#printFrame").length) {
+            $("#printFrame").remove();
+        }
+            var url = 'AssociateHoursPrint/?startdate=' + $('#dpStart').val() + '&enddate=' + $('#dpEnd').val() + '&assoc=' + AssociateID;
+            $("<iframe id='printFrame'>") // create a new iframe element
+                .hide()// make it invisible
+                .attr("src", url) // point the iframe to the page you want to print
+                .appendTo("body");
         });
-
-
 
         $("#btnSearch").on('click', function (event) {
             if (Date.parse($("#dpEnd").val()) < Date.parse($("#dpStart").val())) {
                 $.AlertDialog('End date cannot be before start date', 'Error Message', function (event) { }, 'lightcoral');
-                //alert('End date cannot be before start date');
+                return;
             }
-            else {
-                $.ajax({
-                    url: '/admin/GetAssociateHours/',
-                    type: 'POST',
-                    data: JSON.stringify({ StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
-                    //dataType: 'json',
-                    traditional: true,
-                    contentType: 'application/json;',
-                    success: function (result) {
 
-                        if (result.length == 0) {
-                            //THIS NEEDS TO GO
-                            //StoreFlavor = "<tr><td>No Results</td></tr>";
-                            //$("#tblCustomers").append(StoreFlavor);
-                        } else {
-                            $("#tblClockIns tr:gt(0)").remove();
-                            HoursWorked = result.HoursWorked;
+            $("#tblClockIns tbody").empty();
+            HoursWorkedList = [];
+            $.ajax({
+                url: '/admin/GetAssociateHours/',
+                type: 'POST',
+                data: JSON.stringify({ StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
+                //dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) {
 
-                            $.each(result.HoursWorked, function (key, value) {
-                                expense = "<tr id=" + value.AssociateID + ">" +
-                                           "<td>" + value.AssociateID + "</td>" +
-                                           "<td>" + value.AssociateName + "</td>" +
-                                           "<td>" + value.TotalHoursWorked + "</td>" +
-                                           "<td>" + value.TotalMinutesWorked + "</td>" +
-                                    "</tr>";
+                    if (result && result.HoursWorked.length > 0) {
+                        HoursWorkedList = result.HoursWorked;
+                        HoursWorked = result.HoursWorked;
 
-                                $("#tblClockIns").append(expense);
+                        $.each(result.HoursWorked, function (index, value) {
+                            var expense = "<tr id=" + value.AssociateID + ">" +
+                                "<td>" + value.AssociateID + "</td>" +
+                                "<td>" + value.AssociateName + "</td>" +
+                                "<td>" + value.TotalHoursWorked + "</td>" +
+                                "<td>" + value.TotalMinutesWorked + "</td>" +
+                                "<td> <a class='associateDetail' data-index='" + index + "'><i class='fa fa-history fa-shadow fa-2x' data-toggle='tooltip' data-placement='right' title='View details' ></i></a> </td>" +
+                                "</tr>";
 
-                            });
+                            $("#tblClockIns tbody").append(expense);
 
-                            expense = "<tr>" +
-                                                "<td> <strong>TOTAL:</strong></td>" +
-                                                "<td><strong>" + result.TotalWorkTimeString + "</strong></td>" +
-                                                "<td></td>" +
-                                                "<td></td>" +
-                                         "</tr>";
-                            $("#tblClockIns").append(expense);
+                        });
 
-                            $('[data-toggle="tooltip"]').tooltip();
-                        }
+                        //expense = "<tr>" +
+                        //    "<td> <strong>TOTAL:</strong></td>" +
+                        //    "<td><strong>" + result.TotalWorkTimeString + "</strong></td>" +
+                        //    "<td></td>" +
+                        //    "<td></td>" +
+                        //    "</tr>";
+                        //$("#tblClockIns").append(expense);
+
+                        $("#lblTotalHours").text(result.TotalWorkTimeString);
+                        $('[data-toggle="tooltip"]').tooltip();
+                    } else {
+                        $("#tblClockIns tbody").append("<tr><td colspan='5' class='text-center'>No data available in table</td></tr>");
+                        $("#lblTotalHours").text("0.00");
                     }
-                });
-            }
+                }
+            });
         });
 
         $('#btnSearch').trigger('click');
@@ -289,13 +305,26 @@
         </div>
     </div>
 
-    <table id="tblClockIns" class="table table-responsive table-hover">
-        <tr>
-            <th>Associate ID</th>
-            <th>Associate Name</th>
-            <th>Hours Worked</th>
-            <th>Minutes Worked</th>
-        </tr>
+    <table id="tblClockIns" class="table table-responsive table-condensed">
+        <thead>
+            <tr>
+                <th>Associate ID</th>
+                <th>Associate Name</th>
+                <th>Hours Worked</th>
+                <th>Minutes Worked</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            <tr>
+                <td class="text-right">Total:</td>
+                <td><span id="lblTotalHours"></span></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
     </table>
 
 </div>
@@ -305,14 +334,16 @@
 <div id="hours-dialog" title="Associate Hours">
     <div class="container">
         <div class="row">
-            <div class="col-lg-2">
-                <div id="associate"></div>
+            <div class="col-sm-2">
+                <label id="associateName"></label>
+                <p id="assosiateTotalTime"></p>
             </div>
-        </div>
-        <div class="col-lg-2 text-left" style="padding-left:30px">
-            <a href="#" id="lnkPrint">
-                <img src="~/images/print.png" data-toggle="tooltip" data-placement="right" title="Print Expenses" />
-            </a>
+            <div class="col-sm-10 text-right" >
+                <a href="#" id="lnkPrint">
+                    @*<img src="~/images/print.png" data-toggle="tooltip" data-placement="right" title="Print" />*@
+                    <i class="fa fa-print  fa-3x fa-shadow" aria-hidden="true" style="color:steelblue" data-toggle="tooltip" data-placement="right" title="Print"></i>
+                </a>
+            </div>
         </div>
     </div>
     <table id="tblClockInsDetails" class="table table-responsive">

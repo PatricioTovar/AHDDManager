@@ -1,0 +1,190 @@
+﻿@{
+    Layout = null;
+}
+<script>
+    var _newtransactiondialog;
+
+    $(function () {
+        _newtransactiondialog = $("#new-transaction-dialog").dialog({
+            autoOpen: false,
+            draggable: false,
+            width: $(window).width() * .6,
+            stack: true,
+            modal: true,
+            buttons: {
+                Update: _AddTransactionDetail,
+                Cancel: function () {
+                    _CloseNewDetailDialog();
+                }
+            },
+            close: function () {
+                _ClearNewDetailDialog();
+            }
+        });
+
+        $.ajax({
+            url: '/transactions/GetForms/',
+            //dataType: "json",
+            success: function (result) {
+                result.sort(function (a, b) {
+                    var A = a.Title.toUpperCase();
+                    var B = b.Title.toUpperCase();
+                    return (A < B) ? -1 : (A > B) ? 1 : 0;
+                })
+                var ddlFormsAutocomplete = $("#ddlFormsAutocomplete");
+
+                $.each(result, function (index, item) {
+                    ddlFormsAutocomplete.append($("<option />").val(this.FormID).text(this.Title).data("price", item.Price));
+                });
+
+                ddlFormsAutocomplete.combobox();
+            }
+        });
+    });
+
+
+    function ddlFormsAutocompleteChange() {
+        var ddlFormsAutocomplete = $("#ddlFormsAutocomplete");
+        if (ddlFormsAutocomplete.val()) {
+            $('#txtPrice').val(ddlFormsAutocomplete.find(":selected").data('price'));
+            if (!($('#txtQuantity').val())) {
+                $('#txtQuantity').val('1');
+            }
+        } 
+
+        updateSubtotal();
+    }
+
+    function _OpenNewDetailDialog() {
+        _newtransactiondialog.dialog("open");
+    }
+
+    function _CloseNewDetailDialog() {
+        _newtransactiondialog.dialog("close");
+    }
+
+    function _ValidateNewDetail() {
+
+        if ($('#ddlFormsAutocomplete').val() == '') {
+            //alert('No transaction item has been selected.');
+            $.AlertDialog('No service has been selected.', 'Error Message', function (event) { }, 'lightcoral');
+            return false;
+        }
+
+        var elements = document.querySelectorAll('[data-required="true"]');
+        var alertTriggered = false;
+
+        $.each(elements, function (index, item) {
+            if (item.value == '') {
+                item.style.borderColor = 'red';
+
+                if (!alertTriggered) {
+                    //alert(item.dataset.name + " is required.");
+                    $.AlertDialog(item.dataset.name + ' is required.', 'Error Message', function (event) { }, 'lightcoral');
+                    item.focus();
+                }
+
+                alertTriggered = true;
+            }
+            else {
+                item.style.borderColor = '#cccccc';
+            }
+        });
+
+        if (alertTriggered) {
+            return false;
+        }
+
+        if ($('#txtDiscount').val() != '' && $('#txtNote').val().trim() == '') {
+            //alert('You must include a note if you are discounting the price.');
+            $.AlertDialog('You must include a note if you are discounting the price.', 'Error Message', function (event) { $('#txtDiscount').focus();}, 'lightcoral');            
+            return false;
+        }
+
+        return true;
+    }
+
+    function _GetNewDetail() {
+        var subtotal;
+
+        if ($('#txtDiscount').val() == '') {
+            subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtPrice').val());
+        }
+        else {
+            subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtDiscount').val());
+        }
+
+        var newDetail = {
+            FormID: $('#ddlFormsAutocomplete').val(),
+            FormTitle: $('#ddlFormsAutocomplete').val(),
+            UnitPrice: $('#txtPrice').val(),
+            DiscountPrice: $('#txtDiscount').val(),
+            Quantity: $('#txtQuantity').val(),
+            Notes: $('#txtNote').val().trim(),
+            Total: subtotal
+        };
+
+        return newDetail;
+    }
+
+    function _ClearNewDetailDialog() {
+        $('ddlFormsAutocomplete').combobox('clear');
+        $('#txtPrice').val('');
+        $('#txtDiscount').val('');
+        $('#txtQuantity').val('');
+        $('#txtNote').val('');
+    }
+
+    function updateSubtotal() {
+        if ($('#txtQuantity').val() == '' || $('#txtPrice').val() == '') {
+            $('#txtSubtotal').val(0);
+            return;
+        }
+
+
+        var subtotal;
+
+        if ($('#txtDiscount').val() == '') {
+            subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtPrice').val());
+        }
+        else {
+            subtotal = parseFloat($('#txtQuantity').val()) * parseFloat($('#txtDiscount').val());
+        }
+
+        $('#txtSubtotal').val(subtotal)
+    }
+
+</script>
+
+<div id="new-transaction-dialog" title="Add Service">
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label for="txtAddress">Service:</label>
+            <select id="ddlFormsAutocomplete" class="form-control" onchange="ddlFormsAutocompleteChange()" data-placeholder="Type here to search">
+                <option value="" selected></option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 form-group">
+            <label for="txtQuantity">Quantity</label>
+            <input id="txtQuantity" class="form-control" data-required="true" data-name="Quantity" onkeypress='numericValidate(event);' onkeyup="updateSubtotal();" onchange="updateSubtotal()" />
+        </div>
+        <div class="col-md-3 form-group">
+            <label for="txtPrice">Unit Price</label> <input type="text" id="txtPrice" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" maxlength="5" data-required="true" data-name="Unit Price" onchange="updateSubtotal()" />
+        </div>
+        <div class="col-md-3 form-group">
+            <label for="txtDiscount">Discount Price</label><input type="text" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateSubtotal();" id="txtDiscount" onchange="updateSubtotal()" />
+        </div>
+        <div class="col-md-3 form-group">
+            <label for="txtSubtotal">Sub-total</label><input type="text" class="form-control" id="txtSubtotal" value="0" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 form-group">
+            <label for="comment">Note:</label>
+            <textarea class="form-control" rows="6" style="min-width: 100%" id="txtNote"></textarea>
+        </div>
+    </div>
+</div>
+

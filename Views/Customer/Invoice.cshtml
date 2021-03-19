@@ -11,21 +11,16 @@
 <style>
     .main {
         background: #ffffff;
-        border-bottom: 15px solid #F81D2D;
-        border-top: 15px solid #1E1F23;
+        border-bottom: 5px solid #808080;
+        border-top: 5px solid #808080;
+        box-shadow: 0 0px 21px #808080;
         margin-top: 30px;
-        margin-bottom: 30px;
-        padding: 20px 30px !important;
-        position: relative;
-        box-shadow: 0 1px 21px #808080;
-        font-size: 19px;
-        max-width: 100%;
-        width: 1170px;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
+        font-size: 16px;
     }
+    #tblInfo {
+        font-size: 18px;
+    }
+
     .tr-note {
         font-size: 0.7em;
     }
@@ -52,15 +47,15 @@
             <div class="col-md-12">
                 <div class="hidden-print"><a href="#" id="print" onclick="sendToPrint()"><img src="/images/print.png" width="25" height="25" /></a></div>
                 <div class="row">
-                    <div class="=row col-sm-12">
-                        <h3><strong>Agencia Hispana De Dallas on Bishop Ave.</strong></h3>
+                    <div class="col-sm-12 text-center">
+                        <h2><strong>Agencia Hispana De Dallas on Bishop Ave.</strong></h2>
                     </div>
 
-                    <table class="table">
+                    <table id="tblInfo" class="table">
                         <tr>
                             <td>
                                 <div>
-                                    <div> <strong id="lblBizName">@Model.Business.BusinessName</strong></div>
+                                    <div> <strong> @Model.Business.BusinessName</strong></div>
                                     <div id="lblBizAddress">@Model.Business.Address  </div>
                                     <div>@Model.Business.City, @Model.Business.State @Model.Business.Zip </div>
                                     <div id="lblBizPhone">@Model.Business.PhoneFomatted</div>
@@ -70,7 +65,7 @@
                             <td>
                                 <div class="text-right top">
                                     <div id="lblCustName">@Model.Customer.FirstName @Model.Customer.LastName</div>
-                                    <div id="lblCustName">@Model.Customer.SecondaryFirstName @Model.Customer.SecondaryLastName</div>
+                                    <div >@Model.Customer.SecondaryFirstName @Model.Customer.SecondaryLastName</div>
                                     <div id="lblCustAddress">@Model.Customer.Address  </div>
                                     <div>@Model.Customer.City , @Model.Customer.State @Model.Customer.Zip</div>
 
@@ -86,27 +81,27 @@
                     <tr>
                         <td>
                             <div class="text-center">
-                                <h4 id="lblInvoice"><strong>Rep:</strong></h4>
-                                <h4>@Model.Transaction.TakenBy</h4>
+                                <label id="lblInvoice"><strong>Rep:</strong></label>
+                                <p>@Model.Transaction.TakenBy</p>
                             </div>
                         </td>
                         <td>
                             <div class="text-center">
-                                <h4 id="lblInvoice"><strong>Customer ID:</strong></h4>
-                                <h4>@Model.Customer.CustomerID</h4>
+                                <label id="lblInvoice"><strong>Customer ID:</strong></label>
+                                <p>@Model.Customer.CustomerID</p>
 
                             </div>
                         </td>
                         <td>
                             <div class="text-center">
-                                <h4 id="lblInvoice"><strong>Receipt No.</strong></h4>
-                                <h4>@Model.Transaction.TransactionID</h4>
+                                <label id="lblInvoice"><strong>Receipt No.</strong></label>
+                                <p>@Model.Transaction.TransactionID</p>
                             </div>
                         </td>
                         <td>
                             <div class="text-center">
-                                <h4 id="lblInvoiceDate"><strong>Receipt Date:</strong></h4>
-                                <h4>@Model.Transaction.TransactionDate.ToString("MM/dd/yyyy hh:mm tt")</h4>
+                                <label id="lblInvoiceDate"><strong>Receipt Date:</strong></label>
+                                <p>@Model.Transaction.TransactionDate.ToString("MM/dd/yyyy hh:mm tt")</p>
                             </div>
                         </td>
                     </tr>
@@ -165,9 +160,9 @@
                 <h3><strong>Payments</strong></h3>
                 <table class="table" id="tblPayments">
                     <tr>
-                        <th class="col-sm-4">Rep</th>
-                        <th class="col-sm-3">Date</th>
-                        <th class="col-sm-3">Method</th>
+                        <th class="col-sm-3">Rep</th>
+                        <th class="col-sm-5">Date</th>
+                        <th class="col-sm-2">Method</th>
                         <th class="col-sm-2 text-center">Amount</th>
                     </tr>
 
