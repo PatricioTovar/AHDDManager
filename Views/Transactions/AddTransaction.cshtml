@@ -60,7 +60,7 @@
             //}
 
             if (transactionDetails.length == 0) {
-                $.AlertDialog('There is no product or service added.', 'Error Message', function (event) { }, 'lightcoral');
+                $.AlertDialog('There is no item added.', 'Error Message', function (event) { }, 'lightcoral');
                 return;
             }
 
@@ -160,7 +160,7 @@
                 total += subtotal;
             });
         } else {
-            $("#tblTrans tbody").append("<tr><td colspan='8' class='text-center'>No product or service added</td></tr>");
+            $("#tblTrans tbody").append("<tr><td colspan='8' class='text-center'>No data available in table</td></tr>");
         }
         $("#lblTotal").text(total);
 
@@ -215,7 +215,7 @@
     <div class="col-lg-12 text-right">
         <a id="lnkAdd">
             @*<img src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add Item" />*@
-            <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add Service" style="color:royalblue"></i>
+            <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add Item" style="color:royalblue"></i>
         </a>
     </div>
 </div>
@@ -232,7 +232,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody><tr><td colspan='8' class='text-center'>No product or service added</td></tr></tbody>
+    <tbody><tr><td colspan='8' class='text-center'>No data available in table</td></tr></tbody>
     <tfoot>
         <tr>
             <td></td>

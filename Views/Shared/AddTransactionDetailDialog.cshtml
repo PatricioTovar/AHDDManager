@@ -67,7 +67,7 @@
 
         if ($('#ddlFormsAutocomplete').val() == '') {
             //alert('No transaction item has been selected.');
-            $.AlertDialog('No service has been selected.', 'Error Message', function (event) { }, 'lightcoral');
+            $.AlertDialog('No item has been selected.', 'Error Message', function (event) { }, 'lightcoral');
             return false;
         }
 
@@ -156,10 +156,10 @@
 
 </script>
 
-<div id="new-transaction-dialog" title="Add Service">
+<div id="new-transaction-dialog" title="Add Item">
     <div class="row">
         <div class="col-md-6 form-group">
-            <label for="txtAddress">Service:</label>
+            <label for="txtAddress">Item:</label>
             <select id="ddlFormsAutocomplete" class="form-control" onchange="ddlFormsAutocompleteChange()" data-placeholder="Type here to search">
                 <option value="" selected></option>
             </select>

@@ -10,7 +10,18 @@
 <script src="~/Scripts/States.js"></script>
 
 <!-- NEEDED FOR SPINNER DIALOG -->
+<style>
+    #divParthnerInfo {
+        background-color: #f5f5f5;
+        border: 1px solid #e3e3e3;
+        border-radius: 4px;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-left: -5px;
+        margin-right: -5px;
+    }
 
+</style>
 <script>
     $(function () {
         var _associateID = '@(ViewBag.AssociateID)';
@@ -264,7 +275,7 @@
             event.preventDefault();
             ClearCustomerDialog();
             $('#dialog_menu').show();
-            $('#rowClientId').show();
+            $('#divClientId').css('visibility', 'visible');
             $("#customer-dialog :input").prop("disabled", true);
             $('.ui-dialog-buttonpane button:contains("Update")').button().hide();
             CustomerDialog.dialog("open");
@@ -278,7 +289,7 @@
             ClearCustomerDialog();
             CustomerDialog.dialog("open");
             $('#dialog_menu').hide();
-            $('#rowClientId').show();
+            $('#divClientId').css('visibility', 'visible');
             $("#customer-dialog :input").prop("disabled", false);
             $('.ui-dialog-buttonpane button:contains("Update")').button().show();
             //load dialog
@@ -328,7 +339,7 @@
             ClearCustomerDialog();
 
             $('#dialog_menu').hide();
-            $('#rowClientId').hide();
+            $('#divClientId').css('visibility', 'hidden');
             $("#customer-dialog :input").prop("disabled", false);
             $('.ui-dialog-buttonpane button:contains("Update")').button().show();
             $('#chkActive').attr('disabled', true);
@@ -339,7 +350,7 @@
 
         function ClearCustomerDialog() {
 
-            $("#lblClientID").val('');
+            $("#lblClientID").text('');
             $('#customer-dialog').find('input:text').css("border-color", "#cccccc");
             $('#customer-dialog').find('input:text').val('');
             $('#customer-dialog').find('input:checkbox').removeAttr('checked');
@@ -366,7 +377,7 @@
                         var _date = new Date(parseInt(result.DateCreated.substr(6)));
                         _date = (_date.getMonth() + 1) + '/' + _date.getDate() + '/' + _date.getFullYear();
 
-                        $("#lblClientID").val(customerid);
+                        $("#lblClientID").text(customerid);
                         $("#txtFirst").val(result.FirstName);
                         $("#txtLast").val(result.LastName);
                         $("#txtFirst2").val(result.SecondaryFirstName);
@@ -543,11 +554,11 @@
                                 "<td>" + value.Note + "</td>" +
                                 "<td class='text-center'>" +
                                 (value.CustomerNoteID > 0 ?
-                                    "<a class='deleteNote' id=cNote_'" + value.CustomerNoteID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;'></i></a>" : ""
+                                    "<a class='deleteNote' id='cNote_" + value.CustomerNoteID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;'></i></a>" : ""
                                 )
                                 + "</td>";
 
-                            
+
 
                             row = row +"</tr>";
                             $("#tblNotes").append(row);
@@ -689,10 +700,10 @@
         <tr>
             <th style="width:5%">ID</th>
             <th style="width:5%">Rep</th>
-            <th>First</th>
-            <th>Last</th>
-            <th>2nd First</th>
-            <th>2nd Last</th>
+            <th>First Names</th>
+            <th>Last Names</th>
+            <th>Partner First</th>
+            <th>Partner Last</th>
             <th>Address</th>
             @*<th>City</th>*@
             @*<th>State</th>*@
@@ -718,29 +729,39 @@
     </nav>
 
     @*<div id="divCustomerError" style="color: red; display: none;"></div>*@
-    <div style="padding: 0px 15px" autocomplete="chrome-off">
-        <div id="rowClientId" class="row">
-            <div class="col-md-3 form-group">
-                <label class="control-label">Client ID:</label>
-                <input type="text" id="lblClientID" class="form-control" readonly />
-            </div>
-        </div>
+    <div autocomplete="chrome-off">
         <div class="row">
-            <div class="col-md-3 form-group">
-                <label for="txtFirst">*First Name:</label>
-                <input type="text" id="txtFirst" class="form-control" data-required="true" maxlength="50" autofocus autocomplete="chrome-off"/>
+            <div class="col-md-6">
+                <div class="row">
+                    <div id="divClientId" class="col-md-12 form-group">
+                        <label class="control-label">Client ID: <span id="lblClientID"></span></label>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="txtFirst">*First Name(s):</label>
+                        <input type="text" id="txtFirst" class="form-control" data-required="true" maxlength="50" autofocus autocomplete="chrome-off" />
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="txtLast">*Last Name(s):</label>
+                        <input type="text" id="txtLast" class="form-control" data-required="true" maxlength="50" autocomplete="chrome-off" />
+                    </div>
+                </div>
             </div>
-            <div class="col-md-3 form-group">
-                <label for="txtLast">*Last Name:</label>
-                <input type="text" id="txtLast" class="form-control" data-required="true" maxlength="50" autocomplete="chrome-off" />
-            </div>
-            <div class="col-md-3 form-group">
-                <label for="txtFirst2">2nd Name:</label>
-                <input type="text" id="txtFirst2" class="form-control" maxlength="50" autocomplete="chrome-off" />
-            </div>
-            <div class="col-md-3 form-group">
-                <label for="txtLast2">2nd Last Name:</label>
-                <input type="text" id="txtLast2" class="form-control" maxlength="50" autocomplete="chrome-off" />
+            <div class="col-md-6">
+                <div id="divParthnerInfo">
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <label>Partner Info</label>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="txtFirst2">First Name(s):</label>
+                            <input type="text" id="txtFirst2" class="form-control" maxlength="50" autocomplete="chrome-off" />
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="txtLast2">Last Name(s):</label>
+                            <input type="text" id="txtLast2" class="form-control" maxlength="50" autocomplete="chrome-off" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -807,7 +828,7 @@
             <div class="col-sm-10">
                 <label id="lblNoteCount">Count: 0</label>
             </div>
-            <div class="col-sm-2 text-right" >
+            <div class="col-sm-2 text-right">
                 <a href="#" id="lnkAddNote">
                     @*<img src="~/images/sticky note.png" data-toggle="tooltip" data-placement="right" title="Add Customer Note" />*@
                     <i class="fa fa-plus fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add Note" data-placement="left"></i>

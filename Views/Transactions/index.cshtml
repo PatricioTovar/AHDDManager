@@ -73,9 +73,7 @@
 
                 $('#tblTrans').find('tr:gt(0)').remove();
                 if (result == '0') {
-                    var row = '<tr>' +
-                        "<td colspan='6'><h4>No transactions were found.</h4></td>" +
-                        "</tr>"
+                    var row = "<tr><td colspan='9' class='text-center'>No data available in table</td></tr>";
                     $("#tblTrans").append(row);
 
                 } else {

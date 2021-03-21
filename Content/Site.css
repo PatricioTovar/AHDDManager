@@ -230,3 +230,10 @@ i.fa-badge {
 } 
 /*---------*/
 
+@media print {
+    @page {
+        size: 330mm 427mm;
+        margin-left: 40mm;
+        margin-right: 40mm;
+    }
+}

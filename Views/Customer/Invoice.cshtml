@@ -17,6 +17,7 @@
         margin-top: 30px;
         font-size: 16px;
     }
+
     #tblInfo {
         font-size: 18px;
     }
@@ -26,9 +27,9 @@
     }
 
     #divTotalDue {
-        color: #F81D2D !important
+        color: #F81D2D !important;
+        width: 100%;
     }
-
 </style>
 <script>
     $(function () {
@@ -65,7 +66,7 @@
                             <td>
                                 <div class="text-right top">
                                     <div id="lblCustName">@Model.Customer.FirstName @Model.Customer.LastName</div>
-                                    <div >@Model.Customer.SecondaryFirstName @Model.Customer.SecondaryLastName</div>
+                                    <div>@Model.Customer.SecondaryFirstName @Model.Customer.SecondaryLastName</div>
                                     <div id="lblCustAddress">@Model.Customer.Address  </div>
                                     <div>@Model.Customer.City , @Model.Customer.State @Model.Customer.Zip</div>
 
@@ -110,10 +111,10 @@
                     <thead>
                         <tr>
                             @*<th><h5>Item #</h5></th>*@
-                            <th>Description</th>
-                            <th class="text-center">Quantity</th>
-                            <th class="text-center">Price</th>
-                            <th class="text-center">Subtotal</th>
+                            <th width="60%">Description</th>
+                            <th width="10%" class="text-center">Quantity</th>
+                            <th width="15%" class="text-center">Price</th>
+                            <th width="15%" class="text-center">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,10 +124,10 @@
 
                                 <tr>
                                     @*<td class="col-md-2">@item.TransactionDetailID</td>*@
-                                    <td class="col-sm-7">@item.FormTitle</td>
-                                    <td class="col-sm-1 text-center">@item.Quantity</td>
-                                    <td class="col-sm-2 text-right">@item.PriceCharged.ToString("C") </td>
-                                    <td class="col-sm-2 text-right"> @item.Total.ToString("C") </td>
+                                    <td>@item.FormTitle</td>
+                                    <td class="text-center">@item.Quantity</td>
+                                    <td class="text-right">@item.PriceCharged.ToString("C") </td>
+                                    <td class="text-right"> @item.Total.ToString("C") </td>
                                 </tr>
                                 if (!string.IsNullOrWhiteSpace(item.Notes))
                                 {
@@ -140,19 +141,12 @@
                         }
 
                         <tr>
-                            @*<td class="col-md-2"></td>*@
-                            <td class="col-sm-7"></td>
-                            <td class="col-sm-1"></td>
-                            <td class="col-sm-2 text-right">
-                                <p>
-                                    <strong>Total: </strong>
-                                </p>
+                            <td class="text-right" colspan="3">
+                                <label>Total: </label>
                             </td>
 
                             <td class="col-sm-2 text-right">
-                                <p id="lblSubTotal">
-                                    <strong> @Model.Transaction.TotalAmount.ToString("C")  </strong>
-                                </p>
+                                <label id="lblSubTotal"> @Model.Transaction.TotalAmount.ToString("C")  </label>
                             </td>
                         </tr>
                     </tbody>
@@ -160,10 +154,10 @@
                 <h3><strong>Payments</strong></h3>
                 <table class="table" id="tblPayments">
                     <tr>
-                        <th class="col-sm-3">Rep</th>
-                        <th class="col-sm-5">Date</th>
-                        <th class="col-sm-2">Method</th>
-                        <th class="col-sm-2 text-center">Amount</th>
+                        <th width="35%">Rep</th>
+                        <th width="35%">Date</th>
+                        <th width="15%">Method</th>
+                        <th width="15%" class="text-center">Amount</th>
                     </tr>
 
                     @{ foreach (AHDDManagerClass.Payment item in Model.Payments)
@@ -181,11 +175,9 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td class="col-md-3 text-right"><strong>Total Paid: </strong></td>
+                        <td class="col-md-3 text-right"><label>Total Paid: </label></td>
                         <td class="col-md-3 text-right">
-                            <p id="lblBalance">
-                                <strong> @Model.Transaction.TotalCollected.ToString("C")  </strong>
-                            </p>
+                                <label> @Model.Transaction.TotalCollected.ToString("C")  </label>
                         </td>
                     </tr>
 
@@ -196,41 +188,42 @@
                     <h3><strong>Refunds</strong></h3>
                     <table class="table" id="tblRefounds">
                         <tr>
-                            <th class="col-sm-4">Rep</th>
-                            <th class="col-sm-3">Date</th>
-                            <th class="col-sm-3">Note</th>
-                            <th class="col-sm-2">Refund Amount</th>
+                            <th width="35%">Rep</th>
+                            <th width="50%">Date</th>
+                            @*<th class="col-sm-3">Note</th>*@
+                            <th width="15%" class="text-center">Amount</th>
                         </tr>
 
-                        @{ foreach (AHDDManagerClass.Refund item in Model.Refunds)
+                        @foreach (AHDDManagerClass.Refund item in Model.Refunds)
+                        {
+                            <tr>
+                                <td>@item.RefundedByName</td>
+                                <td>@item.RefundDate</td>
+                                @*<td>@item.Note</td>*@
+                                <td class="text-right">@item.RefundAmount.ToString("C") </td>
+                            </tr>
+                            if (!string.IsNullOrWhiteSpace(item.Note))
                             {
-
-                                <tr>
-                                    <td>@item.RefundedBy</td>
-                                    <td>@item.RefundDate</td>
-                                    <td>@item.Note</td>
-                                    <td class="text-right">@item.RefundAmount.ToString("C") </td>
+                                <tr class="tr-note">
+                                    <td class="col-sm-12" colspan="3">*Note: @item.Note</td>
                                 </tr>
                             }
-
                         }
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td class="col-sm-3 text-right"><strong>Total Refunded:</strong></td>
-                            <td class="col-sm-2 text-right">
-                                <p id="lblBalance">
-                                    <strong> @Model.Transaction.RefundedAmount.ToString("C")  </strong>
-                                </p>
+                            <td class="text-right" colspan="2"><label>New Total:</label></td>
+                            <td class="text-right">
+                                    <label> @((Model.Transaction.TotalCollected - Model.Transaction.RefundedAmount).ToString("C"))   </label>
                             </td>
                         </tr>
                     </table>
                 }
 
-                <div id="divTotalDue">
-                    <div class="col-sm-10 text-right"><strong>Total Due:</strong></div>
-                    <div class=" col-sm-2 text-right" id="lblTotal"><strong>@Model.Transaction.TotalOwed.ToString("C") </strong></div>
-                </div>
+                <table id="divTotalDue">
+                    <tr>
+                        <td width="85%" class="text-right"><label>Total Due:</label></td>
+                        <td width="15%" class="text-right" id="lblTotal"><label>@Model.Transaction.TotalOwed.ToString("C")</label></td>
+                    </tr>
+                </table>
             </div>
             <div class="col-md-12 text-center">
                 Thank you for your business!

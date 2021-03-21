@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Forms";
+    ViewBag.Title = "Items Catalog";
 }
 
 <link href="~/Scripts/datatables.min.css" rel="stylesheet" />
@@ -19,7 +19,6 @@
 
         var newformdialog = $("#new-form-dialog").dialog({
             autoOpen: false,
-            height: 350,
             width: 700,
             stack: true,
             modal: true,
@@ -138,18 +137,17 @@
 
 
         $('#tblTrans').on('click', '.editForm', function (e) {
+            event.preventDefault();
+            var data = $('#tblTrans').DataTable().row($(this).parents('tr')).data();
             var row = $(this).closest('tr').find('td');
             resetForm();
-            formID = $(this).attr("id");
 
-            event.preventDefault();
+            formID = data.FormID;
+            $('#txtFormTitle').val(data.Title);
+            $('#chkActive').prop('checked', data.Active);
+            $('#txtFormPrice').val(data.Price);
 
-            $('#txtFormTitle').val(row[0].innerText);
-            //$('#chkActive').prop('checked', row.find('input:checkBox').is(':checked'));
-            $('#chkActive').prop('checked', true);
-            $('#txtFormPrice').val(row[2].innerText);
-
-            newformdialog.dialog('option', 'title', 'Update Form');
+            newformdialog.dialog('option', 'title', 'Update Item');
             newformdialog.dialog("open");
         });
 
@@ -161,7 +159,7 @@
             resetForm();
             $('#chkActive').prop('checked', true);
             $('#tdActive').attr('align', 'center');
-            newformdialog.dialog('option', 'title', 'Add New Form');
+            newformdialog.dialog('option', 'title', 'Add New Item');
             newformdialog.dialog("open");
         });
 
@@ -241,7 +239,7 @@
 
 <div class="row">
     <div class="col-lg-6">
-        <h2>Products & Services</h2>
+        <h2>Items</h2>
     </div>
     <div class="col-lg-6 pull-bottom text-right" style="padding-top: 10px">
         <a href="#" id="lnkAdd">
@@ -253,7 +251,7 @@
 <table id="tblTrans" class="table table-striped table-condensed" style="width:100%">
     <thead>
         <tr>
-            <th>Service ID</th>
+            <th>Item ID</th>
             <th>Description</th>
             <th>Active</th>
             <th>Price</th>
@@ -273,19 +271,18 @@
     <div class="container">
         <table id="tblTransDetails" class="table">
             <tr>
-                <td colspan="3" width="300px">
-                    <label for="txtFormTitle">Form Name</label><input type="text" class="form-control" id="txtFormTitle" style="max-width:100%;" data-required="true" data-name="Form Name" />
+                <td colspan="2" width="300px">
+                    <label for="txtFormTitle">Item Name</label><input type="text" class="form-control" id="txtFormTitle" style="max-width:100%;" data-required="true" data-name="Form Name" />
                 </td>
             </tr>
             <tr>
-                <td width="150px;" align="left">
-                    <label for="txtFormPrice">Form Price</label>
+                <td width="150px" align="left">
+                    <label for="txtFormPrice">Price</label>
                     <input type="text" class="form-control" id="txtFormPrice" data-required="true" style="max-width:100%;" data-name="Form Price" onkeypress='numericValidate(event)' />
                 </td>
-                <td id="tdActive" class="text-center" width="75px;">
+                <td id="tdActive" width="75px">
                     <label for="chkActive">Active</label> <input type="checkbox" class="checkbox" id="chkActive" checked="checked" />
                 </td>
-                <td></td>
             </tr>
         </table>
     </div>
