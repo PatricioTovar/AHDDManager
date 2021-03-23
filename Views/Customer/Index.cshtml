@@ -9,7 +9,6 @@
 <script src="~/Scripts/Utilities.js"></script>
 <script src="~/Scripts/States.js"></script>
 
-<!-- NEEDED FOR SPINNER DIALOG -->
 <style>
     #divParthnerInfo {
         background-color: #f5f5f5;
@@ -209,11 +208,7 @@
                     "orderable": false,
                     "className": "text-center",
                     "render": function (data, type, full, meta) {
-                        if (data == 1) {
-                            var i = 0;
-                        }
-
-                        return data == 1 ? "<a class='deletecustomer text-danger' id='" + full.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;'></i></a>" : ''
+                        return data == 1 ? "<a class='deletecustomer text-danger' id='" + full.CustomerID + "'><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;' data-toggle='tooltip' data-placement='top' title='Delete' ></i></a>" : ''
                     }
                 }
             ],

@@ -15,11 +15,11 @@
         border-top: 5px solid #808080;
         box-shadow: 0 0px 21px #808080;
         margin-top: 30px;
-        font-size: 16px;
+        font-size: 19px;
     }
 
     #tblInfo {
-        font-size: 18px;
+        font-size: 22px;
     }
 
     .tr-note {
@@ -45,38 +45,37 @@
 <div class="container">
     <div class="row">
         <div class="main">
+            <div class="hidden-print">
+                <a href="#" id="print" onclick="sendToPrint()"><img src="/images/print.png" width="25" height="25" /></a>
+            </div>
+            <div class="col-md-12 text-center">
+                <h1><strong>Agencia Hispana De Dallas on Bishop Ave.</strong></h1>
+            </div>
             <div class="col-md-12">
-                <div class="hidden-print"><a href="#" id="print" onclick="sendToPrint()"><img src="/images/print.png" width="25" height="25" /></a></div>
-                <div class="row">
-                    <div class="col-sm-12 text-center">
-                        <h2><strong>Agencia Hispana De Dallas on Bishop Ave.</strong></h2>
-                    </div>
+                <table id="tblInfo" class="table">
+                    <tr>
+                        <td>
+                            <div>
+                                <div> <strong> @Model.Business.BusinessName</strong></div>
+                                <div id="lblBizAddress">@Model.Business.Address  </div>
+                                <div>@Model.Business.City, @Model.Business.State @Model.Business.Zip </div>
+                                <div id="lblBizPhone">@Model.Business.PhoneFomatted</div>
+                                <!-- <div id="lblBizEmail">[NEED TO ADD BIZ EMAIL]</div> -->
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-right top">
+                                <div id="lblCustName">@Model.Customer.FirstName @Model.Customer.LastName</div>
+                                <div>@Model.Customer.SecondaryFirstName @Model.Customer.SecondaryLastName</div>
+                                <div id="lblCustAddress">@Model.Customer.Address  </div>
+                                <div>@Model.Customer.City , @Model.Customer.State @Model.Customer.Zip</div>
 
-                    <table id="tblInfo" class="table">
-                        <tr>
-                            <td>
-                                <div>
-                                    <div> <strong> @Model.Business.BusinessName</strong></div>
-                                    <div id="lblBizAddress">@Model.Business.Address  </div>
-                                    <div>@Model.Business.City, @Model.Business.State @Model.Business.Zip </div>
-                                    <div id="lblBizPhone">@Model.Business.PhoneFomatted</div>
-                                    <!-- <div id="lblBizEmail">[NEED TO ADD BIZ EMAIL]</div> -->
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-right top">
-                                    <div id="lblCustName">@Model.Customer.FirstName @Model.Customer.LastName</div>
-                                    <div>@Model.Customer.SecondaryFirstName @Model.Customer.SecondaryLastName</div>
-                                    <div id="lblCustAddress">@Model.Customer.Address  </div>
-                                    <div>@Model.Customer.City , @Model.Customer.State @Model.Customer.Zip</div>
-
-                                    <div id="lblCustPhone">@Model.Customer.MobileFormatted</div>
-                                    <div id="lblCustEmail">@Model.Customer.Email</div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+                                <div id="lblCustPhone">@Model.Customer.MobileFormatted</div>
+                                <div id="lblCustEmail">@Model.Customer.Email</div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
 
                 <table class="table">
                     <tr>
@@ -102,7 +101,7 @@
                         <td>
                             <div class="text-center">
                                 <label id="lblInvoiceDate"><strong>Receipt Date:</strong></label>
-                                <p>@Model.Transaction.TransactionDate.ToString("MM/dd/yyyy hh:mm tt")</p>
+                                <p>@Model.Transaction.TransactionDate.ToString("MM/dd/yyyy")</p>
                             </div>
                         </td>
                     </tr>
@@ -132,8 +131,7 @@
                                 if (!string.IsNullOrWhiteSpace(item.Notes))
                                 {
                                     <tr class="tr-note">
-                                        @*<td class="col-md-2"></td>*@
-                                        <td class="col-sm-12" colspan="4">*Note: @item.Notes</td>
+                                        <td colspan="4">*Note: @item.Notes</td>
                                     </tr>
                                 }
                             }
@@ -145,7 +143,7 @@
                                 <label>Total: </label>
                             </td>
 
-                            <td class="col-sm-2 text-right">
+                            <td class="text-right">
                                 <label id="lblSubTotal"> @Model.Transaction.TotalAmount.ToString("C")  </label>
                             </td>
                         </tr>
@@ -165,9 +163,9 @@
 
                             <tr>
                                 <td>@item.TakenBy</td>
-                                <td>@item.PaymentDate.ToString("MM/dd/yyyy hh:mm tt")</td>
+                                <td>@item.PaymentDate.ToString("MM/dd/yyyy")</td>
                                 <td>@item.PaymentMethodDescription</td>
-                                <td class="col-md-2 text-right">@item.PaymentAmount.ToString("C") </td>
+                                <td class="text-right">@item.PaymentAmount.ToString("C") </td>
                             </tr>
                         }
 
@@ -175,9 +173,9 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td class="col-md-3 text-right"><label>Total Paid: </label></td>
-                        <td class="col-md-3 text-right">
-                                <label> @Model.Transaction.TotalCollected.ToString("C")  </label>
+                        <td class="text-right"><label>Total Paid: </label></td>
+                        <td class="text-right">
+                            <label> @Model.Transaction.TotalCollected.ToString("C")  </label>
                         </td>
                     </tr>
 
@@ -212,13 +210,13 @@
                         <tr>
                             <td class="text-right" colspan="2"><label>New Total:</label></td>
                             <td class="text-right">
-                                    <label> @((Model.Transaction.TotalCollected - Model.Transaction.RefundedAmount).ToString("C"))   </label>
+                                <label> @((Model.Transaction.TotalCollected - Model.Transaction.RefundedAmount).ToString("C"))   </label>
                             </td>
                         </tr>
                     </table>
                 }
 
-                <table id="divTotalDue">
+                <table id="divTotalDue" class="table">
                     <tr>
                         <td width="85%" class="text-right"><label>Total Due:</label></td>
                         <td width="15%" class="text-right" id="lblTotal"><label>@Model.Transaction.TotalOwed.ToString("C")</label></td>

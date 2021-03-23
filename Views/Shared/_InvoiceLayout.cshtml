@@ -11,19 +11,11 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
-
-    <style>
-
-        body {
-            padding-top: 100px;
-        }
-    </style>
-
 </head>
 
 <body>
   
-    <div class="container body-content" style="margin-top:-100px;">
+    <div class="body-content">
         @RenderBody()
     </div>
 

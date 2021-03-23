@@ -60,12 +60,7 @@
                 refunddialog.dialog("close");
             }
         });
-        /*
-                $(".refund").on('click', function(){
-                    event.preventDefault();
-                    refunddialog.dialog("open");
-                });
-        */
+
         $("#tblTransDetails").on('click', '.delete', function (event) {
             event.preventDefault();
 
@@ -147,9 +142,8 @@
                 $("#txtRefundNote").css('border-color','#cccccc');
             }
 
-            if (parseFloat($("#lblDialogPaid").text().replace("$","").replace(",","")) < parseFloat($("#txtRefundAmount").val())){
-                //alert('You cannot pay more than ' + $("#lblDialogPaid").text());
-                $.AlertDialog('You cannot pay more than ' + $("#lblDialogPaid").text(), 'Error Message', function (event) { }, 'lightcoral');
+            if ($("#lblRefundActualPaid").asNumber() < $("#txtRefundAmount").val()){
+                $.AlertDialog('You cannot pay more than ' + $("#lblRefundActualPaid").text(), 'Error Message', function (event) { }, 'lightcoral');
                 return;
             }
 
@@ -224,14 +218,14 @@
             }
 
 
-            if (parseFloat($("#lblDialogOwed").text().replace("$","").replace(",","")) < parseFloat($("#txtPaymentAmount").val())){
+            if ($("#lblDialogOwed").asNumber() < $("#txtPaymentAmount").val()){
                 //alert('You cannot pay more than ' + $("#lblDialogOwed").text());
                 $.AlertDialog('You cannot pay more than ' + $("#lblDialogOwed").text(), 'Error Message', function (event) { }, 'lightcoral');
                 return;
             }
 
 
-            if (parseFloat($("#lblDialogOwed").text().replace("$", "").replace(",", "")) != parseFloat($("#txtPaymentAmount").val())) {
+            if ($("#lblDialogOwed").asNumber() != $("#txtPaymentAmount").val()) {
                 $.ConfirmDialog('You are about to take a payment of $' + $("#txtPaymentAmount").val() + '. Continue?', 'Confirm', MakePayment, function () { }, null, 'skyblue');
             } else {
                 MakePayment()
@@ -365,7 +359,7 @@
 
 
 
-    var changeCustomerDialog = $("#change-customer-dialog").dialog({
+        var changeCustomerDialog = $("#change-customer-dialog").dialog({
         autoOpen: false,
         draggable: false,
         width: 400,
@@ -405,6 +399,10 @@
             }
         }
     });
+
+        $("#lblDialogOwed").text(@Model.Item3.TotalOwed);
+        $("#lblRefundActualPaid").text(@Model.Item3.Net);
+        $('.currencyLabel').formatCurrency();
     });
 
     function btnAddTransaccionClick() {
@@ -422,7 +420,6 @@
 
         _CloseNewDetailDialog();
 
-        return;
         $.ajax({
             url: '/transactions/AddTransactionDetail/',
             type: 'POST',
@@ -442,10 +439,6 @@
                 }
             }
         });
-
-
-
-        newtransactiondialog.dialog("close");
     }
 
 
@@ -463,7 +456,19 @@
                 .hide()// make it invisible
                 .attr("src", url) // point the iframe to the page you want to print
                 .appendTo("body");
+    }
 
+    function updateRefundNewTotal() {
+        var refundAmount = $('#txtRefundAmount').asNumber();
+        if (refundAmount == '' || isNaN(refundAmount)) {
+            refundAmount = 0;
+        }
+
+        var refundNewTotal = $("#lblRefundActualPaid").asNumber() - refundAmount;
+        if (refundNewTotal < 0) {
+            refundNewTotal = 0
+        }
+        $("#txtRefundNewTotal").val(refundNewTotal);
     }
 
 </script>
@@ -474,8 +479,6 @@
 <div class="row">
     <div class="col-lg-3 pull-bottom">
         <a onclick="PrintRecipe()">
-            @*href="/customer/Invoice/@Url.RequestContext.RouteData.Values["id"]" target="_blank"*@
-            @*<img src="~/images/Invoice.png" alt="View Receipt" data-toggle="tooltip" data-placement="right" title="View Receipt" />*@
             <i class="fa fa-print  fa-3x fa-shadow" aria-hidden="true" style="color:steelblue" data-toggle="tooltip" title="Print Receipt"></i>
         </a>
     </div>
@@ -486,7 +489,6 @@
             if (Model.Item3.TransactionStatusID == 1)
             {
                 <a href="#" class="cancel">
-                    @*<img src="~/images/CancelTransaction.png" data-toggle="tooltip" data-placement="left" title="Cancel Receipt" />*@
                     <i class="fa fa-ban fa-3x fa-shadow" aria-hidden="true" style="color: red;" data-toggle="tooltip" title="Cancel"></i>
                 </a>
             }
@@ -494,7 +496,6 @@
         @if (ViewBag.IsAdmin && Model.Item3.TransactionStatusID != 1)
         {
             <a href="#" id="lnkReOpen" class="reopen">
-                @*<img src="~/images/TransactionComplete.png" data-toggle="tooltip" data-placement="left" title="Complete Receipt" />*@
                 <i class="fa fa-undo fa-3x fa-shadow" aria-hidden="true" style="color: orangered;" data-toggle="tooltip" title="Reopen"></i>
             </a>
         }
@@ -505,7 +506,6 @@
             if (Model.Item3.TransactionStatusID == 1 && Model.Item3.TotalOwed == 0)
             {
                 <a href="#" id="lnkRefundTop" class="complete">
-                    @*<img src="~/images/TransactionComplete.png" data-toggle="tooltip" data-placement="left" title="Complete Receipt" />*@
                     <i class="fa fa-check-circle-o fa-3x fa-shadow" aria-hidden="true" style="color: forestgreen;" data-toggle="tooltip" title="Complete"></i>
                 </a>
             }
@@ -514,7 +514,6 @@
 
     <div class="col-lg-3 pull-text-right">
         <a href="/Transactions/CustomerTransactions/@Model.Item3.CustomerID">
-            @*<img src="~/images/GoBack.png" data-toggle="tooltip" data-placement="left" title="Back to Receipts" />*@
             <i class="fa fa-arrow-circle-o-left fa-shadow fa-3x" aria-hidden="true" style="color:yellowgreen" data-toggle="tooltip" title="Customer Receipts"></i>
         </a>
     </div>
@@ -573,7 +572,6 @@
             <h3>Items</h3>
         </div>
         <div class="col-sm-6 text-right">
-            @*<img id="btnAddTransaccion" class="imgBtn" src="~/images/addtransactionitem.png" data-toggle="tooltip" data-placement="right" title="Add New Transaction Item" onclick="btnAddTransaccionClick()" />*@
             <a href="#" id="btnAddTransaccion" onclick="btnAddTransaccionClick()">
                 <i class="fa fa-shopping-basket fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add product" style="color:royalblue"></i>
             </a>
@@ -601,7 +599,6 @@
 
         foreach (var item in Model.Item1.ToList())
         {
-
             if (item.DiscountPrice == 0)
             {
                 decSubTotal = item.Quantity * item.UnitPrice;
@@ -662,9 +659,6 @@
         @{
             if (Model.Item3.TransactionStatusID == 1 && Model.Item3.TotalOwed != 0)
             {
-                @*<a href="#" id="lnkAddPaymentBottom" class="payment">
-                        <img src="~/images/wallet.png" data-toggle="tooltip" data-placement="left" title="Add Payment" />
-                    </a>*@
                 <a href="#" id="lnkAddPaymentBottom" class="payment">
                     <i class="fa fa-money fa-3x" aria-hidden="true" data-toggle="tooltip" title="Add payment" style="color:green"></i>
                 </a>
@@ -675,7 +669,6 @@
 
 <table id="tblPayments" class="table table-striped table-condensed">
     <tr>
-        @*<th>Pay ID</th>*@
         <th class="col-sm-5">Rep</th>
         <th class="col-sm-2">Pay Date</th>
         <th class="col-sm-1">Pay Method</th>
@@ -689,12 +682,11 @@
     @{
         var decPayTotal = 0M;
 
-        foreach (var item in Model.Item2.ToList())
+        foreach (var item in Model.Item2.ToList().OrderBy(x => x.PaymentDate))
         {
             decPayTotal += item.PaymentAmount;
 
             <tr id="@item.PaymentID">
-                @*<td>@item.PaymentID</td>*@
                 <td>@item.TakenBy</td>
                 <td>@item.PaymentDate</td>
                 <td>@item.PaymentMethodDescription</td>
@@ -713,7 +705,6 @@
         }
 
         <tr>
-            @*<td></td>*@
             <td></td>
             <td></td>
             <td></td>
@@ -726,23 +717,6 @@
         </tr>
     }
 </table>
-<script>
-            $(function () {
-
-                $("#lblDialogOwed").text(@Model.Item3.TotalOwed);
-
-
-                $("#lblDialogPaid").text(@Model.Item3.Net);
-
-                if(@Model.Item3.TransactionStatusID != 1){
-                    $("#lnkAddPaymentBottom").hide();
-                }else
-                {
-                    $("#lnkAddPaymentBottom").show();
-                }
-
-                $('.currencyLabel').formatCurrency();
-            })</script>
 
 
 
@@ -789,26 +763,20 @@
 
             <tr>
                 <td class="text-right" colspan="3"><label>New Total:</label></td>
-                <td class="text-right currencyLabel" >
+                <td class="text-right currencyLabel">
                     @(Model.Item3.TotalCollected - Model.Item3.RefundedAmount)
                 </td>
                 <td></td>
             </tr>
         }
     </table>
-    <script>
-        $(function () {
-            $('.currencyLabel').formatCurrency();
-        })</script>
 }
 
-<div>
-    <div class="form-horizontal">
-        <div class="form-group" style="color:red">
-            <label for="lblOwedBottom" class="col-md-2 col-md-offset-8 control-label">Remaining Owed:</label>
-            <div class="col-md-1 text-right">
-                <p id="lblOwedBottom" class="form-control-static currencyLabel">@Model.Item3.TotalOwed</p>
-            </div>
+<div class="form-horizontal">
+    <div class="form-group" style="color:red">
+        <label for="lblOwedBottom" class="col-md-2 col-md-offset-8 control-label">Remaining Owed:</label>
+        <div class="col-md-1 text-right">
+            <p id="lblOwedBottom" class="form-control-static currencyLabel">@Model.Item3.TotalOwed</p>
         </div>
     </div>
 </div>
@@ -858,52 +826,26 @@
     </div>
 </div>
 
-
-@*<table class="table table-hover">
-        <tr>
-            <td>
-                <label for="txtQuantity">Pay Method</label><br />
-                <select id="ddlPayMethod" class="form-control">
-                    <option value="1">CASH</option>
-                    <option value="2">CHECK</option>
-                    <option value="3">CARD</option>
-                    <option value="4">DEPOSIT</option>
-                </select>
-            </td>
-
-        </tr>
-    </table>*@
 <div id="refund-dialog" title="Receipt Refund">
-    <div class="container">
-        <div class="well well-lg">
-            <div class="row">
-                <div class="col-lg-6"><strong>Total Paid Amount:</strong></div>
-                <div class="col-lg-4 currencyLabel" id="lblDialogPaid"><strong></strong></div>
-            </div>
+    <div class="row">
+        <div class="form-group col-sm-4">
+            <label>Total Paid:</label>
+            <p id="lblRefundActualPaid" class="currencyLabel form-control-static"></p>
         </div>
-        <table id="tblRefund" class="table table-striped">
-            <tr>
-                <td>
-                    <div class="ui-widget">
-                        <label for="txtRefundAmount">Refund Amount: </label><br />
-                        <input type="text" id="txtRefundAmount" class="form-control" onkeypress='numericValidate(event)' maxlength="5">
-                    </div>
-                </td>
-                <td>
-                    <label for="txtQuantity">Pay Method</label><br />
-                    <select id="ddlRefundMethod">
-                        <option value="1">CASH</option>
-                        <option value="2">CHECK</option>
-                        <option value="3">CARD</option>
-                    </select>
-                </td>
-                <td>
-                    <label for="txtPrice">Refund Note:</label><br />
-                    <input type="text" id="txtRefundNote" class="form-control" maxlength="500" />
-                </td>
-
-            </tr>
-        </table>
+        <div class="form-group col-sm-4">
+            <label>Refund Amount:</label>
+            <input id="txtRefundAmount" class="form-control" onkeypress='numericValidate(event)' onkeyup="updateRefundNewTotal();" maxlength="5">
+        </div>
+        <div class="form-group col-sm-4">
+            <label>New Total:</label>
+            <input id="txtRefundNewTotal" class="form-control" readonly value="0" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <label for="txtPrice">Refund Note:</label><br />
+            <textarea id="txtRefundNote" class="form-control" rows="3" maxlength="500"></textarea>
+        </div>
     </div>
 </div>
 
