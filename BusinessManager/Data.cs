@@ -142,7 +142,7 @@ namespace AHDDManagerClass
             }
         }
 
-        public DataTable GetAssociatesByBusinessID(int BusinessID)
+        public DataTable GetAssociatesByBusinessID(int BusinessID, bool? Active)
         {
             SqlConnection Conn = new SqlConnection(this.ConnString);
 
@@ -157,6 +157,7 @@ namespace AHDDManagerClass
                 da.SelectCommand = selectCMD;
 
                 selectCMD.Parameters.Add(new SqlParameter("@BusinessID", BusinessID));
+                selectCMD.Parameters.Add(new SqlParameter("@Active", Active));
 
                 Conn.Open();
 

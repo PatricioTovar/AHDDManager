@@ -559,13 +559,13 @@ namespace AHDDManagerClass
             infoList = new List<Associate>();
         }
 
-        public Associates(int BusinessID)
+        public Associates(int BusinessID, bool? Active = null)
         {
             Data objData = new Data();
             DataTable dt;
             Associate objInfo;
 
-            dt = objData.GetAssociatesByBusinessID(BusinessID);
+            dt = objData.GetAssociatesByBusinessID(BusinessID, Active);
 
             if (dt != null && dt.Rows.Count > 0)
             {

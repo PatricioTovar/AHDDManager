@@ -168,7 +168,7 @@ namespace AHDDManager.Controllers
         {
             try
             {
-                Associates objAs = new Associates(base.Business.BusinessID);
+                Associates objAs = new Associates(base.Business.BusinessID, true);
 
                 return Json(objAs);
             }
@@ -180,5 +180,19 @@ namespace AHDDManager.Controllers
         }
 
 
+        public JsonResult GetAllAssociates()
+        {
+            try
+            {
+                Associates objAs = new Associates(base.Business.BusinessID);
+
+                return Json(objAs);
+            }
+            catch
+            {
+                return Json("0");
+            }
+
+        }
     }
 }

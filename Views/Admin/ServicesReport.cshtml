@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<link href="~/Content/datatables.min.css" rel="stylesheet" />
 <script src="~/Scripts/datatables.min.js"></script>
 <script src="~/Scripts/moment.js"></script>
 <script src="~/Scripts/dataTables.buttons.min.js"></script>
@@ -117,7 +117,7 @@
     function GetAssociates() {
         $.ajax({
             beforeSend: function () { }, //Prevent loading dialog
-            url: '/customer/GetAssociates/',
+            url: '/customer/GetAllAssociates/',
             type: 'POST',
             //dataType: 'json',
             traditional: true,

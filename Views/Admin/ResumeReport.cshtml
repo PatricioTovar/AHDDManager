@@ -4,8 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
-<script src="~/Scripts/datatables.min.js"></script>
+<link href="~/Content/datatables.min.css" rel="stylesheet" />
+<script src="~/Scripts/datatables.js"></script>
 <script src="~/Scripts/moment.js"></script>
 <script src="~/Scripts/dataTables.buttons.min.js"></script>
 <script src="~/Scripts/buttons.html5.min.js"></script>
@@ -32,6 +32,25 @@
                     exportOptions: {
                         modifier: {
                             search: "applied"
+                        },
+                        columns: function (idx, data, node) {
+                            if (node.className.includes('exportExcel')) {
+                                if (node.className.includes('refunds')) {
+                                    var isEmpty = true;
+                                    for (i = 0; i < data.length; i++) {
+                                        if (data[i] < 0) {
+                                            isEmpty = false;
+                                            break;
+                                        }
+                                    }
+
+                                    return !isEmpty;
+                                }
+
+                                return true;
+                            }
+
+                            return false;
                         }
                     },
                     filename: function () {
@@ -44,9 +63,6 @@
                         }
 
                         return title;
-                    },
-                    exportOptions: {
-                        columns: '.exportExcel'
                     }
                 },
             ],
@@ -93,45 +109,61 @@
                     }
                 },
                 {
+                    data: "PaymentAmount",
                     name: "Cash",
                     visible: false,
                     className: "exportExcel",
                     render: function (data, type, row, meta) {
                         if (row.PaymentMethod == 1) {
-                            return row.PaymentAmount;
+                            return data;
                         }
                         return "";
                     }
                 },
                 {
+                    data: "PaymentAmount",
                     name: "Check",
                     visible: false,
                     className: "exportExcel",
                     render: function (data, type, row, meta) {
                         if (row.PaymentMethod == 2) {
-                            return row.PaymentAmount;
+                            return data;
                         }
                         return "";
                     }
                 },
                 {
+                    data: "PaymentAmount",
                     name: "Card",
                     visible: false,
                     className: "exportExcel",
                     render: function (data, type, row, meta) {
                         if (row.PaymentMethod == 3) {
-                            return row.PaymentAmount;
+                            return data;
                         }
                         return "";
                     }
                 },
                 {
+                    data: "PaymentAmount",
                     name: "Deposit",
                     visible: false,
                     className: "exportExcel",
                     render: function (data, type, row, meta) {
                         if (row.PaymentMethod == 4) {
-                            return row.PaymentAmount;
+                            return data;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    data: "PaymentAmount",
+                    name: "Refunds",
+                    visible: false,
+                    className: "exportExcel refunds",
+                    render: function (data, type, row, meta) {
+                        if (data < 0) {
+                            return data;
                         }
                         return "";
                     }
@@ -326,6 +358,7 @@
                 <th>Check</th>
                 <th>Visa</th>
                 <th>Deposit</th>
+                <th>Refund</th>
                 <th>Method</th>
                 <th>Amount</th>
                 <th>Rep</th>
