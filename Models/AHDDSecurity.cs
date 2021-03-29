@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace AHDDManager.Models
 {
@@ -20,7 +21,12 @@ namespace AHDDManager.Models
 
             if (Session["Associate"] == null)
             {
-                filterContext.Result = new RedirectResult("/home/index/");
+                //filterContext.Result = new RedirectResult("/home/index/");
+                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new
+                {
+                    controller = "home",
+                    action = "index"
+                }));
             }
             else
             {

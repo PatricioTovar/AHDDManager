@@ -15,8 +15,14 @@
     $(document).ready(function () {
         $.fn.bootstrapBtn = $.fn.button.noConflict();
 
-        $("#dpStart").datepicker().datepicker("setDate", new Date());
-        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        var today = new Date();
+        $("#dpStart").datepicker({
+            onSelect: function (dateText, inst) {
+                $("#dpEnd").datepicker("option", { minDate: dateText });
+            }
+        }).datepicker("setDate", today);
+        $("#dpEnd").datepicker({ minDate: today }).datepicker("setDate", today);
+
         initTable();
 
     });

@@ -51,15 +51,13 @@
             $('#divCollected').text('$0.00');
             $('#divPaid').text('($0.00)');
 
-            $("#dpStart").datepicker();
-            $("#dpEnd").datepicker();
-
-            //$.fn.bootstrapBtn = $.fn.button.noConflict();
-
-            var _now = new Date;
-
-            $("#dpStart").datepicker().datepicker("setDate", new Date());
-            $("#dpEnd").datepicker().datepicker("setDate", new Date());
+            var today = new Date();
+            $("#dpStart").datepicker({
+                onSelect: function (dateText, inst) {
+                    $("#dpEnd").datepicker("option", { minDate: dateText });
+                }
+            }).datepicker("setDate", today);
+            $("#dpEnd").datepicker({ minDate: today }).datepicker("setDate", today);
 
             var paymentdialog = $("#payments-dialog").dialog({
                 autoOpen: false,

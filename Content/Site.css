@@ -122,11 +122,15 @@ html, body {
 }
 
 
-.form-control.hasDatepicker {
+.form-control.hasDatepicker[readonly] {
     cursor: pointer;
     background-color: #ffffff;
 }
 
+.form-control.hasDatepicker[disabled] {
+    cursor: not-allowed;
+    background-color: #eeeeee;
+}
 .table thead > tr > th,
 .table tbody > tr > th,
 .table tfoot > tr > th,

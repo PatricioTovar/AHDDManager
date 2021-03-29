@@ -10,9 +10,6 @@
 
 <script>
     $(function () {
-        $("#dpStart").datepicker();
-        $("#dpEnd").datepicker();
-
         var AssociateID;
         var HoursWorked;
         var HoursWorkedList = [];
@@ -20,8 +17,13 @@
         $.fn.bootstrapBtn = $.fn.button.noConflict();
         $('[data-toggle="tooltip"]').tooltip();
 
-        $("#dpStart").datepicker().datepicker("setDate", new Date());
-        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        var today = new Date();
+        $("#dpStart").datepicker({
+            onSelect: function (dateText, inst) {
+                $("#dpEnd").datepicker("option", { minDate: dateText });
+            }
+        }).datepicker("setDate", today);
+        $("#dpEnd").datepicker({ minDate: today }).datepicker("setDate", today);
 
         //$('#tblClockIns tbody').on('click', 'tr:not(:first-child, :last-child)', function () {
         //    AssociateID = $(this).attr('id');

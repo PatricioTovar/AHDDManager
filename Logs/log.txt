@@ -522,3 +522,23 @@
 3/16/2021 6:04:40 PM|3/16/2021 9:45:00 AM
 3/16/2021 6:04:40 PM|3/16/2021 3:02:00 PM
 3/16/2021 6:04:40 PM|3/16/2021 3:43:00 PM
+3/27/2021 3:39:31 PM|My Hours: 
+3/27/2021 3:39:31 PM|3/27/2021 9:51:00 AM
+3/27/2021 3:41:54 PM|************************************************************************
+3/27/2021 3:41:54 PM|Admin.UpdateHours input param: LogInDate - Sat Mar 27 2021 15:41:00
+3/27/2021 3:41:54 PM|Admin.UpdateHours input param: LogOutDate - Sat Mar 27 2021 16:11:00
+3/27/2021 3:41:54 PM|Admin.UpdateHours converted:  objACH.LoginDatetime - 3/27/2021 3:41:00 PM
+3/27/2021 3:41:54 PM|Admin.UpdateHours converted: objACH.LogoutDatetime - 3/27/2021 4:11:00 PM
+3/27/2021 3:41:54 PM|************************************************************************
+3/29/2021 11:21:47 AM|Event to Add by 48 - TITLE: Open* Maria Estela Gonzalez, Taxas | Start Date: 3/20/2021 10:30:00 AM (3/20/2021 10:30:00 AM)
+3/29/2021 11:21:49 AM|Event: Appt id - 2467
+3/29/2021 11:25:33 AM|Event to Add by 48 - TITLE: OPEN* Maria Garcia, Taxes | Start Date: 3/30/2021 4:00:00 PM (3/30/2021 4:00:00 PM)
+3/29/2021 11:25:33 AM|Event: Appt id - 2516
+3/29/2021 2:52:22 PM|Event to Add by 32 - TITLE: MARIA CRUZ (214)715-9244 REMOVAL OF CONDITIONS  | Start Date: 2/5/2021 1:00:00 PM (2/5/2021 1:00:00 PM)
+3/29/2021 2:52:23 PM|Event: Appt id - 1868
+3/29/2021 2:52:29 PM|Event to Add by 32 - TITLE: MARIA CRUZ (214)715-9244 REMOVAL OF CONDITIONS  | Start Date: 2/5/2021 1:15:00 PM (2/5/2021 1:15:00 PM)
+3/29/2021 2:52:29 PM|Event: Appt id - 1868
+3/29/2021 2:52:34 PM|Event to Add by 32 - TITLE: MARIA CRUZ (214)715-9244 REMOVAL OF CONDITIONS  | Start Date: 2/5/2021 1:00:00 PM (2/5/2021 1:00:00 PM)
+3/29/2021 2:52:34 PM|Event: Appt id - 1868
+3/29/2021 3:05:10 PM|Event to Add by 32 - TITLE: MARIA CRUZ (214)715-9244 REMOVAL OF CONDITIONS  | Start Date: 2/5/2021 1:15:00 PM (2/5/2021 1:15:00 PM)
+3/29/2021 3:05:11 PM|Event: Appt id - 1868

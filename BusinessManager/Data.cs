@@ -1883,7 +1883,7 @@ namespace AHDDManagerClass
             }
         }
 
-        public DataTable GetTransactionsReport(DateTime StartDate, DateTime EndDate, bool IncludeOpens)
+        public DataTable GetTransactionsReport(DateTime StartDate, DateTime EndDate, bool ReceivablesOnly)
         {
             SqlConnection Conn = new SqlConnection(this.ConnString);
 
@@ -1899,7 +1899,7 @@ namespace AHDDManagerClass
 
                 selectCMD.Parameters.Add(new SqlParameter("@StartDate", StartDate));
                 selectCMD.Parameters.Add(new SqlParameter("@EndDate", EndDate));
-                selectCMD.Parameters.Add(new SqlParameter("@IncludeOpens", IncludeOpens));
+                selectCMD.Parameters.Add(new SqlParameter("@ReceivablesOnly", ReceivablesOnly));
 
                 Conn.Open();
 

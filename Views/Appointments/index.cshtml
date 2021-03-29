@@ -35,16 +35,14 @@
 
         $.fn.bootstrapBtn = $.fn.button.noConflict();
 
+        var today = new Date();
         $("#dpStart").datepicker({
-            onSelect: function (date) {
-                $("#dpEnd").val($(this).val());
+            onSelect: function (dateText, inst) {
+                $("#dpEnd").datepicker("setDate", dateText);
+                $("#dpEnd").datepicker("option", { minDate: dateText });
             }
-        });
-
-        $("#dpEnd").datepicker();
-
-        $("#dpStart").datepicker().datepicker("setDate", new Date());
-        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        }).datepicker("setDate", today);
+        $("#dpEnd").datepicker({ minDate: today }).datepicker("setDate", today);
 
         //load associates
         $.ajax({
@@ -56,12 +54,23 @@
             success: function (result) {
 
                 if (result != '0') {
-                    $.each(result, function (i, item) {
-                        $('#ddlAssignedTo').append($('<option>', {
-                            value: item.AssociateID,
-                            text: item.FirstName + ' ' + item.LastName
-                        }));
+                    var ddlAssignedTo = $('#ddlAssignedTo');
+                    var legendContent = $('<ul>')
+                        .addClass("fa-ul")
+                        .css("margin-left", 0);
+                    $.each(result, function () {
+                        ddlAssignedTo.append($('<option />').val(this.AssociateID).text(this.FirstName + ' ' + this.LastName));
+
+                        var li = $('<li/>')
+                            .text(this.FirstName + ' ' + this.LastName)
+                            .appendTo(legendContent);
+                        var icon = $('<i/>')
+                            .addClass('fa fa-circle fa-lg fa-fw')
+                            .css("color", this.BackgroundColor)
+                            .prependTo(li);
                     });
+
+                    $(".fc-Legend-button").popover({ html: true, placement: "left", content: legendContent.prop('outerHTML'), container: "#calendar", trigger: "hover"})
                 } else {
                     $.AlertDialog('There was an error loading the page.', 'Error Message', function (event) { }, 'lightcoral');
                 }
@@ -178,7 +187,7 @@
                         AppointmentName: $('#txtCreateTitledlg').val(),
                         Description: $('#txtCreateDescdlg').val(),
                         AssignedTo: $('#ddlAssignedTo').val(),
-                        BusinessID: 0,
+                        CreatedDate: (new Date()).toLocaleString(),
                         Active: 1
                     }
 
@@ -249,7 +258,7 @@
             //$("#ddlAssignTo").val($("#ddlAssignTo option:first").val());
             $("#ddlAssignedTo").val(_associateID);
             $('#lblCreatedByName').text(_associateName);
-
+            $('#lblCreatedDate').text(moment(new Date).format("DD/MM/YYYY"))
 
             $('#hdnApptID').val('0');
 
@@ -304,7 +313,7 @@
             header: {
                 left: 'AddAppt  prev,next today',
                 center: 'title',
-                right: 'month,agendaWeek,agendaDay,listMonth Reload'
+                right: 'month,agendaWeek,agendaDay,listMonth Reload Legend'
             },
             customButtons: {
                 AddAppt: { //PT - create class .fc-AddAppt-button in button
@@ -317,6 +326,12 @@
                     text: 'Reload',
                     click: function () {
                         $("#calendar").fullCalendar('refetchEvents');
+                    }
+                },
+                Legend: { //PT - create class .fc-Legend-button in button
+                    text: ' ',
+                    click: function () {
+                        
                     }
                 }
             },
@@ -439,6 +454,8 @@
 
                 $('#ddlAssignedTo').val(calEvent.assignedto);
                 $('#lblCreatedByName').text(calEvent.createdbyname);
+                $('#lblCreatedDate').text(moment(calEvent.createddate).format("DD/MM/YYYY"));
+                
 
                 if (calEvent.allDay) {
                     $('#create-appt-dialog .start').hide();
@@ -628,7 +645,8 @@
                                 allDay: value.AllDay,
                                 assignedto: value.AssignedTo,
                                 createdby: value.CreatedBy,
-                                createdbyname: value.CreatedByName
+                                createdbyname: value.CreatedByName,
+                                createddate: value.CreatedDate
                             });
                         });
                         callback(events);
@@ -645,9 +663,10 @@
 
         //PT - Add Appoinment buttom custom
         $('.fc-AddAppt-button').addClass('btn-info');
-        $('.fc-AddAppt-button').prepend('<i class="fa fa-calendar-plus-o fa-fw" aria-hidden="true"></i>')
+        $('.fc-AddAppt-button').prepend('<i class="fa fa-calendar-plus-o fa-fw" aria-hidden="true"></i>');
         //PT - Reload calendar buttom custom
-        $('.fc-Reload-button').prepend('<i class="fa fa-refresh fa-fw" aria-hidden="true"></i>')
+        $('.fc-Reload-button').prepend('<i class="fa fa-refresh fa-fw" aria-hidden="true"></i>');
+        $('.fc-Legend-button').prepend('<i class="fa fa-list-ul fa-fw fa-lg" aria-hidden="true"></i>');
 
     });
 
@@ -728,9 +747,13 @@
             <label for="txtCreateDescdlg">Assigned:</label>
             <select id="ddlAssignedTo" class="form-control"></select>
         </div>
-        <div class="form-group col-sm-7">
+        <div class="form-group col-sm-4">
             <label>Created by:</label>
             <p id="lblCreatedByName" class="form-control-static"></p>
+        </div>
+        <div class="form-group col-sm-3">
+            <label>Created date:</label>
+            <p id="lblCreatedDate" class="form-control-static"></p>
         </div>
     </div>
     <div class="row">
