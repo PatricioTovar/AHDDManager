@@ -41,6 +41,17 @@ function numericValidate(evt) {
     }
 }
 
+function maskCleanCopy(evt, input) {
+    var text = $(input).cleanVal();
+
+    evt.preventDefault();
+    if (evt.clipboardData) {
+        evt.clipboardData.setData('text/plain', text);
+    } else if (window.clipboardData) {
+        window.clipboardData.setData('Text', text);
+    }
+
+}
 //https://jqueryui.com/autocomplete/#combobox
 (function ($) {
     $.widget("custom.combobox", {

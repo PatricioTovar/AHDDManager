@@ -653,10 +653,6 @@
                     Table.column('delete').visible(false);
                 }
 
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                // needs to implement if it fails
-              //  alert('Error searching customers.');
-                $.AlertDialog(textStatus + ": " + errorThrown, 'Error Message', null, 'lightcoral');
             });
     }
 </script>
@@ -778,11 +774,11 @@
         <div class="row">
             <div class="col-md-3 form-group">
                 <label for="txtMobile">Mobile:</label>
-                <input type="text" id="txtMobile" class="form-control" maxlength="10" onkeypress='numericValidate(event)' autocomplete="chrome-off" />
+                <input type="text" id="txtMobile" class="form-control" maxlength="10" onkeypress='numericValidate(event)' oncopy="maskCleanCopy(event, this)" autocomplete="chrome-off" />
             </div>
             <div class="col-md-3 form-group">
                 <label for="txtPhone">Phone:</label>
-                <input type="text" id="txtPhone" class="form-control" maxlength="10" onkeypress='numericValidate(event)' autocomplete="chrome-off" />
+                <input type="text" id="txtPhone" class="form-control" maxlength="10" onkeypress='numericValidate(event)' oncopy="maskCleanCopy(event, this)" autocomplete="chrome-off" />
             </div>
             <div class="col-md-3 form-group">
                 <label for="txtFax">Other number:</label>

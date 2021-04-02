@@ -171,9 +171,6 @@
                 $('#lblTotalAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalAmount));
                 $('#lblTotalCount').text('(' + totalCount + ')');
             }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-
-            $.AlertDialog(textStatus + ': ' + errorThrown, 'Error Message', null, 'lightcoral');
         });
     }
 </script>

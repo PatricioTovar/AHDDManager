@@ -100,13 +100,6 @@
             Table.clear().draw();
             Table.rows.add(result).draw();
             $('[data-toggle="tooltip"]').tooltip();
-
-
-           
-
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            // needs to implement if it fails
-            $.AlertDialog(textStatus, 'Error Message', function (event) { }, 'lightcoral');
         });
 
 

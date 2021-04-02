@@ -223,9 +223,6 @@
                 $('#lblTotalAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalAmount));
                 $('#lblTotalCount').text('(' + totalCount + ')');
             }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            // needs to implement if it fails
-            $.AlertDialog(textStatus, 'Error Message', null, 'lightcoral');
         });
     }
 </script>

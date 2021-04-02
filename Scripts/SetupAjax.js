@@ -14,18 +14,14 @@
                 $("#loadingModal").show();
             },
             complete: function () {
-                //$(".modal").delay(2000).hide();
-                $("#loadingModal").fadeOut(200) //BETTER DESING
+                $("#loadingModal").fadeOut(200) 
             },
             error: function (response, status, error) {
-                if (response.status == 901) {
-                    //alert("Sorry, your session has expired. Please login again to continue");
-                    $.AlertDialog("Sorry, your session has expired. Please login again to continue", 'Session expired', null, 'lightcoral');
-                    document.location.href = "/Home/";
+                if (response.status == 901 || response.status == 403) {
+                    $.ErrorDialog("Sorry, your session has expired. Please login again to continue", 'Session expired', function () { document.location.href = "/Home/"; });
                 }
                 else {
-                    //alert("An error occurred: " + status + "nError: " + error);
-                    $.AlertDialog(status + ": " + error, 'System error', null, 'lightcoral');
+                    $.ErrorDialog("Please show this message to the system administrator. <br /><br />" + status + ": " + error, 'System error', null, 'lightcoral');
                 }
             }
         });

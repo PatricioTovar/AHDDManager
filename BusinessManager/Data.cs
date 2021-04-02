@@ -3045,6 +3045,47 @@ namespace AHDDManagerClass
         }
 
 
+        public DataTable GetAppointmentsByDateRange(DateTime StartDate, DateTime EndDate)
+        {
+            SqlConnection Conn = new SqlConnection(this.ConnString);
+
+            try
+            {
+                SqlCommand selectCMD = new SqlCommand("GetAppointmentsByDateRange", Conn);
+                selectCMD.CommandTimeout = 30;
+                selectCMD.CommandType = CommandType.StoredProcedure;
+
+
+                SqlDataAdapter da = new SqlDataAdapter();
+                da.SelectCommand = selectCMD;
+
+                selectCMD.Parameters.Add(new SqlParameter("@StartDate", StartDate));
+                selectCMD.Parameters.Add(new SqlParameter("@EndDate", EndDate));
+
+                Conn.Open();
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                Conn.Close();
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Data.GetAppointmentsByMonthYear error :" + ex.Message);
+
+                //return new DataTable();
+            }
+
+            finally
+            {
+                if (Conn.State != ConnectionState.Closed)
+                {
+                    Conn.Close();
+                }
+            }
+        }
         public DataTable GetCustomerNoteByID(int CustomerNoteID)
         {
             SqlConnection Conn = new SqlConnection(this.ConnString);
