@@ -37,7 +37,7 @@ namespace AHDDManager.Controllers
             return View();
         }
 
-        public ActionResult ResumeReport()
+        public ActionResult PaymentsReport()
         {
             return View();
         }
