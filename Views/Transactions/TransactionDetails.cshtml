@@ -20,10 +20,11 @@
 
 <script>
     $(function () {
-        var CustomerID;
-
         $.fn.bootstrapBtn = $.fn.button.noConflict();
         $('[data-toggle="popover"]').popover();
+
+        var today = new Date();
+        $("#dpPaymentDate").datepicker().datepicker("setDate", today);
 
         var newpaymentdialog = $("#new-payment-dialog").dialog({
             autoOpen: false,
@@ -234,36 +235,46 @@
 
         }
 
+
         function MakePayment() {
-                var _payment = {
-                    CustomerID: @Model.Item3.CustomerID,
-                    TransactionID: @ViewContext.RouteData.Values["id"],
-                    AssociateID: 0,
-                    PaymentAmount: $("#txtPaymentAmount").val(),
-                    PaymentMethod: $("#payMethodButtons").find(".selected").data('value'),
-                    CheckNumber: $("#txtCheckNumber").val(),
-                    PaymentDate: (new Date()).toLocaleString()
-                };
+            var paymentDate = "";
 
-                $.ajax({
-                    url: '/transactions/MakePayment/',
-                    type: 'POST',
-                    data: JSON.stringify({ payment: _payment }),
-                    //dataType: 'json',
-                    traditional: true,
-                    contentType: 'application/json;',
-                    success: function (result) { //result is returned as an arry of base flavors
-                        if (result == '1') {
-                            newpaymentdialog.dialog("close");
-
-                            location.reload();
-                        } else {
-                            //alert("Error: Customer update was failed.");
-                            $.AlertDialog('Error: Customer update was failed.', 'Error Message', function (event) { }, 'lightcoral');
-                        }
-                    }
-                });
+            var dpPaymentDate = $("#dpPaymentDate").val();
+            if (moment(new Date()).isSame(dpPaymentDate, 'day')) {
+                paymentDate = (new Date()).toLocaleString(); //To Keep Hour
+            } else {
+                paymentDate = dpPaymentDate;
             }
+
+            var _payment = {
+                CustomerID: @Model.Item3.CustomerID,
+                TransactionID: @ViewContext.RouteData.Values["id"],
+                AssociateID: 0,
+                PaymentAmount: $("#txtPaymentAmount").val(),
+                PaymentMethod: $("#payMethodButtons").find(".selected").data('value'),
+                CheckNumber: $("#txtCheckNumber").val(),
+                PaymentDate: paymentDate
+            };
+
+            $.ajax({
+                url: '/transactions/MakePayment/',
+                type: 'POST',
+                data: JSON.stringify({ payment: _payment }),
+                //dataType: 'json',
+                traditional: true,
+                contentType: 'application/json;',
+                success: function (result) { //result is returned as an arry of base flavors
+                    if (result == '1') {
+                        newpaymentdialog.dialog("close");
+
+                        location.reload();
+                    } else {
+                        //alert("Error: Customer update was failed.");
+                        $.AlertDialog('Error: Customer update was failed.', 'Error Message', function (event) { }, 'lightcoral');
+                    }
+                }
+            });
+        }
 
         $('.payment').on('click', function () {
             event.preventDefault();
@@ -821,6 +832,18 @@
                     <input type="text" id="txtCheckNumber" class="form-control" onkeypress='numericValidate(event)' />
                 </div>
             </div>
+            @if (ViewBag.IsAdmin)
+            {
+                <div class="form-group">
+                    <label for="dpPaymentDate" class="col-md-6 control-label">Payment Date:</label>
+                    <div class="col-md-6">
+                        <div class="input-group margin-bottom-sm">
+                            <input type="text" id="dpPaymentDate" class="form-control" readonly />
+                            <span class="input-group-addon btn btn-default" onclick="$('#dpPaymentDate').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>

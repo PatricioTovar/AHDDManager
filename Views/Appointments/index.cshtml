@@ -5,7 +5,7 @@
 
 <link href='../scripts/calendar/fullcalendar.min.css' rel='stylesheet' />
 <link href='../scripts/calendar/fullcalendar.print.min.css' rel='stylesheet' media='print' />
-<script src='../scripts/calendar/lib/moment.min.js'></script>
+@*<script src='../scripts/calendar/lib/moment.min.js'></script>*@
 
 <script src='../scripts/calendar/fullcalendar.js'></script>
 <script src='../scripts/calendar/locale-all.js'></script>
@@ -26,7 +26,6 @@
     $(function () {
         var _associateID = '@(ViewBag.AssociateID)';
         var _associateName = '@(ViewBag.AssosiateName)';
-        var today = new Date();
         var initialLocaleCode = 'en';
 
         var doubleClick = null;
@@ -37,8 +36,8 @@
         var today = new Date();
         $("#dpStart").datepicker({
             onSelect: function (dateText, inst) {
-                $("#dpEnd").datepicker("setDate", dateText);
                 $("#dpEnd").datepicker("option", { minDate: dateText });
+                $("#dpEnd").datepicker("setDate", dateText);
             }
         }).datepicker("setDate", today);
         $("#dpEnd").datepicker({ minDate: today }).datepicker("setDate", today);
@@ -241,11 +240,6 @@
                     $('#txtCreateTitledlg').val('');
                     $('#txtCreateDescdlg').val('');
 
-                    var _now = new Date;
-
-                    $("#dpStart").datepicker().datepicker("setDate", new Date());
-                    $("#dpEnd").datepicker().datepicker("setDate", new Date());
-
                     createapptdialog.dialog("close");
                 }
             }
@@ -262,6 +256,10 @@
             $('#lblCreatedDate').text(moment(new Date).format("DD/MM/YYYY"))
 
             $('#hdnApptID').val('0');
+
+            $("#dpStart").datepicker().datepicker("setDate", new Date());
+            $("#dpEnd").datepicker("option", { minDate: new Date() });
+            $("#dpEnd").datepicker().datepicker("setDate", new Date());
 
             $('#chkAllDay').prop('checked', false);
 
@@ -340,6 +338,7 @@
                 //Pseudo doubleClick 
                 var singleClick = date.format();
                 if (doubleClick == singleClick) {
+                    selectedStartDate = date;
                     openCreateApptDialog();
                     doubleClick = null;
                 } else {
@@ -597,8 +596,8 @@
 
             if (selectedStartDate != null && selectedStartDate != null) { //Patricio Tovar - use the current dates selection in calendar
                 $('#dpStart').val(moment(selectedStartDate).format('MM/DD/YYYY'));
-                $('#dpEnd').val(moment(selectedStartDate).format('MM/DD/YYYY'));
                 $("#dpEnd").datepicker("option", { minDate: moment(selectedStartDate).format('MM/DD/YYYY') });
+                $('#dpEnd').val(moment(selectedStartDate).format('MM/DD/YYYY'));
             }
 
             $('#hdnApptID').val('0');

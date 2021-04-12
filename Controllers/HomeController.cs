@@ -36,7 +36,7 @@ namespace AHDDManager.Controllers
 
                         Session["Business"] = objB;
 
-                        AHDDManager.Models.Logging.LogClockIn("User Logged in: " + objA.UserName + " (" + objA.FirstName +  " " + objA.LastName + ")", objA.UserName);
+                        Models.Logging.LogClockIn("User Logged in: " + objA.UserName + " (" + objA.FirstName +  " " + objA.LastName + ")", objA.UserName);
 
                         Session.Timeout = 600;
 
@@ -44,19 +44,19 @@ namespace AHDDManager.Controllers
                     }
                     else
                     {
-                        AHDDManager.Models.Logging.LogClockIn("User LOGGED in. Could not find business: " + objA.UserName + " (" + objA.FirstName + " " + objA.LastName + ") | " + objA.BusinessID, objA.UserName);
+                        Models.Logging.LogClockIn("User LOGGED in. Could not find business: " + objA.UserName + " (" + objA.FirstName + " " + objA.LastName + ") | " + objA.BusinessID, objA.UserName);
                         return Json("There was an error logining in.");
                     }
                 }
                 else
                 {
-                    AHDDManager.Models.Logging.LogClockIn("User Login FAILED: " + UserName + " | " + Password, objA.UserName);
+                    Models.Logging.LogClockIn("User Login FAILED: " + UserName + " | " + Password, objA.UserName);
                     return Json("Login failed.");
                 }
             }
             catch
             {
-                AHDDManager.Models.Logging.LogClockIn("User Login FAILED: " + UserName + " | " + Password, UserName);
+                Models.Logging.LogClockIn("User Login FAILED: " + UserName + " | " + Password, UserName);
                 return Json("There was an error logining in.");
             }
             

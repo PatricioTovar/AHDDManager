@@ -370,9 +370,19 @@ namespace AHDDManagerClass
             if (lastNotToday.ToList().Count > 0 && lastNotToday.First().LogoutDatetime == DateTime.MinValue)
             {//if the lastest cih from yesterday does not have a log out it means they did not logout.
                 var cih_yest = lastNotToday.First();
-
+                
                 //auto log yesterday's cih out
-                cih_yest.LogoutDatetime = Convert.ToDateTime(cih_yest.LoginDatetime.ToShortDateString() + " 5:30:00 PM");
+                //cih_yest.LogoutDatetime = Convert.ToDateTime(cih_yest.LoginDatetime.ToShortDateString() + " 5:30:00 PM");
+                var clockOutDate = new DateTime(cih_yest.LoginDatetime.Year, cih_yest.LoginDatetime.Month, cih_yest.LoginDatetime.Day, 17, 30, 0); //TODO: HARDCODE
+
+                if (clockOutDate > cih_yest.LoginDatetime)
+                {
+                    cih_yest.LogoutDatetime = clockOutDate;
+                }
+                else {
+
+                    cih_yest.LogoutDatetime = cih_yest.LoginDatetime;
+                }
                 cih_yest.Update();
 
             }
