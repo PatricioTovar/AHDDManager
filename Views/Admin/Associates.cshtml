@@ -180,9 +180,8 @@
             AssociateDialog.dialog("open");
         });
 
-        $('#tblAssociates').on('click', '.name', function () {
+        $('#tblAssociates').on('click', '.edit', function () {
 
-            $('#divColor').css('background', 'silver')
             ClearForm();
             resetRequiredBoxes();
             AssociateID = $(this).data("id");
@@ -243,7 +242,7 @@
             <td class="text-center">
                 <i class="fa fa-circle fa-lg fa-fw" style="color: @item.BackgroundColor" data-toggle="tooltip" title="" data-original-title="@item.BackgroundColor"></i>
             </td>
-            <td><a href="#" class="name" data-id="@item.AssociateID">@item.FirstName @item.LastName</a></td>
+            <td>@item.FirstName @item.LastName</td>
             <td>@item.Address</td>
             @*<td>@item.City</td>*@
             @*<td>@item.State</td>*@
@@ -295,7 +294,9 @@
                     }
                 }
             </td>
-
+            <td>
+                <a class='edit' data-id="@item.AssociateID"><i class='fa fa-pencil fa-shadow fa-2x' style='color: lightskyblue;' data-toggle='tooltip' data-placement='top' title='Edit'></i></a>
+            </td>
         </tr>
     }
 </table>

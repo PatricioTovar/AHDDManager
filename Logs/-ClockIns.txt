@@ -93,3 +93,5 @@
 4/2/2021 11:42:55 AM|User Login FAILED: Marcelo | Tovar26
 4/2/2021 11:42:56 AM|User Login FAILED: Marcelo | 
 4/8/2021 6:29:15 PM|User Login FAILED: Marcelo | Tovar26/1
+4/12/2021 2:11:58 PM|User Login FAILED: BadUser | asdfasd
+4/12/2021 2:14:06 PM|User Login FAILED: Super | Bishop2351
