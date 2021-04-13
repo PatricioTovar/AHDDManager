@@ -553,10 +553,10 @@
                                     events.push({
                                         id: value.AppointmentID,
                                         title: value.AppointmentName,
-                                        //start: value.StartDateString,
-                                        //end: value.EndDateString,
-                                        start: moment(value.StartDate).format(),
-                                        end: moment(value.EndDate).format(),
+                                        start: value.StartDateString,
+                                        end: value.EndDateString,
+                                        //start: moment(value.StartDate).format(),
+                                        //end: moment(value.EndDate).format(),
                                         description: value.Description,
                                         textColor: value.TextColor,
                                         backgroundColor: value.BackGroundColor,// will be parsed
