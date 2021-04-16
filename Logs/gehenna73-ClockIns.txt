@@ -131,3 +131,33 @@
 2/26/2021 7:09:00 PM|User Logged in: gehenna73 (Diego Cantu)
 2/26/2021 7:16:59 PM|User Logged in: gehenna73 (Diego Cantu)
 3/13/2021 6:51:17 PM|User Logged in: gehenna73 (Diego Cantu)
+3/27/2021 10:24:23 AM|User Logged in: gehenna73 (Diego Cantu)
+4/7/2021 9:13:51 PM|User Logged in: gehenna73 (Diego Cantu)
+4/7/2021 9:16:56 PM|User Logged OUT: gehenna73
+4/7/2021 9:17:09 PM|User Logged in: gehenna73 (Diego Cantu)
+4/7/2021 9:19:26 PM|User Logged OUT: gehenna73
+4/7/2021 9:43:33 PM|User Logged in: gehenna73 (Diego Cantu)
+4/7/2021 9:51:32 PM|User Logged in: gehenna73 (Diego Cantu)
+4/7/2021 10:14:04 PM|User Logged OUT: gehenna73
+4/8/2021 1:04:27 PM|User Logged in: gehenna73 (Diego Cantu)
+4/8/2021 1:06:49 PM|User Logged in: gehenna73 (Diego Cantu)
+4/8/2021 1:31:14 PM|User Logged in: gehenna73 (Diego Cantu)
+4/8/2021 5:30:03 PM|User Logged in: gehenna73 (Diego Cantu)
+4/9/2021 10:00:30 AM|User Logged in: gehenna73 (Diego Cantu)
+4/10/2021 8:00:44 AM|User Logged in: gehenna73 (Diego Cantu)
+4/10/2021 8:26:57 AM|User Logged in: gehenna73 (Diego Cantu)
+4/10/2021 8:29:44 AM|User Logged in: gehenna73 (Diego Cantu)
+4/10/2021 8:38:05 AM|User Logged in: gehenna73 (Diego Cantu)
+4/10/2021 11:29:43 AM|User Logged in: gehenna73 (Diego Cantu)
+4/10/2021 11:33:33 AM|User Logged in: gehenna73 (Diego Cantu)
+4/10/2021 8:06:07 PM|User Logged in: gehenna73 (Diego Cantu)
+4/10/2021 10:29:37 PM|User Logged in: gehenna73 (Diego Cantu)
+4/10/2021 10:29:58 PM|User clock in status changed to False: gehenna73 (Diego Cantu)
+4/10/2021 10:29:58 PM|User Logged OUT: gehenna73
+4/11/2021 9:47:03 AM|User Logged in: gehenna73 (Diego Cantu)
+4/11/2021 9:51:15 AM|User Logged OUT: gehenna73
+4/11/2021 9:55:17 AM|User Logged in: gehenna73 (Diego Cantu)
+4/11/2021 10:00:05 AM|User Logged OUT: gehenna73
+4/11/2021 10:04:23 AM|User Logged in: gehenna73 (Diego Cantu)
+4/14/2021 4:37:53 PM|User Logged in: gehenna73 (Diego Cantu)
+4/15/2021 10:50:53 PM|User Logged in: gehenna73 (Diego Cantu)

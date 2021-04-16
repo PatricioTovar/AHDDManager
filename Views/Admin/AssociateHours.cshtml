@@ -54,6 +54,7 @@
             open: function (event, ui) {
                 var today = new Date();
                 var startDate = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
+                entry = "";
 
                 $.each(HoursWorked, function (key, value) {
                     if (value.AssociateID == AssociateID) {
@@ -66,14 +67,14 @@
 
                             var _LogoutDatetime = cih.LogoutDatetimeString;
 
-                            if (_LoginDatetime == '1/1/0001') {
+                            if (_LoginDatetime == '1/1/0001 12:00:00 AM') {
                                 _LoginDatetime = 'N/A';
                             }
-                            if (_LogoutDatetime == '1/1/0001') {
+                            if (_LogoutDatetime == '1/1/0001 12:00:00 AM') {
                                 _LogoutDatetime = 'N/A';
                             }
 
-                            var entry = "";
+                            entry = "";
 
                             if (cih.IsLunch) {
                                 entry += "<tr id=\"" + cih.AssociateClockInHistoryID + "\" style=\"background-color:beige\" \">"
@@ -92,6 +93,55 @@
                             $("#tblClockInsDetails").append(entry);
 
                         });
+
+
+                        //$.ajax({
+                        //    url: '/admin/GetAssociateOpenClockins/',
+                        //    type: 'POST',
+                        //    data: JSON.stringify({ AssociateID: AssociateID, StartDate: $('#dpStart').val(), EndDate: $('#dpEnd').val() }),
+                        //    //dataType: 'json',
+                        //    traditional: true,
+                        //    contentType: 'application/json;',
+                        //    success: function (res) {
+                        //        var x = 1;
+                        //        //if (res.length > 0) {
+                        //        //    $.each(res.ClockInHistory, function (key, cih) {
+                        //        //        var _LoginDatetime = cih.LoginDatetimeString;
+
+                        //        //        var _LogoutDatetime = cih.LogoutDatetimeString;
+
+                        //        //        if (_LoginDatetime == '1/1/0001') {
+                        //        //            _LoginDatetime = 'N/A';
+                        //        //        }
+                        //        //        if (_LogoutDatetime == '1/1/0001') {
+                        //        //            _LogoutDatetime = 'N/A';
+                        //        //        }
+
+                        //        //        entry = '';
+
+                        //        //        if (cih.IsLunch) {
+                        //        //            entry += "<tr id=\"" + cih.AssociateClockInHistoryID + "\" style=\"background-color:beige\" \">"
+                        //        //        }
+                        //        //        else {
+                        //        //            entry += "<tr id=\"" + cih.AssociateClockInHistoryID + "\">"
+                        //        //        }
+
+                        //        //        entry += "<td>" + _LoginDatetime + "</td>" +
+                        //        //            "<td>" + _LogoutDatetime + "</td>" +
+                        //        //            "<td>" + cih.HoursWorked + "</td>" +
+                        //        //            "<td>" + cih.MinutesWorked + "</td>" +
+                        //        //            "<td><a class='editTime'><i class='fa fa-pencil fa-shadow fa-2x' style='color:cornflowerblue' data-toggle='tooltip' data-placement='right' title='Edit' ></i></a> </td>" +
+                        //        //            "</tr>";
+
+                        //        //        $("#tblClockInsDetails").append(entry);
+                        //        //    });
+
+                        //        //}
+
+                        //    }
+                        //});
+
+
 
                         $('[data-toggle="tooltip"]').tooltip();
                     }

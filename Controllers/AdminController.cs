@@ -338,7 +338,6 @@ namespace AHDDManager.Controllers
             return Content(JsonConvert.SerializeObject(objAHWs), "application/json");
         }
 
-
         public ActionResult ChangeClockedInStatus()
         {
             return ChangeAssociateClockedInStatus(base.Associate.AssociateID);
@@ -499,6 +498,38 @@ namespace AHDDManager.Controllers
 
 
         }
+
+
+
+
+
+
+
+
+
+
+
+        public JsonResult GetAssociateOpenClockins(int AssociateID, DateTime StartDate, DateTime EndDate)
+        {
+            AssociateClockInHistories objAHWs = new AssociateClockInHistories();
+
+            var res = objAHWs.GetClockinOpensByDateRange(StartDate.ToString(), EndDate.ToString(), AssociateID);
+
+            return Json(res);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

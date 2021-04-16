@@ -43,12 +43,10 @@ namespace AHDDManagerClass
             //objError = new ClassError();
         }
 
-
         public AssociateClockInHistory()
         {
             initialize();
         }
-
 
         public AssociateClockInHistory(DataRow dr)
         {
@@ -179,7 +177,7 @@ namespace AHDDManagerClass
         {
             get { return dtmLoginDatetime.ToString(); }
         }
-        
+
 
         public DateTime LogoutDatetime
         {
@@ -293,8 +291,6 @@ namespace AHDDManagerClass
     }
 
 
-
-
     public class AssociateClockInHistories : IEnumerable<AssociateClockInHistory>
     {
         List<AssociateClockInHistory> infoList = new List<AssociateClockInHistory>();
@@ -326,24 +322,27 @@ namespace AHDDManagerClass
         {
             Data objData = new Data();
             DataTable dt;
-            AssociateClockInHistory objInfo;
+            //AssociateClockInHistory objInfo;
 
             //infoList = new ArrayList();
 
-            dt = objData.GetAssociateClockInsByDateRange(StartDate, EndDate, AssociateID);
+            infoList = GetAllClockinsUnfiltered(StartDate, EndDate, AssociateID);
 
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    objInfo = new AssociateClockInHistory(dt.Rows[i]);
-                    if (objInfo.AssociateClockInHistoryExists)
-                    {
-                        infoList.Add(objInfo);
-                    }
-                }
-            }
+            //dt = objData.GetAssociateClockInsByDateRange(StartDate, EndDate, AssociateID);
+
+            //if (dt != null && dt.Rows.Count > 0)
+            //{
+            //    for (int i = 0; i < dt.Rows.Count; i++)
+            //    {
+            //        objInfo = new AssociateClockInHistory(dt.Rows[i]);
+            //        if (objInfo.AssociateClockInHistoryExists)
+            //        {
+            //            infoList.Add(objInfo);
+            //        }
+            //    }
+            //}
         }
+
 
         public AssociateClockInHistories()
         {
@@ -377,6 +376,39 @@ namespace AHDDManagerClass
 
         }
 
+
+        public List<AssociateClockInHistory> GetClockinOpensByDateRange(string StartDate, string EndDate, int AssociateID)
+        {
+            Data objData = new Data();
+            DataTable dt;
+            AssociateClockInHistory objInfo;
+
+            List<AssociateClockInHistory> retList = new List<AssociateClockInHistory>();
+
+            dt = objData.GetClockinOpensByDateRange(StartDate, EndDate, AssociateID);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    objInfo = new AssociateClockInHistory();
+
+                    objInfo.AssociateClockInHistoryID = Convert.ToInt32(dt.Rows[i]["AssociateClockInHistoryID"]);
+                    objInfo.FirstName = dt.Rows[i]["FirstName"].ToString();
+                    objInfo.LastName = dt.Rows[i]["LastName"].ToString();
+                    objInfo.AssociateID = AssociateID;
+                    objInfo.LoginDatetime = Convert.ToDateTime(dt.Rows[i]["LoginDatetime"]);
+                    objInfo.HoursWorked = 0;
+                    objInfo.MinutesWorked = 0;
+
+                    retList.Add(objInfo);
+                }
+            }
+
+            return retList;
+
+        }
+
         public void Add(AssociateClockInHistory Info)
         {
             infoList.Add(Info);
@@ -390,9 +422,6 @@ namespace AHDDManagerClass
             return infoList.GetEnumerator();
         }
     }
-
-
-
 
 
     //create this to get accumulated hours over a date range for an assoc
@@ -427,12 +456,15 @@ namespace AHDDManagerClass
 
                 if (!item.IsLunch)
                 { // calculate work time
-                    span = item.LogoutDatetime - item.LoginDatetime;
+                    if (item.LogoutDatetime != DateTime.MinValue)
+                    {
+                        span = item.LogoutDatetime - item.LoginDatetime;
 
-                    iTotalHoursWorked += Convert.ToInt16(Math.Floor(span.TotalMinutes / 60));
+                        iTotalHoursWorked += Convert.ToInt16(Math.Floor(span.TotalMinutes / 60));
 
-                    minutes = Convert.ToInt16(Math.Floor(span.TotalMinutes % 60));
-                    iTotalMinutesWorked += minutes;
+                        minutes = Convert.ToInt16(Math.Floor(span.TotalMinutes % 60));
+                        iTotalMinutesWorked += minutes;
+                    }
 
                     //Debug.WriteLine(iTotalHoursWorked.ToString() + " :: " + item.AssociateClockInHistoryID + ": " + span.Hours.ToString() + " - " + span.Minutes.ToString());
                 }
@@ -505,8 +537,6 @@ namespace AHDDManagerClass
 
     }
 
-
-
     public class AssociatesHoursWorked //: IEnumerable<AssociateHoursWorked>
     {
 
@@ -527,6 +557,10 @@ namespace AHDDManagerClass
 
             foreach (int associd in AssocsWithHours)
             {
+                AssociateClockInHistories objACH = new AssociateClockInHistories();
+
+                var ret = objACH.GetAllClockinsUnfiltered(StartDate, StartDate, associd);
+
                 objInfo = new AssociateHoursWorked(StartDate, EndDate, associd);
 
                 iTotalMinutesWorked += (objInfo.TotalHoursWorked * 60) + objInfo.TotalMinutesWorked;
@@ -543,8 +577,6 @@ namespace AHDDManagerClass
         {
             infoList = new List<AssociateHoursWorked>();
         }
-
-
 
         public List<AssociateHoursWorked> HoursWorked
         {
@@ -577,9 +609,4 @@ namespace AHDDManagerClass
         //    return infoList.GetEnumerator();
         //}
     }
-
-
-
-
-
 }

@@ -273,6 +273,56 @@ namespace AHDDManagerClass
             }
         }
 
+        public DataTable GetClockinOpensByDateRange(string StartDate, string EndDate, int AssociateID)
+        {
+            SqlConnection Conn = new SqlConnection(this.ConnString);
+
+            try
+            {
+                SqlCommand selectCMD = new SqlCommand("GetClockinOpensByDateRange", Conn);
+                selectCMD.CommandTimeout = 30;
+                selectCMD.CommandType = CommandType.StoredProcedure;
+
+
+                SqlDataAdapter da = new SqlDataAdapter();
+                da.SelectCommand = selectCMD;
+
+                DateTime dtStart = Convert.ToDateTime(StartDate);
+                DateTime dtEnd = Convert.ToDateTime(EndDate);
+                
+                 dtStart = Convert.ToDateTime(dtStart.ToShortDateString() + " 00:00:00");
+                 dtEnd = Convert.ToDateTime(dtEnd.ToShortDateString() + " 23:59:59");
+
+                selectCMD.Parameters.Add(new SqlParameter("@StartDate", dtStart));
+                selectCMD.Parameters.Add(new SqlParameter("@EndDate", dtEnd));
+                selectCMD.Parameters.Add(new SqlParameter("@AssociateID", AssociateID));
+
+                Conn.Open();
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                Conn.Close();
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Data.GetClockinOpensByDateRange error :" + ex.Message);
+
+                //return new DataTable();
+            }
+
+            finally
+            {
+                if (Conn.State != ConnectionState.Closed)
+                {
+                    Conn.Close();
+                }
+            }
+        }
+
+
         public DataTable GetAssociateClockInsAllByDateRange(string StartDate, string EndDate, int AssociateID)
         {
             SqlConnection Conn = new SqlConnection(this.ConnString);

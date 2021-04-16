@@ -2,3 +2,8 @@
 1/26/2021 5:20:41 PM|User Logged OUT: Sylvia
 2/28/2021 1:45:43 PM|User Logged in: Sylvia (Silvia Balderas)
 2/28/2021 2:08:29 PM|User Logged OUT: Sylvia
+4/7/2021 9:19:35 PM|User Logged in: Sylvia (Silvia Balderas)
+4/7/2021 10:14:12 PM|User Logged in: Sylvia (Silvia Balderas)
+4/11/2021 9:51:23 AM|User Logged in: Sylvia (Silvia Balderas)
+4/11/2021 9:53:22 AM|User Logged OUT: Sylvia
+4/11/2021 9:59:58 AM|User clock in status changed to False: Sylvia (Silvia Balderas)
