@@ -63,7 +63,6 @@
 
 
 
-    <li><a href="/logout/">Logout</a></li>
     <li>
         @if (Context.Session["Associate"] != null)
         {
@@ -101,16 +100,12 @@
                 <div class="user-container" style="background-color:white; ">
                     <h4>
                         <a href="/account/associateprofile/">Welcome @assoc.FirstName</a>
-
-                        @*<span class='dot' style='background-color: @assoc.BackgroundColor'></span>*@
                         <i class="fa fa-circle fa-lg fa-fw" style='color: @assoc.BackgroundColor' data-toggle='tooltip' title='Your color'></i>
                         @{
                             if (Context.Session["Associate"] != null)
                             {
                                 if (assoc.IsAdmin)
                                 {
-                                    @*<text>&nbsp; &nbsp;</text>*@
-                                    @*<img src="~/images/admin.png" />*@
                                     <i class="fa fa-key fa-shadow" style="color: gold;" data-toggle='tooltip' title='You are Admin!'></i>
                                 }
                             }
@@ -121,5 +116,6 @@
         }
     }
 
+    <li><a href="/logout/">Logout</a></li>
 
 </ul>

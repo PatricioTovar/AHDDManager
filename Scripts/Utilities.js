@@ -1,5 +1,5 @@
 ﻿function currencyValidate(evt, input) {
-    var theEvent = evt || window.event;   
+    var theEvent = evt || window.event;
 
     var text = '';
 
@@ -32,7 +32,7 @@ function numericValidate(evt) {
     } else {
         // Handle key press
         var key = theEvent.keyCode || theEvent.which;
-        key = String.fromCharCode(key);        
+        key = String.fromCharCode(key);
     }
     var regex = /^[0-9]/;
     if (!regex.test(key)) {
@@ -52,6 +52,16 @@ function maskCleanCopy(evt, input) {
     }
 
 }
+
+if (jQuery && $.fn.dataTable) {
+    $.extend(true, $.fn.dataTable.defaults, {
+        language: {
+            search: "Filter:"
+        }
+    });
+}
+
+
 //https://jqueryui.com/autocomplete/#combobox
 (function ($) {
     $.widget("custom.combobox", {
@@ -59,7 +69,7 @@ function maskCleanCopy(evt, input) {
         options: {
             value: 0,
             text: '',
-        }, 
+        },
 
         _create: function () {
             this.wrapper = $("<div>")
