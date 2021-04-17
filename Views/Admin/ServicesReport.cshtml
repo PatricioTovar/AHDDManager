@@ -4,9 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<link href="~/Content/datatables.min.css" rel="stylesheet" />
 <script src="~/Scripts/datatables.min.js"></script>
-<script src="~/Scripts/moment.js"></script>
 <script src="~/Scripts/dataTables.buttons.min.js"></script>
 <script src="~/Scripts/buttons.html5.min.js"></script>
 <script src="~/Scripts/jszip.min.js"></script>
@@ -16,8 +15,14 @@
     $(document).ready(function () {
         $.fn.bootstrapBtn = $.fn.button.noConflict();
 
-        $("#dpStart").datepicker().datepicker("setDate", new Date());
-        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        var today = new Date();
+        $("#dpStart").datepicker({
+            onSelect: function (dateText, inst) {
+                $("#dpEnd").datepicker("option", { minDate: dateText });
+            }
+        }).datepicker("setDate", today);
+        $("#dpEnd").datepicker({ minDate: today }).datepicker("setDate", today);
+
         initTable();
         GetAssociates();
     });
@@ -117,7 +122,7 @@
     function GetAssociates() {
         $.ajax({
             beforeSend: function () { }, //Prevent loading dialog
-            url: '/customer/GetAssociates/',
+            url: '/customer/GetAllAssociates/',
             type: 'POST',
             //dataType: 'json',
             traditional: true,

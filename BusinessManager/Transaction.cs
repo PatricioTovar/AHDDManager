@@ -460,7 +460,7 @@ namespace AHDDManagerClass
             return retList;
         }
 
-        public List<Transaction> GetTransactionsReport(DateTime StartDate, DateTime EndDate, bool IncludeOpens)
+        public List<Transaction> GetTransactionsReport(DateTime StartDate, DateTime EndDate, bool ReceivablesOnly)
         {
             Data objData = new Data();
             DataTable dt;
@@ -468,7 +468,7 @@ namespace AHDDManagerClass
 
             List<Transaction> retList = new List<Transaction>();
 
-            dt = objData.GetTransactionsReport(StartDate, EndDate, IncludeOpens);
+            dt = objData.GetTransactionsReport(StartDate, EndDate, ReceivablesOnly);
 
             if (dt != null && dt.Rows.Count > 0)
             {

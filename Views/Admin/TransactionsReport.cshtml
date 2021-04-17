@@ -4,9 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<link href="~/Content/datatables.min.css" rel="stylesheet" />
 <script src="~/Scripts/datatables.min.js"></script>
-<script src="~/Scripts/moment.js"></script>
 <script src="~/Scripts/dataTables.buttons.min.js"></script>
 <script src="~/Scripts/buttons.html5.min.js"></script>
 <script src="~/Scripts/jszip.min.js"></script>
@@ -37,8 +36,14 @@
     $(document).ready(function () {
         $.fn.bootstrapBtn = $.fn.button.noConflict();
 
-        $("#dpStart").datepicker().datepicker("setDate", new Date());
-        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        var today = new Date();
+        $("#dpStart").datepicker({
+            onSelect: function (dateText, inst) {
+                $("#dpEnd").datepicker("option", { minDate: dateText });
+            }
+        }).datepicker("setDate", today);
+        $("#dpEnd").datepicker({ minDate: today }).datepicker("setDate", today);
+
         initTable();
 
     });
@@ -62,7 +67,7 @@
             columns: [
                 {
                     data: "TransactionID",
-                    className: "exportExcel",
+                    className: "exportExcel min-col",
                     render: function (data, type, row, meta) {
                         {
                             if (type == "exportxls") {
@@ -79,14 +84,14 @@
                 },
                 {
                     data: "TransactionDate",
-                    className: "exportExcel",
+                    className: "exportExcel  min-col",
                     render: function (data, type, row, meta) {
                         return moment(data).format('MM/DD/YYYY');
                     }
                 },
                 {
                     data: "ModifiedDate",
-                    className: "exportExcel",
+                    className: "exportExcel  min-col",
                     render: function (data, type, row, meta) {
                         return moment(data).format('MM/DD/YYYY');
                     }
@@ -103,16 +108,16 @@
                 },
                 {
                     data: "TransactionStatus",
-                    className: "exportExcel"
+                    className: "exportExcel min-col"
                 },
                 {
                     data: "TotalAmount",
-                    className: "exportExcel text-right",
+                    className: "exportExcel text-right min-col",
                     render: $.fn.dataTable.render.number(',', '.', 2)
                 },
                 {
                     name: "totalOwned",
-                    className: "exportExcel text-right",
+                    className: "exportExcel text-right min-col",
                     render: function (data, type, row, meta) {
                         {
                             var totalOwned = row.TotalAmount - row.TotalCollected
@@ -122,7 +127,7 @@
                 },
                 {
                     data: "RefundedAmount",
-                    className: "exportExcel text-right",
+                    className: "exportExcel text-right min-col",
                     render: $.fn.dataTable.render.number(',', '.', 2)
                 }
             ],
@@ -210,12 +215,12 @@
     function btnSearchClick() {
         tblTransactions.clear().draw();
 
-        var includeOpens = $('#chkIncludeOpens').prop('checked')
+        var ReceivablesOnly = $('#chkReceivablesOnly').prop('checked');
 
         $.ajax({
             url: "/admin/GetTransactionsReport/",
             type: "post",
-            data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val(), IncludeOpens: includeOpens }),
+            data: JSON.stringify({ StartDate: $("#dpStart").val(), EndDate: $("#dpEnd").val(), ReceivablesOnly: ReceivablesOnly }),
             //dataType: 'json',
             contentType: 'application/json;',
         }).done(function (result) {
@@ -226,9 +231,17 @@
             }
         })
     }
+
+    function chkReceivablesOnlyChange() {
+        var ReceivablesOnly = $('#chkReceivablesOnly').prop('checked');
+
+        $("#dpStart").prop("disabled", ReceivablesOnly);
+        $("#dpEnd").prop("disabled", ReceivablesOnly);
+
+    }
 </script>
 
-<h2>Receipts Info</h2>
+<h2>Receipts Report</h2>
 
 <div class="well">
     <div class="row">
@@ -250,8 +263,8 @@
             <label class="empty-label">&nbsp;</label>
             <div class="radio">
                 <label>
-                    <input type="checkbox" id="chkIncludeOpens" />
-                    Include Opens
+                    <input type="checkbox" id="chkReceivablesOnly" onchange="chkReceivablesOnlyChange()" />
+                    Receivables Only
                 </label>
             </div>
         </div>

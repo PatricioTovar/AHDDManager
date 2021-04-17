@@ -5,29 +5,24 @@
 
 <script>
     $(function () {
-        $("#dpStart").datepicker();
-        $("#dpEnd").datepicker();
-        $("#dpExpense").datepicker();
 
         $.fn.bootstrapBtn = $.fn.button.noConflict();
         $('[data-toggle="tooltip"]').tooltip();
 
-        var _now = new Date;
-
-        $("#dpStart").datepicker().datepicker("setDate", new Date());
-        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        var today = new Date();
+        $("#dpStart").datepicker({
+            onSelect: function (dateText, inst) {
+                $("#dpEnd").datepicker("option", { minDate: dateText });
+            }
+        }).datepicker("setDate", today);
+        $("#dpEnd").datepicker({ minDate: today }).datepicker("setDate", today);
 
         var _total = 0;
-
-
 
         $('#lnkPrint').on('click', function (e) {
             e.stopPropagation();
             window.open('expensesprint/?startdate=' + $('#dpStart').val() + '&enddate=' + $('#dpEnd').val(), '', 'scrollbars=1,toolbar=1,resizable=1,width=1000,height=580,left=0,top=0')
         });
-
-
-
 
         $("#btnSearch").on('click', function (event) {
             if (Date.parse($("#dpEnd").val()) < Date.parse($("#dpStart").val())) {

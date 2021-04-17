@@ -5249,7 +5249,7 @@
             this._moveToTop(null, true);
 
             if ($.ui.dialog.overlayInstances) { //PT - FIX Dialogs Stack Bug
-                var newIndex = ((+ (this.uiDialog.css("z-index"))) + $.ui.dialog.overlayInstances);
+                var newIndex = 1000 + $.ui.dialog.overlayInstances;
                 this.uiDialog.attr('style', function (i, s) { return (s || '') + 'z-index: ' + newIndex + ' !important;' });
             }
 

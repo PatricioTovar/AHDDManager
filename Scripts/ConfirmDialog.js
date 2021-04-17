@@ -158,6 +158,43 @@ $.AlertDialog = function (message, title, callbackYes, TitleBarColor) {
     dlg.dialog("open");
 };
 
+$.ErrorDialog = function (message, title, callback) {
+    if ($("#modalErrorDialog").length == 0)
+        $('body').append('<div id="modalErrorDialog"></div>');
+
+    var dlg = $("#modalErrorDialog")
+        .html(message)
+        .dialog({
+            autoOpen: false, // set this to false so we can manually open it
+            dialogClass: "confirmScreenWindow no-close",
+            closeOnEscape: false,
+            draggable: false,
+            width: 600,
+            minHeight: 50,
+            modal: true,
+            resizable: false,
+            title: title,
+            buttons: {
+                OK: function () {
+                    if (callback && typeof (callback) === "function") {
+                        callback();
+                    }
+
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+                if (callback && typeof (callback) === "function") {
+                    callback();
+                }
+
+                $(this).dialog("close");
+            }
+        });
+        dlg.prev(".ui-dialog-titlebar").css("background", "tomato");
+
+    dlg.dialog("open");
+};
 
 
 

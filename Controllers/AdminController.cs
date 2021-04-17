@@ -37,7 +37,7 @@ namespace AHDDManager.Controllers
             return View();
         }
 
-        public ActionResult ResumeReport()
+        public ActionResult PaymentsReport()
         {
             return View();
         }
@@ -115,14 +115,14 @@ namespace AHDDManager.Controllers
             return Json(objTs);
         }
 
-        public JsonResult GetTransactionsReport(DateTime StartDate, DateTime EndDate, bool IncludeOpens)
+        public JsonResult GetTransactionsReport(DateTime StartDate, DateTime EndDate, bool ReceivablesOnly)
         {
             var result = new Result();
             try
             {
                 Transactions objTs = new Transactions();
 
-                var list = objTs.GetTransactionsReport(StartDate, EndDate, IncludeOpens);
+                var list = objTs.GetTransactionsReport(StartDate, EndDate, ReceivablesOnly);
 
                 result.Object = list;
             }

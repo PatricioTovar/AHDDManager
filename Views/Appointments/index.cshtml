@@ -5,7 +5,7 @@
 
 <link href='../scripts/calendar/fullcalendar.min.css' rel='stylesheet' />
 <link href='../scripts/calendar/fullcalendar.print.min.css' rel='stylesheet' media='print' />
-<script src='../scripts/calendar/lib/moment.min.js'></script>
+@*<script src='../scripts/calendar/lib/moment.min.js'></script>*@
 
 <script src='../scripts/calendar/fullcalendar.js'></script>
 <script src='../scripts/calendar/locale-all.js'></script>
@@ -16,13 +16,9 @@
         padding: 0px 40px;
     }
 
-    #calendar {
-        margin-top: 20px;
+    #calendar a {
+        color: inherit;
     }
-
-        #calendar a {
-            color: inherit;
-        }
 </style>
 <script>
     var selectedStartDate = null;
@@ -30,21 +26,21 @@
     $(function () {
         var _associateID = '@(ViewBag.AssociateID)';
         var _associateName = '@(ViewBag.AssosiateName)';
-        var today = new Date();
         var initialLocaleCode = 'en';
+
+        var doubleClick = null;
+        var clickTimer = null;
 
         $.fn.bootstrapBtn = $.fn.button.noConflict();
 
+        var today = new Date();
         $("#dpStart").datepicker({
-            onSelect: function (date) {
-                $("#dpEnd").val($(this).val());
+            onSelect: function (dateText, inst) {
+                $("#dpEnd").datepicker("option", { minDate: dateText });
+                $("#dpEnd").datepicker("setDate", dateText);
             }
-        });
-
-        $("#dpEnd").datepicker();
-
-        $("#dpStart").datepicker().datepicker("setDate", new Date());
-        $("#dpEnd").datepicker().datepicker("setDate", new Date());
+        }).datepicker("setDate", today);
+        $("#dpEnd").datepicker({ minDate: today }).datepicker("setDate", today);
 
         //load associates
         $.ajax({
@@ -56,12 +52,25 @@
             success: function (result) {
 
                 if (result != '0') {
-                    $.each(result, function (i, item) {
-                        $('#ddlAssignedTo').append($('<option>', {
-                            value: item.AssociateID,
-                            text: item.FirstName + ' ' + item.LastName
-                        }));
+                    var ddlAssignedTo = $('#ddlAssignedTo');
+                    var ddlAssociateFilter = $('#ddlAssociateFilter');
+                    var legendContent = $('<ul>')
+                        .addClass("fa-ul")
+                        .css("margin-left", 0);
+                    $.each(result, function () {
+                        ddlAssignedTo.append($('<option />').val(this.AssociateID).text(this.FirstName + ' ' + this.LastName));
+                        ddlAssociateFilter.append($("<option />").val(this.AssociateID).text(this.FirstName + ' ' + this.LastName));
+
+                        var li = $('<li/>')
+                            .text(this.FirstName + ' ' + this.LastName)
+                            .appendTo(legendContent);
+                        var icon = $('<i/>')
+                            .addClass('fa fa-circle fa-lg fa-fw')
+                            .css("color", this.BackgroundColor)
+                            .prependTo(li);
                     });
+
+                    $("#btnLegend").popover({ html: true, placement: "left", content: legendContent.prop('outerHTML'), container: "#calendar", trigger: "hover"})
                 } else {
                     $.AlertDialog('There was an error loading the page.', 'Error Message', function (event) { }, 'lightcoral');
                 }
@@ -178,7 +187,7 @@
                         AppointmentName: $('#txtCreateTitledlg').val(),
                         Description: $('#txtCreateDescdlg').val(),
                         AssignedTo: $('#ddlAssignedTo').val(),
-                        BusinessID: 0,
+                        CreatedDate: (new Date()).toLocaleString(),
                         Active: 1
                     }
 
@@ -231,11 +240,6 @@
                     $('#txtCreateTitledlg').val('');
                     $('#txtCreateDescdlg').val('');
 
-                    var _now = new Date;
-
-                    $("#dpStart").datepicker().datepicker("setDate", new Date());
-                    $("#dpEnd").datepicker().datepicker("setDate", new Date());
-
                     createapptdialog.dialog("close");
                 }
             }
@@ -249,9 +253,13 @@
             //$("#ddlAssignTo").val($("#ddlAssignTo option:first").val());
             $("#ddlAssignedTo").val(_associateID);
             $('#lblCreatedByName').text(_associateName);
-
+            $('#lblCreatedDate').text(moment(new Date).format("DD/MM/YYYY"))
 
             $('#hdnApptID').val('0');
+
+            $("#dpStart").datepicker().datepicker("setDate", new Date());
+            $("#dpEnd").datepicker("option", { minDate: new Date() });
+            $("#dpEnd").datepicker().datepicker("setDate", new Date());
 
             $('#chkAllDay').prop('checked', false);
 
@@ -285,33 +293,19 @@
 
         });
 
-        $("body").on("click", ".fc-AddAppt-button", function () {
-            // this is a create therefore set the appointment id to 0 signifying a new appointment
-            resetDialog();
-
-            if (selectedStartDate != null && selectedStartDate != null) { //Patricio Tovar - use the current dates selection in calendar
-                $('#dpStart').val(moment(selectedStartDate).format('MM/DD/YYYY'));
-                $('#dpEnd').val(moment(selectedStartDate).format('MM/DD/YYYY'));
-            }
-
-            $('#hdnApptID').val('0');
-            $("#btnDeleteAppoiment").hide();
-            createapptdialog.dialog("open");
-        });
-
         $('#calendar').fullCalendar({
             themeSystem: 'bootstrap3',
             header: {
                 left: 'AddAppt  prev,next today',
                 center: 'title',
-                right: 'month,agendaWeek,agendaDay,listMonth Reload'
+                right: 'month,agendaWeek,agendaDay,listMonth Reload Legend'
             },
             customButtons: {
                 AddAppt: { //PT - create class .fc-AddAppt-button in button
                     text: 'Add appoinment',
-                    //click: function () {
-                    //    openCreateApptDialog();
-                    //}
+                    click: function () {
+                        openCreateApptDialog();
+                    }
                 },
                 Reload: { //PT - create class .fc-Reload-button in button
                     text: 'Reload',
@@ -320,7 +314,8 @@
                     }
                 }
             },
-            aspectRatio: 2.6, //PatricioTovar
+            aspectRatio: 2.5, //PatricioTovar
+            //height: "parent",
             //defaultDate: today.getMonth() + 1 + '/' + today.getDate() + '/' + today.getFullYear(),
             locale: initialLocaleCode,
             buttonIcons: true, // show the prev/next text
@@ -339,83 +334,25 @@
             loading: function (bool) {
 
             },
-            eventAfterAllRender: function () {
-                //if (!$('#calendarTrash').length) {
-                //    $('.fc-header-toolbar').find('.fc-left').prepend('<div id="calendarTrash" class="calendar-trash" style="padding-right: 10px;"><img style="height: 40px;" src="/images/trashcan.png" /> <img class="imgBtn addAppoiment" style="height: 40px;" src="/images/calendar.png" id="addAppoiment" /> </div>');
-                //}
+            dayClick: function (date, allDay, jsEvent, view) {
+                //Pseudo doubleClick 
+                var singleClick = date.format();
+                if (doubleClick == singleClick) {
+                    selectedStartDate = date;
+                    openCreateApptDialog();
+                    doubleClick = null;
+                } else {
+                    doubleClick = date.format();
+                    clearInterval(clickTimer);
+                    clickTimer = setInterval(function () {
+                        doubleClick = null;
+                        clearInterval(clickTimer);
+                    }, 500);
+                }
             },
-
             select: function (start, end) {  //event for creating
                 selectedStartDate = start;
                 selectedEndDate = end;
-                /*
-                            $.PromptDialog('Appointment Title: ', 'Create Appointment', function (e) {
-                                //ajax call to delete using appt id
-                                var title = e.title;
-                                var eventData;
-                                if (title.length > 0) {
-                                    eventData = {
-                                        title: title,
-                                        start: start,
-                                        end: end
-                                    };
-
-                                    var view = $('#calendar').fullCalendar('getView');
-                                    if (view.name == 'month') {
-                                        eventData.allDay = true;
-                                    }
-
-                                    appt = {
-                                        StartDate: $.fullCalendar.formatDate(start, 'MM-DD-YYYY HH:mm:ss'),
-                                        EndDate: $.fullCalendar.formatDate(end, 'MM-DD-YYYY HH:mm:ss'),
-                                        AppointmentName: title,
-                                        Description: e.description,
-                                        AssignedTo: 0,
-                                        BusinessID: 0,
-                                        Active: 1
-                                    }
-
-                                    $.ajax({
-                                        url: '/appointments/AddAppointment/',
-                                        type: 'POST',
-                                        data: JSON.stringify({ appointment: appt }),
-                                        //dataType: 'json',
-                                        traditional: true,
-                                        contentType: 'application/json;',
-                                        success: function (result) { //result is returned as an arry of base flavors
-                                            if (result.startsWith == '0-') {
-                                                //alert(result);
-                                                $.AlertDialog(result, 'Error Message', function (event) { }, 'lightcoral');
-                                            } else {
-
-                                                newData = {
-                                                    title: result.AppointmentName,
-                                                    start: result.StartDateString,
-                                                    end: result.EndDate,
-                                                    description: result.Description,
-                                                    textColor: result.TextColor,
-                                                    backgroundColor: result.BackGroundColor,// will be parsed
-                                                    apptid: result.AppointmentID,
-                                                    allDay: result.AllDay
-                                                }
-
-                                                $.extend(eventData, newData);
-                                                $('#calendar').fullCalendar('renderEvent', eventData, true);
-
-                                                $.AlertDialog('Appointment was added successfully', 'Success', function (event) { }, 'lightgreen');
-                                            }
-                                        },
-                                        error: function (jqXHR, error, errorThrown) {
-                                            $.AlertDialog(errorThrown, 'Error Message', function (error) { }, 'lightcoral');
-                                        }
-                                    });
-                                }
-                            }, null, null, 'yellow');
-
-                            $('#calendar').fullCalendar('unselect');
-
-                */
-
             },
 
             unselect: function () {
@@ -436,9 +373,11 @@
                 $('#hdnApptID').val(calEvent.apptid);
 
                 $('#dpStart').val(moment(calEvent.start, 'MM/DD/YYYY').format('MM/DD/YYYY'));
-
+                $("#dpEnd").datepicker("option", { minDate: moment(calEvent.start, 'MM/DD/YYYY').format('MM/DD/YYYY') });
                 $('#ddlAssignedTo').val(calEvent.assignedto);
                 $('#lblCreatedByName').text(calEvent.createdbyname);
+                $('#lblCreatedDate').text(moment(calEvent.createddate).format("DD/MM/YYYY"));
+
 
                 if (calEvent.allDay) {
                     $('#create-appt-dialog .start').hide();
@@ -586,9 +525,8 @@
                 }, null, 'yellow');
             },
             eventRender: function (event, element) {
-                //if(event.description == "yes") {
-                //element.css('background-color', 'red');
-                //}
+                var associateFilter = $("#ddlAssociateFilter").val();
+                return associateFilter == 0 || event.assignedto == associateFilter;
             },
             eventDestroy: function (event, element, view) {
                 //alert('eventDestroy on "' + event.title + '"');
@@ -602,35 +540,38 @@
             },
             events: function (start, end, timezone, callback) {
                 $.ajax({
-                    url: '/appointments/GetAppointments/',
-                    //dataType: 'json',
+                    url: '/appointments/GetAppointmentsByRange/',
                     data: {
-                        // our hypothetical feed requires UNIX timestamps
-                        Month: today.getMonth() + 1,
-                        Year: today.getFullYear()
+                        StartDate: start.format("MM/DD/YYYY"),
+                        EndDate: end.format("MM/DD/YYYY")
                     },
-                    success: function (doc) {
+                    success: function (result) {
                         var events = [];
-                        $(doc).each(function (index, value) {
-
-                            events.push({
-                                id: value.AppointmentID,
-                                title: value.AppointmentName,
-                                start: value.StartDateString,
-                                end: value.EndDateString,
-                                //start: value.StartDate,
-                                //end: value.EndDate,
-                                description: value.Description,
-                                textColor: value.TextColor,
-                                backgroundColor: value.BackGroundColor,// will be parsed
-                                borderColor: value.BackGroundColor,
-                                apptid: value.AppointmentID,
-                                allDay: value.AllDay,
-                                assignedto: value.AssignedTo,
-                                createdby: value.CreatedBy,
-                                createdbyname: value.CreatedByName
+                        if (result.Res) {
+                            var associateFilter = $("#ddlAssociateFilter").val();
+                            $(result.Object).each(function (index, value) {
+                                    events.push({
+                                        id: value.AppointmentID,
+                                        title: value.AppointmentName,
+                                        start: value.StartDateString,
+                                        end: value.EndDateString,
+                                        //start: moment(value.StartDate).format(),
+                                        //end: moment(value.EndDate).format(),
+                                        description: value.Description,
+                                        textColor: value.TextColor,
+                                        backgroundColor: value.BackGroundColor,// will be parsed
+                                        borderColor: value.BackGroundColor,
+                                        apptid: value.AppointmentID,
+                                        allDay: value.AllDay,
+                                        assignedto: value.AssignedTo,
+                                        createdby: value.CreatedBy,
+                                        createdbyname: value.CreatedByName,
+                                        createddate: value.CreatedDate
+                                    });
                             });
-                        });
+                        } else {
+                            $.AlertDialog(result.Message, 'Error Message', null, 'lightcoral');
+                        }
                         callback(events);
                     }
                 });
@@ -645,25 +586,27 @@
 
         //PT - Add Appoinment buttom custom
         $('.fc-AddAppt-button').addClass('btn-info');
-        $('.fc-AddAppt-button').prepend('<i class="fa fa-calendar-plus-o fa-fw" aria-hidden="true"></i>')
+        $('.fc-AddAppt-button').prepend('<i class="fa fa-calendar-plus-o fa-fw" aria-hidden="true"></i>');
         //PT - Reload calendar buttom custom
-        $('.fc-Reload-button').prepend('<i class="fa fa-refresh fa-fw" aria-hidden="true"></i>')
+        $('.fc-Reload-button').prepend('<i class="fa fa-refresh fa-fw" aria-hidden="true"></i>');
 
+
+        function openCreateApptDialog() {
+            resetDialog();
+
+            if (selectedStartDate != null && selectedStartDate != null) { //Patricio Tovar - use the current dates selection in calendar
+                $('#dpStart').val(moment(selectedStartDate).format('MM/DD/YYYY'));
+                $("#dpEnd").datepicker("option", { minDate: moment(selectedStartDate).format('MM/DD/YYYY') });
+                $('#dpEnd').val(moment(selectedStartDate).format('MM/DD/YYYY'));
+            }
+
+            $('#hdnApptID').val('0');
+            $("#btnDeleteAppoiment").hide();
+            createapptdialog.dialog("open");
+        }
     });
 
-    function openCreateApptDialog() {
-        // this is a create therefore set the appointment id to 0 signifying a new appointment
-        resetDialog();
-
-        if (selectedStartDate != null && selectedStartDate != null) { //Patricio Tovar - use the current dates selection in calendar
-            $('#dpStart').val(moment(selectedStartDate).format('MM/DD/YYYY'));
-            $('#dpEnd').val(moment(selectedStartDate).format('MM/DD/YYYY'));
-        }
-
-        $('#hdnApptID').val('0');
-        $("#btnDeleteAppoiment").hide();
-        $("#create-appt-dialog").dialog("open");
-    }
+    
 
     function updateEndHour() {
         var startHour = $("#ddlLIHours").val();
@@ -708,9 +651,25 @@
 
 </script>
 
+<div class="form-horizontal" style="margin-top: 10px;">
+    <div class="form-group">
+        <div class="col-sm-1">
+            <label class="control-label text-left" for="ddlAssociateFilter">Associate:</label>
+        </div>
+        <div class="col-sm-2">
+            <select id="ddlAssociateFilter" class="form-control" onchange="$('#calendar').fullCalendar('rerenderEvents');">
+                <option value="0" selected>All</option>
+            </select>
+        </div>
+        <div class="col-sm-1 col-sm-offset-8 text-right">
+            <button id="btnLegend" class="btn">
+                <i class="fa fa-list-ul fa-fw fa-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+</div>
 
-<div id='calendar'></div>
-
+<div id='calendar' style="margin-top: 10px;"></div>
 
 
 <div id="create-appt-dialog" title="Create Appointment">
@@ -728,9 +687,13 @@
             <label for="txtCreateDescdlg">Assigned:</label>
             <select id="ddlAssignedTo" class="form-control"></select>
         </div>
-        <div class="form-group col-sm-7">
+        <div class="form-group col-sm-4">
             <label>Created by:</label>
             <p id="lblCreatedByName" class="form-control-static"></p>
+        </div>
+        <div class="form-group col-sm-3">
+            <label>Created date:</label>
+            <p id="lblCreatedDate" class="form-control-static"></p>
         </div>
     </div>
     <div class="row">

@@ -14,7 +14,7 @@ namespace AHDDManager.Controllers
         // GET: Appointments
         public ActionResult Index()
         {
-            ViewBag.AssosiateName = base.Associate.FirstName + " " + base.Associate.LastName;
+            ViewBag.AssosiateName = Associate.FirstName + " " + Associate.LastName;
             return View();
         }
 
@@ -25,6 +25,22 @@ namespace AHDDManager.Controllers
             return Json(objAppts, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult GetAppointmentsByRange(DateTime StartDate, DateTime EndDate)
+        {
+            var result = new Result();
+            try
+            {
+                result.Object = new Appointments(StartDate, EndDate);
+            }
+            catch (Exception ex)
+            {
+                result.Res = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+        
 
         public ActionResult DeleteAppointment(int AppointmentID)
         {
@@ -36,29 +52,29 @@ namespace AHDDManager.Controllers
             }
             else
             {
-                AHDDManager.Models.Logging.LogEvent("Event add FAILED");
+                Models.Logging.LogEvent("Event add FAILED");
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Failed to add appointment.");
             }
         }
 
         public ActionResult AddAppointment(Appointment appointment)
         {
-            appointment.CreatedBy = base.Associate.AssociateID;
-            appointment.BusinessID = base.Business.BusinessID;
+            appointment.CreatedBy = Associate.AssociateID;
+            appointment.BusinessID = Business.BusinessID;
 
-            AHDDManager.Models.Logging.LogEvent("Event to Add by " + appointment.AssignedTo + " - TITLE: " + appointment.AppointmentName + " | Start Date: " + appointment.StartDateString + " (" + appointment.StartDateString + ")");
+            Models.Logging.LogEvent("Event to Add by " + appointment.AssignedTo + " - TITLE: " + appointment.AppointmentName + " | Start Date: " + appointment.StartDateString + " (" + appointment.StartDateString + ")");
 
             if (appointment.Update())
             {
                 appointment = new Appointment(appointment.AppointmentID);
 
-                AHDDManager.Models.Logging.LogEvent("Event: Appt id - " + appointment.AppointmentID);
+                Models.Logging.LogEvent("Event: Appt id - " + appointment.AppointmentID);
 
                 return Json(appointment, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                AHDDManager.Models.Logging.LogEvent("Event add FAILED");
+                Models.Logging.LogEvent("Event add FAILED");
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Failed to add appointment.");
             }
         }
@@ -81,7 +97,7 @@ namespace AHDDManager.Controllers
             }
             else
             {
-                AHDDManager.Models.Logging.LogEvent("Event update FAILED");
+                Models.Logging.LogEvent("Event update FAILED");
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Failed to update appointment.");
             }
         }
@@ -99,7 +115,7 @@ namespace AHDDManager.Controllers
             }
             else
             {
-                AHDDManager.Models.Logging.LogEvent("Event update FAILED");
+                Models.Logging.LogEvent("Event update FAILED");
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Failed to update appointment.");
             }
         }

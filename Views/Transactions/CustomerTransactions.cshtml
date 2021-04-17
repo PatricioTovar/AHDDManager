@@ -5,30 +5,45 @@
 }
 
 <script>
+    var _assosiateID = '@ViewBag.AssociateID'
+    var _customerID = '@ViewBag.CustomerID'
     $(function () {
-        var CustomerID;
 
         $('[data-toggle="tooltip"]').tooltip();
-
-        $.ajaxSetup({
-            error: function (x, status, error) {
-                if (x.status == 901) {
-                    alert("Sorry, your session has expired. Please login again to continue");
-                    document.location.href = "/Home/";
-                    // window.location.href = "/Home/";
-                }
-                else {
-                    alert("An error occurred: " + status + "nError: " + error);
-                }
-            }
-        });
 
         $('#tblTransactions tr').not(":first-child").on('click', function () {
             document.location.href = '/transactions/transactiondetails/' + $(this).attr('id');
             //window.location = '/transactions/transactiondetails/' + $(this).attr('id');
         });
-
     });
+
+    function btnDemoRecieptClick() {
+        var transaction = {
+            TransactionID: -1,
+            BusinessID: 0,
+            CustomerID: _customerID,
+            AssociateID: _assosiateID,
+            TotalAmount: 0,
+            TransactionDate: (new Date()).toLocaleString(), //PT - add time in the client side
+            ModifiedDate: (new Date()).toLocaleString() //PT - add time in the client side
+        };
+
+        $.ajax({
+            url: '/transactions/AddNewTransaction/',
+            type: 'POST',
+            data: JSON.stringify({ transaction: transaction, transactiondetails: [{}] }),
+            traditional: true,
+            contentType: 'application/json;',
+            success: function (result) {
+                if (result != '0') {
+                    document.location.href = '/transactions/transactiondetails/' + result;
+                } else {
+                    $.AlertDialog('Error: Customer transaction update has failed.', 'Error Message', function (event) { }, 'lightcoral');
+                }
+            }
+        });
+    }
+
 </script>
 
 <h2>Customer Receipts</h2>
@@ -45,7 +60,13 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12 text-right">
+        <div class="col-lg-6">
+            <button id="btnDemoReciept" class="btn btn-info" onclick="btnDemoRecieptClick()" data-toggle="tooltip" title="Demo Receipt">
+                <i class="fa fa-file-text-o" aria-hidden="true" ></i>
+                DEMO
+            </button>
+        </div>
+        <div class="col-lg-6 text-right">
             <a href="/transactions/addtransaction/@id" id="lnkTrans">
                 @*<img src="~/images/addtransaction.png" data-toggle="tooltip" data-placement="left" title="Create Receipt" />*@
                 <i class="fa fa-plus fa-3x" aria-hidden="true" data-toggle="tooltip" title="New receipt"></i>
@@ -53,49 +74,49 @@
         </div>
     </div>
 
-    <table id="tblTransactions" class="table table-hover table-condensed">
-        <tr>
-            <th>Receipt ID</th>
-            <th>Receipt Date</th>
-            <th>Amount</th>
-            <th>Paid</th>
-            <th>Owed</th>
-            <th>Created By</th>
-        </tr>
+        <table id="tblTransactions" class="table table-hover table-condensed">
+            <tr>
+                <th>Receipt ID</th>
+                <th>Receipt Date</th>
+                <th>Amount</th>
+                <th>Paid</th>
+                <th>Owed</th>
+                <th>Created By</th>
+            </tr>
 
-        @{
+            @{
 
 
 
-            foreach (var item in Model.ToList())
-            {
+                foreach (var item in Model.ToList())
+                {
 
-                <tr id="@item.TransactionID" data-status="@item.TransactionStatusID">
-                    <td>@item.TransactionID</td>
-                    <td>@item.TransactionDate</td>
-                    <td>@item.TotalAmount</td>
-                    <td>@item.TotalCollected</td>
-                    <td>@item.TotalOwed</td>
-                    <td>@item.TakenBy</td>
-                </tr>
-            }
-        }
-
-    </table>
-
-    <script>
-        $(function () {
-            $('#tblTransactions tr').each(function (i, row) {
-                var $row = $(row);
-
-                if ($row.attr('data-status') == '3') {
-                    $row.addClass('danger');
-                } if ($row.attr('data-status') == '2') {
-                    $row.addClass('success');
+                    <tr id="@item.TransactionID" data-status="@item.TransactionStatusID">
+                        <td>@item.TransactionID</td>
+                        <td>@item.TransactionDate</td>
+                        <td>@item.TotalAmount</td>
+                        <td>@item.TotalCollected</td>
+                        <td>@item.TotalOwed</td>
+                        <td>@item.TakenBy</td>
+                    </tr>
                 }
+            }
+
+        </table>
+
+        <script>
+            $(function () {
+                $('#tblTransactions tr').each(function (i, row) {
+                    var $row = $(row);
+
+                    if ($row.attr('data-status') == '3') {
+                        $row.addClass('danger');
+                    } if ($row.attr('data-status') == '2') {
+                        $row.addClass('success');
+                    }
 
 
+                });
             });
-        });
-    </script>
-</div>
+        </script>
+    </div>

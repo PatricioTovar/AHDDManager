@@ -1,5 +1,5 @@
 ﻿function currencyValidate(evt, input) {
-    var theEvent = evt || window.event;   
+    var theEvent = evt || window.event;
 
     var text = '';
 
@@ -32,7 +32,7 @@ function numericValidate(evt) {
     } else {
         // Handle key press
         var key = theEvent.keyCode || theEvent.which;
-        key = String.fromCharCode(key);        
+        key = String.fromCharCode(key);
     }
     var regex = /^[0-9]/;
     if (!regex.test(key)) {
@@ -41,18 +41,36 @@ function numericValidate(evt) {
     }
 }
 
-var formatterCurrency = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+function maskCleanCopy(evt, input) {
+    var text = $(input).cleanVal();
 
-    // These options are needed to round to whole numbers if that's what you want.
-    //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-});
+    evt.preventDefault();
+    if (evt.clipboardData) {
+        evt.clipboardData.setData('text/plain', text);
+    } else if (window.clipboardData) {
+        window.clipboardData.setData('Text', text);
+    }
+
+}
+
+if (jQuery && $.fn.dataTable) {
+    $.extend(true, $.fn.dataTable.defaults, {
+        language: {
+            search: "Filter:"
+        }
+    });
+}
+
 
 //https://jqueryui.com/autocomplete/#combobox
-$(function () {
+(function ($) {
     $.widget("custom.combobox", {
+
+        options: {
+            value: 0,
+            text: '',
+        },
+
         _create: function () {
             this.wrapper = $("<div>")
                 .attr("id", this.element.attr("id") + "-wrapper")
@@ -173,10 +191,11 @@ $(function () {
             this.element.show();
         },
 
-        clear: function () {
+        clear: function (x) {
             this.input.val("")
             this.element.val("").change();
         }
     });
 
-});
+
+})(jQuery);

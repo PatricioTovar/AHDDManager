@@ -36,9 +36,32 @@
     <li><a href="/appointments/">Appointments</a></li>
     <li><a href="/customer/">Customers</a></li>
     <li><a href="/transactions/">Receipts</a></li>
-    @*<li><a href="/account/collected/">Payments Collected</a></li>*@
-    <li><a href="/account/ResumeAssociate/">My Day</a></li>
+    <li><a href="/account/ResumeAssociate/">My Receipts</a></li>
     <!-- <li><a href="/account/MyHours/">My Hours</a></li> -->
+
+    @if (ViewBag.IsAdmin)
+    {
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+            <ul class="dropdown-menu" aria-labelledby="admin">
+                <li><a href="/admin/PaymentsReport">Payments Report</a></li>
+                <li><a href="/admin/TransactionsReport">Receipts Report</a></li>
+                <li><a href="/admin/ServicesReport">Items Report</a></li>
+                <li><a href="/admin/associates">Associates</a></li>
+                <li><a href="/admin/AssociateHours">Associate Hours</a></li>
+                <li><a href="/admin/forms">Items Catalog</a></li>
+                <li><a href="/admin/dailyinvoices">Daily Receipts</a></li>
+                <li><a href="/admin/payments">Payments by Associates</a></li>
+                <li><a href="/admin/AccountsReceivable">Accounts Receivables</a></li>
+                <li><a href="/admin/refunds">Refunds</a></li>
+                <li><a href="/admin/deletedexpenses">Deleted Expenses</a></li>
+            </ul>
+        </li>
+    }
+</ul>
+<ul class="nav navbar-nav nav-pills pull-right ">
+
+
 
     <li>
         @if (Context.Session["Associate"] != null)
@@ -46,9 +69,9 @@
             var assoc = ((AHDDManagerClass.Associate)Context.Session["Associate"]);
             if (assoc.ClockedIn)
             {
-                @*<a href="#" id="lnkClockIn" style="padding:8px 5px;"><img src="~/images/ClockedIn.png" alt="Clocked In" data-toggle='tooltip' data-placement='bottom' title='Currently Clocked In' /></a>*@
-                <a id="lnkClockIn" style="padding: 11px 11px;">
-                    <span class="fa-stack fa-badge-stack fa-2x" data-toggle="tooltip" data-placement="right" data-container="body" title="Currently Clocked In">
+                <a id="lnkClockIn" href="#" style="padding: 11px 11px;" data-toggle="tooltip" data-placement="top" data-container="body" title="Click to clock out">
+                    Clocked in
+                    <span class="fa-stack fa-badge-stack fa-2x">
                         <i class="fa fa-clock-o fa-stack-1x"></i>
                         <i class="fa-badge fa-badge-bottom-circle-surround fa-stack-1x fa-inverse"></i>
                         <i class="fa-badge fa-badge-bottom-check-circle fa-stack-1x text-success"></i>
@@ -57,9 +80,9 @@
             }
             else
             {
-                @*<a href="#" id="lnkClockIn" style="padding:8px 5px;"><img src="~/images/ClockedOut.png" alt="Clocked Out" data-toggle='tooltip' data-placement='bottom' title='Currently Clocked Out' /></a>*@
-                <a id="lnkClockIn" style="padding: 11px 11px;">
-                    <span class="fa-stack fa-badge-stack fa-2x" data-toggle="tooltip" data-placement="right" data-container="body" title="Currently Clocked Out">
+                <a id="lnkClockIn" href="#" style="padding: 11px 11px;" data-toggle="tooltip" data-placement="top" data-container="body" title="Click to clock in">
+                    Clocked out
+                    <span class="fa-stack fa-badge-stack fa-2x">
                         <i class="fa fa-clock-o fa-stack-1x"></i>
                         <i class="fa-badge fa-badge-bottom-circle-surround fa-stack-1x fa-inverse"></i>
                         <i class="fa-badge fa-badge-bottom-times fa-stack-1x text-danger"></i>
@@ -69,31 +92,6 @@
             }
         }
     </li>
-</ul>
-<ul class="nav navbar-nav nav-pills pull-right ">
-
-
-    @if (ViewBag.IsAdmin)
-    {
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
-            <ul class="dropdown-menu" aria-labelledby="admin">
-                <li><a href="/admin/ResumeReport">Resume Report</a></li>
-                <li><a href="/admin/TransactionsInfo">Receipts Report</a></li>
-                <li><a href="/admin/ServicesReport">Services Report</a></li>
-                <li><a href="/admin/associates">Associates</a></li>
-                <li><a href="/admin/forms">Items Catalog</a></li>
-                <li><a href="/admin/dailyinvoices">Daily Receipts</a></li>
-                <li><a href="/admin/AssociateHours">Associate Hours</a></li>
-                <li><a href="/admin/payments">Payments by Associates</a></li>
-                <li><a href="/admin/AccountsReceivable">Accounts Receivables</a></li>
-                <li><a href="/admin/refunds">Refunds</a></li>
-                <li><a href="/admin/deletedexpenses">Deleted Expenses</a></li>
-            </ul>
-        </li>
-    }
-
-    <li><a href="/logout/">Logout</a></li>
     @{
         if (Context.Session["Associate"] != null)
         {
@@ -102,16 +100,12 @@
                 <div class="user-container" style="background-color:white; ">
                     <h4>
                         <a href="/account/associateprofile/">Welcome @assoc.FirstName</a>
-
-                        @*<span class='dot' style='background-color: @assoc.BackgroundColor'></span>*@
                         <i class="fa fa-circle fa-lg fa-fw" style='color: @assoc.BackgroundColor' data-toggle='tooltip' title='Your color'></i>
                         @{
                             if (Context.Session["Associate"] != null)
                             {
                                 if (assoc.IsAdmin)
                                 {
-                                    @*<text>&nbsp; &nbsp;</text>*@
-                                    @*<img src="~/images/admin.png" />*@
                                     <i class="fa fa-key fa-shadow" style="color: gold;" data-toggle='tooltip' title='You are Admin!'></i>
                                 }
                             }
@@ -121,4 +115,7 @@
             </li>
         }
     }
+
+    <li><a href="/logout/">Logout</a></li>
+
 </ul>

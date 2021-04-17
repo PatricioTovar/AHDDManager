@@ -18,6 +18,9 @@
         $('[data-toggle="popover"]').popover();
         $.fn.bootstrapBtn = $.fn.button.noConflict();
 
+        var today = new Date();
+        $("#dpTransactionDate").datepicker().datepicker("setDate", today);
+
         $("#lnkAdd").on('click', function (event) {
             _OpenNewDetailDialog();
         });
@@ -64,12 +67,21 @@
                 return;
             }
 
+            var transactionDate = "";
+
+            var dpTransactionDate = $("#dpTransactionDate").val();
+            if (moment(new Date()).isSame(dpTransactionDate, 'day')) {
+                transactionDate = (new Date()).toLocaleString(); //To Keep Hour
+            } else {
+                transactionDate = dpTransactionDate;
+            }
+
             var transaction = {
                 BusinessID: 0,
                 CustomerID: _customerID,
                 AssociateID: $('#ddlAtendedBy').val(),
                 TotalAmount: $('#tblTrans').find('tr:last td:nth-child(5)').text().replace('$', '').replace(',', '').replace('.00', ''),
-                TransactionDate: (new Date()).toLocaleString(), //PT - add time in the client side
+                TransactionDate: transactionDate, //PT - add time in the client side
                 ModifiedDate: (new Date()).toLocaleString() //PT - add time in the client side
             };
 
@@ -246,9 +258,19 @@
     </tfoot>
 </table>
 <div class="row">
-    <div class="form-group col-sm-9">
+    <div class="form-group col-sm-6">
         <label class="empty-label">&nbsp;</label>
         <a id="btnCancel" href="/transactions/customertransactions/@Url.RequestContext.RouteData.Values["id"]" class="btn btn-danger">Cancel</a>
+    </div>
+    <div class="form-group col-md-3">
+        @if (ViewBag.IsAdmin)
+        {
+            <label for="dpTransactionDate" class="control-label">Transaction Date:</label>
+            <div class="input-group margin-bottom-sm">
+                <input type="text" id="dpTransactionDate" class="form-control" readonly />
+                <span class="input-group-addon btn btn-default" onclick="$('#dpTransactionDate').focus();"><i class="fa fa-calendar fa-lg fa-fw"></i></span>
+            </div>
+        }
     </div>
     <div class="form-group col-sm-2">
         <label>Attended by:</label>

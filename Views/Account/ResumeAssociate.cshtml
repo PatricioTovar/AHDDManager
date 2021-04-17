@@ -4,9 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<link href="~/Content/datatables.min.css" rel="stylesheet" />
 <script src="~/Scripts/datatables.min.js"></script>
-<script src="~/Scripts/moment.js"></script>
 <script src="~/Scripts/dataTables.buttons.min.js"></script>
 <script src="~/Scripts/buttons.html5.min.js"></script>
 <script src="~/Scripts/jszip.min.js"></script>
@@ -171,9 +170,6 @@
                 $('#lblTotalAmount').text($.fn.dataTable.render.number(',', '.', 2, '$').display(totalAmount));
                 $('#lblTotalCount').text('(' + totalCount + ')');
             }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-
-            $.AlertDialog(textStatus + ': ' + errorThrown, 'Error Message', null, 'lightcoral');
         });
     }
 </script>

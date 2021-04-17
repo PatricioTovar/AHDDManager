@@ -4,7 +4,7 @@
     ViewBag.Title = "Customers";
 }
 
-<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<link href="~/Content/datatables.min.css" rel="stylesheet" />
 <script src="~/Scripts/datatables.min.js"></script>
 <script src="~/Scripts/Utilities.js"></script>
 <script src="~/Scripts/States.js"></script>
@@ -184,9 +184,6 @@
                     Table.column(13).visible(false);
                 }
 
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                // needs to implement if it fails
-                $.AlertDialog(textStatus, 'Error Message', function (event) { }, 'lightcoral');
             });
         });
 

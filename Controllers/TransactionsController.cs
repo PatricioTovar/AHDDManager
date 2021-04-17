@@ -23,7 +23,8 @@ namespace AHDDManager.Controllers
             Customer objC = new Customer(id);
 
             ViewBag.CustomerName = objC.FirstName + " " + objC.LastName;
-
+            ViewBag.CustomerID = objC.CustomerID;
+            
             Session["SelectedCustomer"] = objC;
 
             return View(objTs);
@@ -71,8 +72,11 @@ namespace AHDDManager.Controllers
             transaction.TotalCollected = 0;
 
 
-            if (transaction.Update())
+            if (!transaction.Update())
             {
+                return Json("0");
+            }
+            if (transactiondetails != null) { 
                 foreach (TransactionDetail item in transactiondetails)
                 {
                     item.TransactionID = transaction.TransactionID;
@@ -82,13 +86,10 @@ namespace AHDDManager.Controllers
                         return Json("0");
                     }
                 }
-                return Json(transaction.TransactionID);
             }
-            else
-            {
-                return Json("0");
-            }
+            return Json(transaction.TransactionID);
         }
+    
 
 
         public ActionResult AddTransactionDetail(TransactionDetail transactionDetail)

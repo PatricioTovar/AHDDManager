@@ -335,6 +335,27 @@ namespace AHDDManagerClass
 
         }
 
+        public Appointments(DateTime StartDate, DateTime EndDate)
+        {
+            Data objData = new Data();
+            DataTable dt;
+            Appointment objInfo;
+
+            dt = objData.GetAppointmentsByDateRange(StartDate, EndDate);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    objInfo = new Appointment(dt.Rows[i]);
+                    if (objInfo.AppointmentsExist)
+                    {
+                        infoList.Add(objInfo);
+                    }
+                }
+            }
+
+        }
 
 
         public void Add(Appointment Info)

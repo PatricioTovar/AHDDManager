@@ -4,12 +4,11 @@
     ViewBag.Title = "Customers";
 }
 
-<link href="~/Scripts/datatables.min.css" rel="stylesheet" />
+<link href="~/Content/datatables.min.css" rel="stylesheet" />
 <script src="~/Scripts/datatables.min.js"></script>
 <script src="~/Scripts/Utilities.js"></script>
 <script src="~/Scripts/States.js"></script>
 
-<!-- NEEDED FOR SPINNER DIALOG -->
 <style>
     #divParthnerInfo {
         background-color: #f5f5f5;
@@ -20,6 +19,7 @@
         margin-left: -5px;
         margin-right: -5px;
     }
+
 
 </style>
 <script>
@@ -116,7 +116,7 @@
                 {
                     "data": "CustomerID",
                     "type": "html-num",
-                    "className": "text-right",
+                    "className": "min-col",
                     "render": function (data, type, row) {
                         if (row.TotalOwed == 0) {
                             return '<a href="/transactions/customertransactions/' + data + '" class="link" id="' + data + '"  data-toggle="tooltip" data-placement="right" title="View Receipts">' + data + '</a>';
@@ -129,7 +129,7 @@
                 },
                 {
                     "data": "Associate",
-                    "className": "text-center",
+                    "className": "text-center min-col",
                     "render": function (data, type, row) {
 
                         //return "<span class='dot' style='background-color:" + row.BackgroundColor + "' data-toggle='tooltip' title='" + data + "'></span>";
@@ -146,6 +146,7 @@
                 //{ "data": "Zip" },
                 {
                     "data": "Mobile",
+                    "className": "min-col",
                     "render": function (data, type, row) {
                         if (type === 'display') {
                             var text = data.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
@@ -168,7 +169,7 @@
                 {
                     "data": "CustomerID",
                     "orderable": false,
-                    "className": "text-center",
+                    "className": "text-center min-col",
                     "render": function (data, type, row) {
 
                         return "<a class='EditLinks' id='edit_" + row.CustomerID + "' ><i class='fa fa-pencil fa-shadow fa-2x' style='color: lightskyblue;' data-toggle='tooltip' data-placement='top' title='Edit'></i></a>";
@@ -177,7 +178,7 @@
                 {
                     "data": "CustomerID",
                     "orderable": false,
-                    "className": "text-center",
+                    "className": "text-center min-col",
                     "render": function (data, type, row) {
                         var notesLink;
                         notesLink = $("<a></a>")
@@ -198,22 +199,15 @@
 
                         $(notesLink).append(notesIcon);
                         return notesLink.prop('outerHTML');
-                        //return "<a class='CustomersNotesLinks' id='customerNotes_" + row.CustomerID + "' ><i class='fa fa-sticky-note fa-shadow fa-2x' style='color: gold;' data-toggle='tooltip' data-placement='top' title='Notes'></i></a>";
-
-
                     }
                 },
                 {
                     "data": "Deleteable",
                     'name': 'delete',
                     "orderable": false,
-                    "className": "text-center",
+                    "className": "text-center min-col",
                     "render": function (data, type, full, meta) {
-                        if (data == 1) {
-                            var i = 0;
-                        }
-
-                        return data == 1 ? "<a class='deletecustomer text-danger' id='" + full.CustomerID + "' data-toggle='tooltip' data-placement='top' title='Delete'  ><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;'></i></a>" : ''
+                        return data == 1 ? "<a class='deletecustomer text-danger' id='" + full.CustomerID + "'><i class='fa fa-trash fa-shadow fa-2x' style='color: crimson;' data-toggle='tooltip' data-placement='top' title='Delete' ></i></a>" : ''
                     }
                 }
             ],
@@ -660,10 +654,6 @@
                     Table.column('delete').visible(false);
                 }
 
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                // needs to implement if it fails
-              //  alert('Error searching customers.');
-                $.AlertDialog(textStatus + ": " + errorThrown, 'Error Message', null, 'lightcoral');
             });
     }
 </script>
