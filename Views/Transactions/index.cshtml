@@ -108,7 +108,7 @@
     function fillTransactionTable(list) {
         for (var i = 0; i < list.length; i++) {
             var transaction = list[i];
-            var _date = moment(transaction.TransactionDate).format("DD/MM/YYYY");
+            var _date = moment(transaction.TransactionDate).format("MM/DD/YYYY");
 
             var row = '';
 
